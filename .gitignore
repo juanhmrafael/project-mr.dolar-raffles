@@ -11,6 +11,8 @@
 !.env.prod.example
 !.env.dev.example
 .devcontainer
+.gitignore
+nginx/certs/
 
 # --- Archivos de Base de Datos ---
 # Nunca subas la base de datos de desarrollo local.

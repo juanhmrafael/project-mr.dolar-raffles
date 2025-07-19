@@ -39,16 +39,16 @@ USE_X_FORWARDED_HOST = True
 # Descomentarlas en un entorno HTTP romperá su sitio.
 
 # Redirige todo el tráfico HTTP a HTTPS.
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 
 # Solo permite enviar la cookie de sesión a través de conexiones HTTPS.
-# SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # Solo permite enviar la cookie CSRF a través de conexiones HTTPS.
-# CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # SECURE_HSTS_SECONDS = 31536000
 
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-# SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_PRELOAD = True

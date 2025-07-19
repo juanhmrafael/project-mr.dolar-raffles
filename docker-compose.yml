@@ -183,6 +183,7 @@ services:
     # Mapea el puerto 80 del host al puerto 80 del contenedor, exponiendo Nginx al mundo exterior.
     ports:
       - "80:80"
+      - "443:443"
     # Monta los volúmenes de estáticos y medios en modo 'ro' (read-only). Nginx solo necesita
     # leer estos archivos, no escribirlos. Es una buena práctica de seguridad (Principio de Menor Privilegio).
     volumes:
