@@ -81,6 +81,6 @@ elif [ "$role" = "beat" ]; then
     echo "Entrypoint: Entregando control a Celery Beat..."
     exec su-exec appuser "$@"
 else
-    echo "Error: Rol desconocido '$role'. Use 'web' o 'worker'."
+    echo "Error: Rol desconocido '$role'. Use 'web' o 'worker' o 'beat'."
     exit 1
 fi
