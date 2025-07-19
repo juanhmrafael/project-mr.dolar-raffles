@@ -37,7 +37,13 @@ RUN npm run build
 # Propósito: Esta es la etapa final que construye la imagen que se desplegará. Partimos directamente
 # de la imagen oficial de Nginx. Se elige la variante 'alpine' por ser extremadamente ligera y
 # tener una superficie de ataque reducida, ideal para producción.
-FROM nginx:1.28-alpine AS production-server
+FROM alpine:3.22 AS production-server
+
+# INSTALACIÓN DE NGINX: Usamos el gestor de paquetes de Alpine (apk) para
+# instalar Nginx. El paquete 'nginx' de los repositorios oficiales de Alpine
+# VIENE COMPILADO CON EL MÓDULO SSL, solucionando nuestro problema.
+# --no-cache asegura que no se guarde la caché del índice de paquetes, manteniendo la imagen pequeña.
+RUN apk add --no-cache nginx
 
 # Propósito: Eliminar el archivo de configuración por defecto que viene con la imagen de Nginx.
 # Esto previene conflictos o comportamientos inesperados y asegura que solo nuestra configuración
