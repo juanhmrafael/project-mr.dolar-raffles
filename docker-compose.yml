@@ -1,0 +1,253 @@
+# docker-compose.yml para PRODUCCIÓN
+# ====================================================================================================
+# Propósito: Este archivo es el manifiesto de arquitectura de la aplicación para el entorno de
+# producción. Define todos los componentes (servicios, redes, volúmenes) y cómo interactúan
+# entre sí. Ha sido purgado de toda configuración de desarrollo para una máxima claridad y seguridad.
+#
+# Referencia canónica de la especificación de Compose: https://docs.docker.com/reference/compose-file/
+# ====================================================================================================
+
+# --- SECCIÓN DE ANCLAS (PLANTILLAS REUTILIZABLES) ---
+# Propósito: Las anclas de YAML ('&') nos permiten definir un bloque de configuración una vez y
+# reutilizarlo ('<<: *') en múltiples lugares. Esto reduce la duplicación y mejora la mantenibilidad.
+
+x-django-base: &django-base
+  # Esta ancla define la configuración base compartida por los servicios de Django (backend y worker).
+  # Propósito: Asegurar que ambos servicios se basen en la misma imagen y configuración.
+  # Imagen que se construirá y usará para este servicio. El tag ':backend-prod' la identifica
+  # claramente como la imagen de producción del backend.
+  image: fullstack-raffle:backend-prod
+  # Define el archivo del cual se cargarán las variables de entorno. Simplificado a un solo .env.
+  env_file: .env
+  # Conecta el servicio a la red de producción, aislándolo de otros entornos.
+  networks:
+    - app_network
+  # Política de reinicio robusta para producción. 'unless-stopped' reiniciará el contenedor
+  # si falla, e incluso si el servidor anfitrión se reinicia, a menos que sea detenido manualmente.
+  restart: unless-stopped
+  # Define las dependencias de arranque. Este servicio no se iniciará hasta que la base de datos
+  # y Redis no solo hayan arrancado, sino que su 'healthcheck' sea exitoso ('service_healthy').
+  # Esto previene errores de conexión al iniciar la aplicación.
+  environment:
+    # Esta variable le dice a Python que busque módulos en /home/appuser/app
+    # Por lo tanto, podrá encontrar /home/appuser/app/apps/utils.
+    - PYTHONPATH=/home/appuser/app/apps
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+# --- INICIO DE LA DEFINICIÓN DE SERVICIOS ---
+# Un "servicio" en Compose es la definición de un contenedor que se ejecutará.
+services:
+  # --- Servicio de Base de Datos: PostgreSQL ---
+  db:
+    # Propósito: Este servicio ejecuta el motor de base de datos PostgreSQL.
+    # Se construye una imagen personalizada "inline" para añadir soporte de localización (locale),
+    # lo cual es crucial para el correcto ordenamiento y formato de datos específicos de una región.
+    build:
+      # El contexto de la construcción es el directorio 'database'.
+      context: ./database
+      # El Dockerfile a usar dentro de ese contexto.
+      dockerfile: Dockerfile
+      # Los argumentos se pasan de la misma manera, pero ahora de forma segura.
+      args:
+        GLIBC_VER: 2.35-r1
+    # Carga las variables de entorno (usuario, contraseña, nombre de la DB) desde el archivo .env.
+    env_file: .env
+    # Mapea un volumen nombrado ('postgres_data') al directorio interno donde PostgreSQL
+    # almacena sus datos. Esto garantiza que los datos de la base de datos persistan
+    # incluso si el contenedor se elimina y se vuelve a crear.
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    # Conecta el servicio a la red de producción.
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app_network
+    # Política de reinicio para máxima disponibilidad.
+    restart: unless-stopped
+    # Define una prueba de salud. Docker ejecutará este comando periódicamente para verificar
+    # que la base de datos está viva y lista para aceptar conexiones.
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2G
+        reservations:
+          cpus: '0.75'
+          memory: 1G
+    healthcheck:
+      # test: El comando a ejecutar. 'pg_isready' es la herramienta estándar para esto.
+      # NOTA: Se usa '$$' para escapar la variable. Esto le dice a Compose que no la sustituya él,
+      # sino que pase la cadena '$$POSTGRES_USER' al shell del contenedor. El shell del contenedor,
+      # que sí tiene las variables de entorno cargadas, la interpretará correctamente como $POSTGRES_USER.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s # Frecuencia de la prueba.
+      timeout: 5s   # Tiempo máximo de espera para una respuesta.
+      retries: 5    # Número de fallos consecutivos para marcar el servicio como 'unhealthy'.
+
+  # --- Servicio de Broker de Mensajes/Caché: Redis ---
+  redis:
+    # Propósito: Proporciona una instancia de Redis, usada por Celery como broker de mensajes
+    # y por Django como backend de caché.
+    image: redis:7-alpine # Usa la imagen oficial de Redis, variante Alpine, por su pequeño tamaño.
+    networks:
+      - app_network
+    restart: unless-stopped
+    # Define una prueba de salud para Redis. El comando 'redis-cli ping' debe devolver 'PONG'.
+    # Esto asegura que los servicios dependientes no inicien hasta que Redis esté operativo.
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Servicio de Backend: Django/Gunicorn ---
+  backend:
+    # Propósito: El servicio principal que ejecuta la lógica de la aplicación Django a través del
+    # servidor WSGI Gunicorn. Es el cerebro de la aplicación.
+    # Hereda toda la configuración base (imagen, red, reinicio, dependencias) de la ancla &django-base.
+    <<: *django-base
+    # Define cómo construir la imagen para este servicio.
+    build:
+      context: . # El contexto de construcción es el directorio raíz del proyecto.
+      dockerfile: Dockerfile.backend # El Dockerfile a usar.
+    # Expone el puerto 8000 solo a otros servicios dentro de la red de Docker. No es accesible
+    # desde el exterior directamente. Nginx se comunicará con el backend a través de este puerto.
+    expose:
+      - 8000
+    # Monta los volúmenes para los archivos estáticos y de medios. El backend (con 'collectstatic')
+    # escribirá en estos volúmenes, y Nginx los leerá para servirlos directamente.
+    volumes:
+      - staticfiles:/home/appuser/app/staticfiles
+      - mediafiles:/home/appuser/app/mediafiles
+    # La directiva 'deploy' define configuraciones relacionadas con el despliegue y la orquestación.
+    deploy:
+      # Limita los recursos que este contenedor puede consumir, protegiendo al servidor anfitrión
+      # de picos de consumo. Reserva una cantidad mínima y establece un límite máximo.
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 3G
+        reservations:
+          cpus: '1.0'
+          memory: 1.5G
+    command: ["web", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "5", "-k", "uvicorn.workers.UvicornWorker", "config.asgi:application"]
+
+  # --- Servicio de Trabajador en Segundo Plano: Celery ---
+  worker:
+    # Propósito: Ejecuta las tareas asíncronas y en segundo plano (ej: enviar correos, procesar datos).
+    # Hereda la misma configuración base que el servicio 'backend'.
+    <<: *django-base
+    # NOTA: No tiene un bloque 'build'. Docker Compose es lo suficientemente inteligente para
+    # darse cuenta de que usa la misma imagen ('fullstack-raffle:backend-prod') que el servicio
+    # 'backend', por lo que construirá la imagen una sola vez y la usará para ambos servicios.
+    # Define los límites de recursos para el trabajador, que pueden ser diferentes a los del backend.
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    command: ["worker", "celery", "-A", "config", "worker", "-l", "info", "--concurrency=4", "--max-tasks-per-child=500"]
+
+  # --- Servicio de Servidor Web / Proxy Inverso: Nginx ---
+  nginx:
+    # Propósito: El punto de entrada público de la aplicación. Sirve los archivos estáticos del
+    # frontend y reenvía las peticiones de API al backend de Django.
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile.nginx
+    image: fullstack-raffle:nginx-prod
+    networks:
+      - app_network
+    # Mapea el puerto 80 del host al puerto 80 del contenedor, exponiendo Nginx al mundo exterior.
+    ports:
+      - "80:80"
+    # Monta los volúmenes de estáticos y medios en modo 'ro' (read-only). Nginx solo necesita
+    # leer estos archivos, no escribirlos. Es una buena práctica de seguridad (Principio de Menor Privilegio).
+    volumes:
+      - staticfiles:/home/appuser/app/staticfiles:ro
+      - mediafiles:/home/appuser/app/mediafiles:ro
+    restart: unless-stopped
+    # Dependencia en tiempo de ejecución. Nginx no arrancará hasta que el servicio backend lo haga.
+    # Su dependencia en tiempo de construcción del 'frontend' es manejada implícitamente por Docker
+    # a través de la instrucción 'COPY --from=fullstack-raffle:frontend-prod' en su Dockerfile.
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    depends_on:
+      backend:
+        condition: service_started
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy 
+
+  # --- Servicio de Programador de Tareas: Celery Beat ---
+  beat:
+    # Propósito: Ejecuta el proceso de Celery Beat, responsable de programar y
+    # encolar las tareas periódicas (ej: actualizar la tasa del BCV).
+    # Hereda la misma imagen, red y configuración de entorno que el backend y el worker,
+    # asegurando consistencia.
+    <<: *django-base
+    # Define los límites de recursos para el programador. Es un proceso muy ligero,
+    # por lo que requiere muchos menos recursos que el backend o el worker.
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    # El comando específico para iniciar el servicio de Celery Beat.
+    #   -A config: Apunta a la instancia de la app Celery en config/celery.py.
+    #   beat:      Indica que se inicie el scheduler.
+    #   -l info:   Establece el nivel de log.
+    #   --scheduler ...: Le dice a Beat que use el scheduler de la base de datos de Django,
+    #                    permitiendo la gestión de tareas desde el Admin.
+    command: ["beat", "celery", "-A", "config", "beat", "-l", "info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler"]
+    
+# --- CONFIGURACIÓN DE REDES Y VOLÚMENES ---
+
+# Declara las redes personalizadas que usarán nuestros servicios.
+networks:
+  # Propósito: Crear una red de puente (bridge) aislada para todos los servicios de producción.
+  # Esto permite que los contenedores se comuniquen entre sí usando sus nombres de servicio como
+  # nombres de host, y los aísla de otras aplicaciones que puedan estar corriendo en el mismo host.
+  app_network:
+    driver: bridge
+
+# Declara los volúmenes nombrados para la persistencia de datos.
+volumes:
+  # Propósito: Docker gestiona estos volúmenes en el host. Al darles un nombre, nos aseguramos
+  # de que los datos sobrevivan incluso si los contenedores son eliminados y recreados.
+  # El '{}' indica que se use la configuración por defecto del driver de volúmenes local.
+  postgres_data: {} # Volumen para los datos de la base de datos de producción.
+  staticfiles: {}   # Volumen para los archivos estáticos recolectados.
+  mediafiles: {}    # Volumen para los archivos subidos por los usuarios.

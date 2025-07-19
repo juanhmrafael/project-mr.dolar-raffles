@@ -1,0 +1,55 @@
+# Dockerfile de Frontend para PRODUCCIÓN
+# ====================================================================================================
+# Propósito: Este Dockerfile actúa como una "fábrica de artefactos". Su única misión es tomar
+# el código fuente de Angular y compilarlo en un conjunto de archivos estáticos optimizados
+# (HTML, CSS, JavaScript) para producción. No genera una imagen ejecutable por sí misma; en su lugar,
+# la etapa final ('builder') será utilizada por otro Dockerfile (el de Nginx) para copiar estos
+# artefactos compilados. Este enfoque garantiza una separación de responsabilidades limpia.
+#
+# Referencia de imagen oficial de Node.js: https://hub.docker.com/_/node
+# ====================================================================================================
+
+
+# --- Etapa Única: 'builder' ---
+# Propósito: Esta etapa contiene todo el entorno y las herramientas necesarias para construir
+# la aplicación Angular. Se basa en una imagen de Node.js que incluye npm y las herramientas
+# de compilación necesarias. Usamos 'node:22-alpine' por su pequeño tamaño y seguridad.
+# Le asignamos el alias 'builder' para que pueda ser referenciada fácilmente desde otros Dockerfiles.
+FROM node:22-alpine AS builder
+
+# Propósito: Establecer el directorio de trabajo dentro del contenedor. Todos los comandos
+# subsecuentes (COPY, RUN, etc.) se ejecutarán en el contexto de este directorio '/app'.
+WORKDIR /app
+
+# Propósito: Copiar los manifiestos de dependencias ANTES que el resto del código fuente.
+# Esta es una optimización crucial para la caché de capas de Docker. La instalación de
+# dependencias ('npm install') es a menudo el paso más lento. Al separar la copia de
+# 'package.json', esta capa solo se invalidará y reconstruirá si las dependencias cambian,
+# no cada vez que se modifica una línea de código en la aplicación.
+COPY frontend/package.json ./
+
+# Propósito: Instalar las dependencias del proyecto de forma limpia y eficiente.
+# --mount=type=cache,target=/root/.npm: Es una directiva de BuildKit, el motor de construcción
+#   moderno de Docker. Monta un directorio de caché persistente para npm. Esto acelera
+#   drásticamente las instalaciones en builds posteriores, ya que los paquetes descargados
+#   se reutilizan desde la caché en lugar de ser descargados de internet nuevamente.
+# Referencia oficial para --mount: https://docs.docker.com/build/guide/mounts/
+RUN --mount=type=cache,target=/root/.npm npm install
+
+# Propósito: Copiar el resto del código fuente del frontend al directorio de trabajo del contenedor.
+# Este comando se ejecuta después de 'npm install' intencionadamente. De esta manera, los cambios
+# en el código fuente invalidarán esta capa y las siguientes, pero no la capa de dependencias,
+# aprovechando al máximo la caché.
+COPY frontend/ ./
+
+# Propósito: Ejecutar el script de construcción de producción definido en 'package.json'.
+# Este comando invoca al Angular CLI (ng build --configuration production) para compilar,
+# minimizar, y optimizar todo el código TypeScript y SASS en archivos estáticos HTML, JS y CSS.
+# El resultado final se depositará, por defecto, en el directorio '/app/dist/frontend/browser',
+# listo para ser servido por un servidor web como Nginx.
+RUN npm run build
+
+# NOTA: Este Dockerfile no tiene un CMD o ENTRYPOINT final. Esto es intencional.
+# Su ciclo de vida termina aquí. Ha cumplido su propósito: crear los artefactos estáticos
+# en la etapa 'builder'. El servicio de Nginx será el responsable de copiar el contenido
+# de '/app/dist/frontend/browser' desde esta etapa 'builder' a su propia imagen para servirlo.

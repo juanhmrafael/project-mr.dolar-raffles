@@ -1,0 +1,778 @@
+/* LOGIN FORM - Versión completamente responsive que respeta Django */
+
+/* Variables adicionales para mejor mantenimiento */
+:root {
+    --login-container-width: 400px;
+    --login-container-min-width: 320px;
+    --login-padding: 40px;
+    --login-border-radius: 16px;
+    --input-height: 48px;
+    --input-border-radius: 8px;
+    --button-height: 48px;
+    --transition-speed: 0.3s;
+    --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.1);
+    --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Reset y base para login - Mejorado para móviles */
+html {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body.login {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-primary);
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    /* Prevenir zoom en iOS */
+    -webkit-text-size-adjust: 100%;
+    /* Mejorar scroll en móviles */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* Asegurar que el fondo cubra toda la pantalla en móviles */
+body.login::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    z-index: -1;
+}
+
+/* Ocultar elementos innecesarios */
+body.login #header,
+body.login #content-related,
+body.login .breadcrumbs,
+body.login #nav-sidebar {
+    display: none !important;
+}
+
+/* Container principal - Mejorado para móviles */
+body.login #container {
+    background: var(--body-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--login-border-radius);
+    box-shadow: var(--shadow-heavy);
+    overflow: visible;
+    width: 100%;
+    max-width: var(--login-container-width);
+    min-width: var(--login-container-min-width);
+    margin: auto;
+    padding: 0;
+    position: relative;
+    height: auto;
+    min-height: auto;
+    display: block;
+    will-change: transform;
+    backface-visibility: hidden;
+    /* Asegurar que el contenedor sea flexible */
+    flex-shrink: 0;
+}
+
+/* Content area */
+body.login #content {
+    padding: 0;
+    overflow: visible;
+}
+
+body.login #content-main {
+    padding: var(--login-padding);
+    float: none;
+    width: auto;
+    position: relative;
+    overflow: visible;
+}
+
+/* Iconos SVG base */
+body.login .base-svgs {
+    display: none !important;
+}
+
+/* Container del botón de tema */
+body.login .theme-toggle-container {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+}
+
+/* PERSONALIZACIÓN DEL BOTÓN DE TEMA - Colores adaptativos */
+body.login .theme-toggle-container .theme-toggle {
+    background: var(--header-bg);
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 0, 0, 0.25) !important;
+    border-radius: 8px !important;
+    padding: 8px !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all var(--transition-speed) ease !important;
+    margin: 0 !important;
+    margin-inline-start: 0 !important;
+    margin-top: 0 !important;
+    vertical-align: middle;
+    /* Mejorar touch en móviles */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Logo de la empresa */
+body.login .login-logo {
+    text-align: center;
+    margin-bottom: 32px;
+    margin-top: 16px;
+}
+
+body.login .company-logo {
+    max-width: 240px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Header de bienvenida */
+body.login .login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+body.login .login-header h1 {
+    color: var(--body-loud-color);
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+}
+
+body.login .login-header p {
+    color: var(--body-quiet-color);
+    font-size: 16px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Grupos de formulario */
+body.login .form-group {
+    margin-bottom: 24px;
+}
+
+/* Labels mejorados */
+body.login .form-label {
+    display: block;
+    color: var(--body-medium-color);
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+/* Container de input con icono */
+body.login .input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Inputs mejorados */
+body.login .form-group #id_username,
+body.login .form-group #id_password {
+    width: 100% !important;
+    height: var(--input-height) !important;
+    padding: 0 16px 0 48px !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--input-border-radius) !important;
+    font-size: 16px !important;
+    transition: all var(--transition-speed) ease !important;
+    box-sizing: border-box !important;
+    background-color: var(--darkened-bg) !important;
+    color: var(--body-fg) !important;
+    font-family: var(--font-family-primary) !important;
+    margin: 0 !important;
+    vertical-align: top;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    /* Prevenir zoom en iOS */
+    -webkit-text-size-adjust: 100%;
+    /* Mejorar touch */
+    touch-action: manipulation;
+}
+
+/* Estados de focus mejorados */
+body.login .form-group #id_username:focus,
+body.login .form-group #id_password:focus {
+    border-color: var(--primary) !important;
+    background-color: var(--body-bg) !important;
+    box-shadow: 0 0 0 3px rgba(121, 174, 200, 0.1) !important;
+    transform: translateY(-1px);
+}
+
+/* Iconos centrados correctamente */
+body.login .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--body-quiet-color);
+    pointer-events: none;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    transition: color var(--transition-speed) ease;
+}
+
+/* Cambio de color del icono en focus */
+body.login .input-container:focus-within .input-icon {
+    color: var(--primary);
+}
+
+/* Container del botón */
+body.login .submit-container {
+    margin: 32px 0 24px 0;
+}
+
+/* Botón mejorado */
+body.login .login-btn {
+    width: 100% !important;
+    height: var(--button-height) !important;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+    color: var(--button-fg) !important;
+    border: none !important;
+    border-radius: var(--input-border-radius) !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--font-family-primary) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Efectos hover y focus del botón */
+body.login .login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+body.login .login-btn:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+body.login .login-btn:active {
+    transform: translateY(0);
+}
+
+/* Estado disabled del botón */
+body.login .login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Container del link de recuperación */
+body.login .password-reset-container {
+    text-align: center;
+    margin: 24px 0;
+}
+
+/* Link de recuperación mejorado */
+body.login .password-reset-link {
+    color: var(--link-fg) !important;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body.login .password-reset-link:hover,
+body.login .password-reset-link:focus {
+    color: var(--link-hover-color) !important;
+    text-decoration: underline;
+    background-color: rgba(121, 174, 200, 0.1);
+}
+
+/* Contenedores de errores - MEJORADO PARA MÓVILES */
+body.login .error-container {
+    margin-bottom: 20px;
+    /* Asegurar que los errores no causen overflow */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Mensajes de error mejorados */
+body.login .errornote {
+    background-color: var(--message-error-bg) !important;
+    color: var(--error-fg) !important;
+    padding: 12px 16px !important;
+    border-radius: var(--input-border-radius) !important;
+    margin-bottom: 16px !important;
+    border-left: 4px solid var(--error-fg) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    display: block;
+    line-height: 1.4;
+    /* Prevenir overflow en móviles */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+}
+
+/* Errores de campo específicos */
+body.login .field-errors {
+    margin-top: 8px;
+}
+
+body.login .field-errors .errorlist {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+}
+
+body.login .field-errors .errorlist li {
+    color: var(--error-fg) !important;
+    font-size: 13px !important;
+    font-weight: 500;
+    margin-bottom: 4px;
+    padding: 0 !important;
+    line-height: 1.4;
+    /* Prevenir overflow en móviles */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Alert mejorado */
+body.login .alert-warning {
+    background-color: var(--message-warning-bg);
+    color: var(--body-medium-color);
+    border-left: 4px solid var(--warning-color);
+    padding: 12px 16px;
+    border-radius: var(--input-border-radius);
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+    /* Prevenir overflow en móviles */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Responsive mejorado - SOLUCIÓN ESPECÍFICA PARA OVERFLOW */
+@media (max-width: 480px) {
+    html {
+        height: 100%;
+        overflow-x: hidden;
+    }
+
+    body.login {
+        padding: 15px 10px;
+        min-height: 100vh;
+        min-height: 100dvh;
+        height: auto;
+        width: 100vw;
+        max-width: 100vw;
+        overflow-x: hidden !important;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    body.login #container {
+        /* CONTROL ESTRICTO DEL ANCHO */
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        min-width: 280px !important;
+        border-radius: 12px;
+        height: auto;
+        min-height: auto;
+        flex-shrink: 0;
+        margin: 0 auto;
+        overflow: hidden !important;
+        box-sizing: border-box;
+        /* Prevenir expansión */
+        contain: layout style;
+    }
+
+    body.login #content {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    body.login #content-main {
+        padding: 24px 20px !important;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        /* Asegurar que el contenido no se expanda */
+        contain: layout style;
+    }
+
+    /* CONTROL ESPECÍFICO DE ERRORES */
+    body.login .error-container,
+    body.login .errornote,
+    body.login .field-errors,
+    body.login .alert-warning {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        hyphens: auto !important;
+        box-sizing: border-box !important;
+    }
+
+    body.login .errornote {
+        padding: 10px 14px !important;
+        font-size: 13px !important;
+        margin-bottom: 12px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        /* Forzar que no se expanda */
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    body.login .field-errors .errorlist {
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+    }
+
+    body.login .field-errors .errorlist li {
+        font-size: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+    }
+
+    /* TOGGLE THEME - POSICIONAMIENTO MEJORADO */
+    body.login .theme-toggle-container {
+        position: fixed !important;
+        top: 15px !important;
+        right: 15px !important;
+        z-index: 1000 !important;
+        /* Asegurar que siempre esté visible */
+        pointer-events: auto;
+    }
+
+    body.login .theme-toggle-container .theme-toggle {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 6px !important;
+        /* Asegurar visibilidad */
+        position: relative;
+        z-index: 1001;
+    }
+
+    body.login .theme-toggle svg {
+        height: 18px !important;
+        width: 18px !important;
+    }
+
+    /* LOGO - CONTROL DE TAMAÑO */
+    body.login .login-logo {
+        margin-bottom: 20px;
+        margin-top: 8px;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    body.login .company-logo {
+        max-width: 160px !important;
+        width: auto;
+        height: auto;
+        max-height: 80px;
+    }
+
+    /* HEADER */
+    body.login .login-header {
+        margin-bottom: 20px;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.login .login-header h1 {
+        font-size: 22px !important;
+        line-height: 1.3;
+        margin: 0 0 8px 0;
+        overflow-wrap: break-word;
+    }
+
+    body.login .login-header p {
+        font-size: 14px !important;
+        overflow-wrap: break-word;
+    }
+
+    /* FORMULARIO */
+    body.login .form-group {
+        margin-bottom: 18px;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    /* Inputs más grandes en móviles para mejor usabilidad */
+    body.login .form-group #id_username,
+    body.login .form-group #id_password {
+        height: 50px !important;
+        font-size: 16px !important;
+        padding: 0 16px 0 50px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    body.login .input-container {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+    body.login .input-icon {
+        left: 18px;
+    }
+
+    /* Botón más grande en móviles */
+    body.login .login-btn {
+        height: 50px !important;
+        font-size: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    body.login .submit-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 24px 0 20px 0;
+    }
+
+    body.login .password-reset-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+    }
+}
+
+/* Responsive para pantallas muy pequeñas - MEJORADO */
+@media (max-width: 360px) {
+    body.login {
+        padding: 10px 5px;
+    }
+
+    body.login #container {
+        width: calc(100vw - 10px) !important;
+        max-width: calc(100vw - 10px) !important;
+        min-width: 260px !important;
+    }
+
+    body.login #content-main {
+        padding: 20px 16px !important;
+    }
+
+    body.login .login-header h1 {
+        font-size: 20px !important;
+    }
+
+    body.login .company-logo {
+        max-width: 140px !important;
+        max-height: 70px;
+    }
+
+    body.login .theme-toggle-container {
+        top: 10px !important;
+        right: 10px !important;
+    }
+}
+
+/* LANDSCAPE MÓVIL - MEJORADO */
+@media (max-height: 500px) and (orientation: landscape) {
+    body.login {
+        padding: 10px;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    body.login #container {
+        margin: 15px auto;
+        width: calc(100vw - 20px) !important;
+        max-width: 400px !important;
+    }
+
+    body.login .login-logo {
+        margin-bottom: 12px;
+        margin-top: 4px;
+    }
+
+    body.login .company-logo {
+        max-width: 120px !important;
+        max-height: 50px;
+    }
+
+    body.login .login-header {
+        margin-bottom: 12px;
+    }
+
+    body.login .login-header h1 {
+        font-size: 20px !important;
+    }
+
+    body.login .form-group {
+        margin-bottom: 14px;
+    }
+
+    body.login .submit-container {
+        margin: 16px 0 12px 0;
+    }
+
+    body.login .theme-toggle-container {
+        top: 8px !important;
+        right: 8px !important;
+    }
+}
+
+/* PREVENCIÓN ADICIONAL DE OVERFLOW HORIZONTAL */
+body.login *,
+body.login *::before,
+body.login *::after {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Asegurar que ningún elemento cause overflow */
+body.login .form-group *,
+body.login .error-container *,
+body.login .login-header *,
+body.login .password-reset-container * {
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+}
+
+/* Control específico para textos largos */
+body.login p,
+body.login span,
+body.login div,
+body.login li {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+/* Animación de entrada mejorada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body.login #container {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    body.login #container {
+        animation: none;
+    }
+
+    body.login .login-btn,
+    body.login .input-icon,
+    body.login .password-reset-link,
+    body.login .theme-toggle {
+        transition: none;
+    }
+}
+
+/* Optimizaciones de performance */
+body.login * {
+    box-sizing: border-box;
+}
+
+/* Evitar layout shifts */
+body.login .company-logo {
+    aspect-ratio: 3 / 2;
+}
+
+/* Mejoras adicionales para iOS Safari */
+@supports (-webkit-touch-callout: none) {
+    body.login {
+        /* Prevenir bounce scroll en iOS */
+        overscroll-behavior-y: none;
+    }
+
+    body.login .form-group #id_username,
+    body.login .form-group #id_password {
+        /* Prevenir zoom automático en iOS */
+        font-size: 16px !important;
+    }
+}
+
+/* Mejoras para Android Chrome */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    body.login {
+        /* Mejorar rendering en Android */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}

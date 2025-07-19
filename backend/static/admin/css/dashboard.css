@@ -1,0 +1,97 @@
+/* DASHBOARD - Modernizado */
+.dashboard td,
+.dashboard th {
+    word-break: break-word;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard .module table th {
+    width: 100%;
+    background: linear-gradient(135deg, var(--darkened-bg) 0%, var(--selected-bg) 100%);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+    color: var(--body-medium-color);
+}
+
+.dashboard .module table td {
+    white-space: nowrap;
+    padding: 12px 16px;
+}
+
+.dashboard .module table td:hover {
+    transform: translateX(2px);
+}
+
+.dashboard .module table td a {
+    display: block;
+    padding-right: 1em;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+}
+
+.dashboard .module table td a:hover {
+    color: var(--primary);
+    transform: translateX(4px);
+}
+
+/* RECENT ACTIONS MODULE - Modernizado */
+.module ul.actionlist {
+    margin-left: 0;
+    padding: 0;
+}
+
+ul.actionlist li {
+    list-style-type: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 8px 16px;
+    margin: 4px 0;
+    border-radius: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 3px solid transparent;
+}
+
+ul.actionlist li:hover {
+    background: var(--selected-bg);
+    border-left-color: var(--primary);
+    transform: translateX(4px);
+}
+
+ul.actionlist li a {
+    color: var(--link-fg);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+ul.actionlist li:hover a {
+    color: var(--primary);
+}
+
+/* Mejoras adicionales para el dashboard */
+.dashboard .module {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--hairline-color);
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard .module:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.dashboard .module h2 {
+    background: linear-gradient(135deg, var(--header-bg) 0%, var(--darkened-bg) 100%);
+    color: var(--header-link-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    margin: 0;
+    border-bottom: 1px solid var(--hairline-color);
+}

@@ -1,0 +1,56 @@
+# ===================================================================
+# === .gitignore Canónico para Django + Angular + Docker ==========
+# === Propósito: Prevenir la publicación de secretos, dependencias
+# === y artefactos de compilación al repositorio.
+# ===================================================================
+
+# --- Secretos y Entornos Locales ---
+# ¡LA REGLA MÁS IMPORTANTE! Nunca subas tus variables de entorno.
+.env
+.env.*
+!.env.prod.example
+!.env.dev.example
+
+# --- Archivos de Base de Datos ---
+# Nunca subas la base de datos de desarrollo local.
+db.sqlite3
+db.sqlite3-journal
+
+# --- Dependencias de Python ---
+# El entorno virtual y sus paquetes.
+/venv/
+/virtual/
+/env/
+/.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Archivos de Requerimientos Compilados ---
+# Solo se debe versionar los .in, no los .txt generados.
+*.txt
+
+# --- Dependencias y Artefactos de Frontend (Node.js/Angular) ---
+# La carpeta de dependencias de Node.js es masiva.
+/frontend/node_modules/
+# Artefactos de compilación y logs de npm.
+/frontend/dist/
+/frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Archivos del IDE ---
+# Comunes para VSCode, PyCharm, etc.
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Medios Subidos por Usuarios ---
+# El contenido de mediafiles es específico de cada entorno.
+/mediafiles/
+
+# --- Archivos Estáticos Recolectados ---
+# Esta carpeta se genera con 'collectstatic'.
+/staticfiles/

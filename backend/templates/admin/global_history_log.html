@@ -1,0 +1,264 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet"
+          href="{% static "admin/css/global_history_log.css" %}">
+{% endblock extrastyle %}
+{% block content %}
+    <section class="content">
+        <!-- Statistics summary -->
+        <div class="audit-summary">
+            <div class="summary-card">
+                <div class="summary-number text-success">{{ total_created|default:0 }}</div>
+                <div class="summary-label">{% trans "Created" %}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number text-info">{{ total_updated|default:0 }}</div>
+                <div class="summary-label">{% trans "Updated" %}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number text-danger">{{ total_deleted|default:0 }}</div>
+                <div class="summary-label">{% trans "Deleted" %}</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ history_page.paginator.count }}</div>
+                <div class="summary-label">{% trans "Total" %}</div>
+            </div>
+        </div>
+        <!-- Advanced filters -->
+        <div class="audit-filters">
+            <form method="get" class="form-inline">
+                <div class="row w-100">
+                    <!-- Columna 1: Filtro de Modelo -->
+                    <div class="col-md-3 mb-3">
+                        <label class="sr-only" for="model_name">{% trans "Model" %}</label>
+                        <select name="model_name"
+                                id="model_name"
+                                class="form-control"
+                                title="{% trans "Select model" %}">
+                            <option value="">{% trans "All Models" %}</option>
+                            {% for model in model_choices %}
+                                <option value="{{ model.label }}"
+                                        {% if request.GET.model_name == model.label %}selected{% endif %}>{{ model.verbose_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Columna 2: Filtro de Usuario -->
+                    <div class="col-md-3 mb-3">
+                        <label class="sr-only" for="user_email">{% trans "User Email" %}</label>
+                        <input type="text"
+                               id="user_email"
+                               name="user_email"
+                               class="form-control"
+                               value="{{ request.GET.user_email }}"
+                               placeholder="{% trans "User Email" %}">
+                    </div>
+                    <!-- Columna 3: Filtro de Tipo de Acción -->
+                    <div class="col-md-3 mb-3">
+                        <label class="sr-only" for="action_type">{% trans "Action Type" %}</label>
+                        <select name="action_type"
+                                id="action_type"
+                                class="form-control"
+                                title="{% trans "Select action type" %}">
+                            <option value="">{% trans "All Actions" %}</option>
+                            <option value="+" {% if request.GET.action_type == "+" %}selected{% endif %}>{% trans "Created" %}</option>
+                            <option value="~" {% if request.GET.action_type == "~" %}selected{% endif %}>{% trans "Updated" %}</option>
+                            <option value="-" {% if request.GET.action_type == "-" %}selected{% endif %}>{% trans "Deleted" %}</option>
+                        </select>
+                    </div>
+                    <!-- Columna 4: Filtros de Fecha y Botones -->
+                    <div class="col-md-4 mb-3 ">
+                        <div class="input-group">
+                            <input type="date"
+                                   name="date_from"
+                                   class="form-control"
+                                   value="{{ request.GET.date_from }}"
+                                   title="{% trans "Select date from" %}">
+                            <input type="date"
+                                   name="date_to"
+                                   class="form-control"
+                                   value="{{ request.GET.date_to }}"
+                                   title="{% trans "Select date to" %}">
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3 ">
+                        <div class="btn-group">
+                            <button type="submit" class="button" title="{% trans "Apply filters" %}">
+                                <i class="fas fa-filter"></i>
+                                {% trans "Apply filters" %}
+                            </button>
+                            <a href="?" class="button default" title="{% trans "Clear filters" %}">
+                                <i class="fas fa-times"></i>
+                                {% trans "Clear filters" %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Timeline view -->
+        <div class="card audit-log-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i> {% trans "Recent Activity" %}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if history_page %}
+                    <div class="timeline">
+                        <div class="timeline-indicator"></div>
+                        {% for item in history_page %}
+                            {% with entry=item.entry changes=item.changes admin_url=item.admin_url user_admin_url=item.user_admin_url verbose_name=item.verbose_name %}
+                                <div class="timeline-item">
+                                    <div class="timeline-marker"></div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="d-flex align-items-center mb-3 flex-wrap flex-gap-8">
+                                                        {% if entry.history_type == "+" %}
+                                                            <span class="audit-badge created"><i class="fas fa-plus"></i> {% trans "Created" %}</span>
+                                                        {% elif entry.history_type == "~" %}
+                                                            <span class="audit-badge updated"><i class="fas fa-edit"></i> {% trans "Updated" %}</span>
+                                                        {% elif entry.history_type == "-" %}
+                                                            <span class="audit-badge deleted"><i class="fas fa-trash"></i> {% trans "Deleted" %}</span>
+                                                        {% endif %}
+                                                        <span class="text-muted d-flex align-items-center flex-gap-4">
+                                                            <i class="fas fa-user"></i>
+                                                            <!-- ENLACE DEL USUARIO ACTUALIZADO -->
+                                                            {% if entry.history_user %}
+                                                                {% if user_admin_url %}
+                                                                    <a href="{{ user_admin_url }}"
+                                                                       class="user-link"
+                                                                       title="{% trans "View user profile" %}">
+                                                                        {{ entry.history_user.email }}
+                                                                    </a>
+                                                                {% else %}
+                                                                    <span>{{ entry.history_user.email }}</span>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <span class="text-muted">{% trans "System/Anonymous" %}</span>
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {% if admin_url %}
+                                                            <a href="{{ admin_url }}" class="font-weight-bold">{{ entry.instance|default:entry.history_object }}</a>
+                                                        {% else %}
+                                                            <span class="font-weight-bold">{{ entry.instance|default:entry.history_object }}</span>
+                                                        {% endif %}
+                                                        <br>
+                                                        <small class="text-muted d-flex align-items-center mt-1 flex-gap-4">
+                                                            <i class="fas fa-tag"></i>
+                                                            {{ verbose_name }}
+                                                        </small>
+                                                    </div>
+                                                    {% if changes %}
+                                                        <div class="changes-container">
+                                                            <h6 class="mb-3 d-flex align-items-center flex-gap-8">
+                                                                <i class="fas fa-list-alt"></i> {% trans "Changes Made" %}:
+                                                            </h6>
+                                                            {% for change in changes %}
+                                                                <div class="change-item">
+                                                                    <div class="field-name">{{ change.field|capfirst }}:</div>
+                                                                    <div class="old-value">{{ change.old|default:"-" }}</div>
+                                                                    <i class="fas fa-arrow-right text-muted"></i>
+                                                                    <div class="new-value">{{ change.new|default:"-" }}</div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-4 text-md-right text-center">
+                                                    <div class="text-muted mb-2 d-flex align-items-center justify-content-md-end justify-content-center flex-gap-8">
+                                                        <i class="fas fa-calendar-alt"></i>
+                                                        {{ entry.history_date|date:"d/m/Y" }}
+                                                    </div>
+                                                    <div class="text-muted d-flex align-items-center justify-content-md-end justify-content-center flex-gap-8">
+                                                        <i class="fas fa-clock"></i>
+                                                        {{ entry.history_date|date:"H:i:s" }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h4>{% trans "No Recent Activity" %}</h4>
+                        <p>{% trans "No records found matching the applied filters." %}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Pagination -->
+        {% if history_page.has_other_pages %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="dataTables_info">
+                                {% blocktrans with start=history_page.start_index end=history_page.end_index total=history_page.paginator.count %}
+                                Showing {{ start }} to {{ end }} of {{ total }} entries
+                            {% endblocktrans %}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <nav aria-label="{% trans "Page navigation" %}">
+                                <ul class="pagination justify-content-md-end justify-content-center mb-0">
+                                    {% if history_page.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                               aria-label="{% trans "First page" %}"
+                                               title="{% trans "First page" %}"><i class="fas fa-angle-double-left"></i> <span>{% trans "First" %}</span></a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?page={{ history_page.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                               aria-label="{% trans "Previous page" %}"
+                                               title="{% trans "Previous page" %}"><i class="fas fa-angle-left"></i> <span>{% trans "Previous" %}</span></a>
+                                        </li>
+                                    {% endif %}
+                                    {% for num in history_page.paginator.page_range %}
+                                        {% if history_page.number == num %}
+                                            <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > history_page.number|add:"-3" and num < history_page.number|add:"3" %}
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                   href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                                   aria-label="{% trans "Page" %} {{ num }}"
+                                                   title="{% trans "Page" %} {{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if history_page.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?page={{ history_page.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                               aria-label="{% trans "Next page" %}"
+                                               title="{% trans "Next page" %}"><span>{% trans "Next" %}</span> <i class="fas fa-angle-right"></i></a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?page={{ history_page.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}"
+                                               aria-label="{% trans "Last page" %}"
+                                               title="{% trans "Last page" %}"><span>{% trans "Last" %}</span> <i class="fas fa-angle-double-right"></i></a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}

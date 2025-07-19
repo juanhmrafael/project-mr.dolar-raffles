@@ -1,0 +1,2148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <juanhmrafael@gmail.com>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: VERSIÓN DEL PAQUETE\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-18 15:45-0400\n"
+"PO-Revision-Date: 2025-07-03 02:00+America/Caracas\n"
+"Last-Translator: Juan Rafael Hoyos Miranda <juanhmrafael@gmail.com>\n"
+"Language-Team: Español <LL@li.org>\n"
+"Language: Español\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+
+#: apps/auditing/admin/global_audit_log.py:136
+msgid "Yes"
+msgstr "Sí"
+
+#: apps/auditing/admin/global_audit_log.py:136
+msgid "No"
+msgstr "No"
+
+#: apps/auditing/admin/global_audit_log.py:267
+msgid "Unknown Model"
+msgstr "Modelo Desconocido"
+
+#: apps/auditing/admin/global_audit_log.py:292
+msgid "Audit Log"
+msgstr "Registro de Auditoría"
+
+#: apps/auditing/admin/user.py:47 apps/users/admin.py:58
+msgid "Personal info"
+msgstr "Información personal"
+
+#: apps/auditing/admin/user.py:51 apps/users/admin.py:62
+msgid "Permissions"
+msgstr "Permisos"
+
+#: apps/auditing/admin/user.py:63 apps/users/admin.py:73
+msgid "Important dates"
+msgstr "Fechas importantes"
+
+#: apps/auditing/admin/user.py:95 apps/users/admin.py:112
+msgid "No avatar"
+msgstr "Sin avatar"
+
+#: apps/auditing/admin/user.py:97 apps/users/admin.py:114
+msgid "Avatar Preview"
+msgstr "Vista previa del avatar"
+
+#: apps/auditing/apps.py:8
+msgid "Auditing"
+msgstr "Auditoría"
+
+#: apps/auditing/models.py:13
+msgid "Global Audit Log"
+msgstr "Registro de Auditoría Global"
+
+#: apps/auditing/models.py:14
+msgid "Global Audit Logs"
+msgstr "Registros de Auditoría Globales"
+
+#: apps/auditing/sites.py:24
+msgid "Audit Management"
+msgstr "Gestión de Auditoría"
+
+#: apps/auditing/sites.py:25
+msgid "Audit Admin"
+msgstr "Admin de Auditoría"
+
+#: apps/auditing/sites.py:26
+msgid "Audit Administration"
+msgstr "Administración de Auditoría"
+
+#: apps/currencies/admin.py:89
+#, python-format
+msgid "Successfully fetched and created rate for %s."
+msgstr "Tasa para %s obtenida y creada con éxito."
+
+#: apps/currencies/admin.py:96
+#, python-format
+msgid "Rate for %s already exists. Source: %s."
+msgstr "La tasa para %s ya existe. Fuente: %s."
+
+#: apps/currencies/admin.py:102
+msgid "Failed to fetch rate from BCV."
+msgstr "Error al obtener la tasa del BCV."
+
+#: apps/currencies/apps.py:8
+msgid "Financial Settings"
+msgstr "Configuración Financiera"
+
+#: apps/currencies/models.py:17
+msgid "BCV Scraper"
+msgstr "Extractor del BCV"
+
+#: apps/currencies/models.py:18
+msgid "Manual Input"
+msgstr "Entrada Manual"
+
+#: apps/currencies/models.py:21
+msgid "Date"
+msgstr "Fecha"
+
+#: apps/currencies/models.py:22
+msgid "Rate (VEF per USD)"
+msgstr "Tasa (Bs. por USD)"
+
+#: apps/currencies/models.py:23
+msgid "Source"
+msgstr "Fuente"
+
+#: apps/currencies/models.py:28
+msgid "Exchange Rate"
+msgstr "Tasa de Cambio"
+
+#: apps/currencies/models.py:29
+msgid "Exchange Rates"
+msgstr "Tasas de Cambio"
+
+#: apps/currencies/tasks.py:38
+#, python-format
+msgid "Executing BCV rate check. Attempt %(attempt)d of %(max)d for today."
+msgstr "Ejecutando la revisión de la tasa del BCV. Intento %(attempt)d de %(max)d para hoy."
+
+#: apps/currencies/tasks.py:42
+msgid "Maximum attempts for today reached. Stopping execution."
+msgstr "Se alcanzó el número máximo de intentos para hoy. Deteniendo la ejecución."
+
+#: apps/currencies/tasks.py:43
+msgid "Max attempts reached."
+msgstr "Se alcanzó el máximo de intentos."
+
+#: apps/currencies/tasks.py:48
+msgid "SUCCESS: A future rate already exists. Task complete for today."
+msgstr "ÉXITO: Ya existe una tasa futura. Tarea completada por hoy."
+
+#: apps/currencies/tasks.py:50
+msgid "Future rate already exists."
+msgstr "Ya existe una tasa futura."
+
+#: apps/currencies/tasks.py:63
+msgid "Scraper returned None, could not parse page."
+msgstr "El extractor devolvió None, no se pudo analizar la página."
+
+#: apps/currencies/tasks.py:68
+msgid "BCV has not published a future rate yet."
+msgstr "El BCV aún no ha publicado una tasa futura."
+
+#: apps/currencies/tasks.py:72
+msgid "Scraper succeeded but USD rate was not found."
+msgstr "El extractor tuvo éxito, pero no se encontró la tasa del dólar."
+
+#: apps/currencies/tasks.py:79
+#, python-format
+msgid "SUCCESS: Created new rate for %(date)s."
+msgstr "ÉXITO: Se creó una nueva tasa para el %(date)s."
+
+#: apps/currencies/tasks.py:83
+#, python-format
+msgid "INFO: Rate for %(date)s already existed."
+msgstr "INFO: La tasa para el %(date)s ya existía."
+
+#: apps/currencies/tasks.py:89
+#, python-format
+msgid "Attempt %(attempt)d failed: %(error)s"
+msgstr "El intento %(attempt)d falló: %(error)s"
+
+#: apps/currencies/tasks.py:92
+msgid "Attempt failed."
+msgstr "Intento fallido."
+
+#: apps/participants/admin.py:58
+msgid ""
+"The participation has been created successfully. It will expire in 5 minutes "
+"if a payment is not registered."
+msgstr ""
+"La participación se ha creado exitosamente. Expirará en 5 minutos si no se "
+"registra un pago."
+
+#: apps/participants/apps.py:7
+msgid "Participants"
+msgstr "Participantes"
+
+#: apps/participants/models.py:32 apps/raffles/models.py:111
+#: apps/raffles/models.py:147 apps/tickets/models.py:21
+msgid "Raffle"
+msgstr "Rifa"
+
+#: apps/participants/models.py:37
+msgid "Full Name"
+msgstr "Nombre Completo"
+
+#: apps/participants/models.py:42
+msgid "Phone Number"
+msgstr "Número de Teléfono"
+
+#: apps/participants/models.py:46 apps/payments/payment_method/form.py:35
+msgid ""
+"Enter the 11-digit cell phone number. It will be formatted automatically as "
+"(04XX) XXX-XXXX."
+msgstr ""
+"Ingresa el número de celular de 11 dígitos. Se formateará automáticamente "
+"como (04XX) XXX-XXXX."
+
+#: apps/participants/models.py:49
+msgid "Email Address"
+msgstr "Correo Electrónico"
+
+#: apps/participants/models.py:51
+msgid "Identification Number"
+msgstr "Cédula de Identidad"
+
+#: apps/participants/models.py:57 apps/payments/payment_method/form.py:46
+#: apps/users/models.py:82
+msgid ""
+"Format: L-NNNNNNNN (e.g., V-12345678). It will be formatted automatically."
+msgstr "Formato: L-NNNNNNNN (ej. V-12345678). Se formateará automáticamente."
+
+#: apps/participants/models.py:67
+msgid "Ticket Count"
+msgstr "Cantidad de Tickets"
+
+#: apps/participants/models.py:68 apps/payments/models.py:202
+msgid "Created At"
+msgstr "Fecha de Creación"
+
+#: apps/participants/models.py:69 apps/payments/models.py:203
+msgid "Last Updated At"
+msgstr "Última Actualización"
+
+#: apps/participants/models.py:74 apps/payments/models.py:131
+#: apps/tickets/models.py:27
+msgid "Participation"
+msgstr "Participación"
+
+#: apps/participants/models.py:75
+msgid "Participations"
+msgstr "Participaciones"
+
+#: apps/participants/serializers.py:44
+msgid "You must purchase at least one ticket."
+msgstr "Debes comprar al menos un ticket."
+
+#: apps/participants/serializers.py:55
+msgid "Raffle not found."
+msgstr "Rifa no encontrada."
+
+#: apps/participants/serializers.py:59 apps/participants/services_sync.py:43
+msgid "This raffle is not available for participation."
+msgstr "Esta rifa no está disponible para participar."
+
+#: apps/participants/serializers.py:66
+#, python-format
+msgid "The minimum purchase for this raffle is %(min_purchase)s tickets."
+msgstr "La compra mínima para esta rifa es de %(min_purchase)s tickets."
+
+#: apps/participants/serializers.py:104
+msgid "Pending Payment Report"
+msgstr "Reporte de Pagos Pendientes"
+
+#: apps/participants/services_sync.py:48
+msgid "Not enough tickets available."
+msgstr "No hay suficientes tickets disponibles."
+
+#: apps/participants/tasks.py:31
+#, python-format
+msgid "Participation %(id)d has expired without a payment. Deleting."
+msgstr "La participación %(id)d ha expirado sin un pago. Eliminando."
+
+#: apps/participants/tasks.py:37
+#, python-format
+msgid "Participation %(id)d successfully deleted."
+msgstr "Participación %(id)d eliminada con éxito."
+
+#: apps/participants/tasks.py:42
+#, python-format
+msgid "Participation %(id)d has a payment reported. No action taken."
+msgstr "La participación %(id)d tiene un pago reportado. No se tomó ninguna acción."
+
+#: apps/participants/tasks.py:50
+#, python-format
+msgid "Participation %(id)d not found. Already processed or deleted."
+msgstr "Participación %(id)d no encontrada. Ya procesada o eliminada."
+
+#: apps/participants/tasks.py:57
+#, python-format
+msgid ""
+"An unexpected error occurred during cleanup for participation %(id)d: "
+"%(error)s"
+msgstr ""
+"Ocurrió un error inesperado durante la limpieza para la participación %(id)d: "
+"%(error)s"
+
+#: apps/payments/apps.py:8
+msgid "Payments & Verification"
+msgstr "Pagos y Verificación"
+
+#: apps/payments/models.py:21
+msgid "Bank Code"
+msgstr "Código del Banco"
+
+#: apps/payments/models.py:22
+msgid "Bank Name"
+msgstr "Nombre del Banco"
+
+#: apps/payments/models.py:26 apps/payments/payment_method/form.py:52
+msgid "Bank"
+msgstr "Banco"
+
+#: apps/payments/models.py:27
+msgid "Banks"
+msgstr "Bancos"
+
+#: apps/payments/models.py:41
+msgid "Mobile Payment"
+msgstr "Pago Móvil"
+
+#: apps/payments/models.py:42
+msgid "Zelle"
+msgstr "Zelle"
+
+#: apps/payments/models.py:43
+msgid "Binance"
+msgstr "Binance"
+
+#: apps/payments/models.py:44
+msgid "Bank Transfer"
+msgstr "Transferencia Bancaria"
+
+#: apps/payments/models.py:48
+msgid "Method Type"
+msgstr "Tipo de Método"
+
+#: apps/payments/models.py:51
+msgid "Account Nickname"
+msgstr "Alias de la Cuenta"
+
+#: apps/payments/models.py:53
+msgid "E.g., 'Primary Zelle', 'Banesco Mobile Payment'"
+msgstr "Ej: 'Zelle Principal', 'Pago Móvil Banesco'"
+
+#: apps/payments/models.py:56 apps/payments/payment_method/form.py:23
+msgid "Operating Currency"
+msgstr "Moneda de Operación"
+
+#: apps/payments/models.py:59 apps/payments/payment_method/form.py:26
+msgid "The currency in which transactions are made with this method."
+msgstr "La moneda en la que se realizan las transacciones con este método."
+
+#: apps/payments/models.py:63
+msgid "Account Details"
+msgstr "Detalles de la Cuenta"
+
+#: apps/payments/models.py:65
+msgid "Account data will be structured here automatically."
+msgstr "Los datos de la cuenta se estructurarán aquí automáticamente."
+
+#: apps/payments/models.py:68
+msgid "Is Active?"
+msgstr "¿Está Activo?"
+
+#: apps/payments/models.py:107
+msgid "Payment Method"
+msgstr "Método de Pago"
+
+#: apps/payments/models.py:108
+msgid "Payment methods"
+msgstr "Métodos de pago"
+
+#: apps/payments/models.py:122
+msgid "Pending Verification"
+msgstr "Pendiente por Verificar"
+
+#: apps/payments/models.py:123
+msgid "Approved"
+msgstr "Aprobado"
+
+#: apps/payments/models.py:124
+msgid "Rejected"
+msgstr "Rechazado"
+
+#: apps/payments/models.py:136
+msgid "Payment Method Used"
+msgstr "Método de Pago Usado"
+
+#: apps/payments/models.py:141 apps/payments/payment/admin.py:93
+msgid "Transaction Details"
+msgstr "Detalles de la Transacción"
+
+#: apps/payments/models.py:142
+msgid "Details from the user, e.g., {'reference': '123'}"
+msgstr "Datos del usuario, ej: {'referencia': '123'}"
+
+#: apps/payments/models.py:144
+msgid "Payment Date"
+msgstr "Fecha del Pago"
+
+#: apps/payments/models.py:149
+msgid "Amount to Pay"
+msgstr "Monto a Pagar"
+
+#: apps/payments/models.py:153
+msgid ""
+"The final amount the user had to pay, in the currency of the payment method."
+msgstr "El monto final que el usuario pagó, en la moneda del método de pago."
+
+#: apps/payments/models.py:160
+msgid "Exchange Rate Applied (VEF per USD)"
+msgstr "Tasa de Cambio Aplicada (Bs. por USD)"
+
+#: apps/payments/models.py:167
+msgid "Payment Hash"
+msgstr "Hash del Pago"
+
+#: apps/payments/models.py:172 apps/raffles/models.py:72
+#: apps/raffles/models.py:250
+msgid "Status"
+msgstr "Estatus"
+
+#: apps/payments/models.py:183
+msgid "Verified By"
+msgstr "Verificado Por"
+
+#: apps/payments/models.py:186
+msgid "Verified At"
+msgstr "Fecha de Verificación"
+
+#: apps/payments/models.py:187
+msgid "Verification Notes"
+msgstr "Notas de Verificación"
+
+#: apps/payments/models.py:192
+msgid "Ticket Price at Creation"
+msgstr "Precio del Ticket al Crear"
+
+#: apps/payments/models.py:200
+msgid "Ticket Count at Creation"
+msgstr "Cantidad de Tickets al Crear"
+
+#: apps/payments/models.py:207
+msgid "Payment"
+msgstr "Pago"
+
+#: apps/payments/models.py:208
+msgid "Payments"
+msgstr "Pagos"
+
+#: apps/payments/payment/admin.py:84
+msgid "Participant"
+msgstr "Participante"
+
+#. Translators: "Ref:" is a short label for "Reference Number".
+#: apps/payments/payment/admin.py:111
+msgid "Reference"
+msgstr "Referencia"
+
+#. Translators: "Email:" is a label for an email address.
+#: apps/payments/payment/admin.py:115 apps/payments/payment_method/form.py:82
+msgid "Email"
+msgstr "Email"
+
+#. Translators: "Pay ID:" is a label for a Binance Pay ID.
+#: apps/payments/payment/admin.py:119 apps/payments/payment_method/form.py:90
+msgid "Pay ID"
+msgstr "Pay ID"
+
+#: apps/payments/payment/admin.py:167
+msgid "Base Details"
+msgstr "Detalles Base"
+
+#: apps/payments/payment/admin.py:174
+msgid "Verification Status"
+msgstr "Estatus de Verificación"
+
+#: apps/payments/payment/admin.py:178
+msgid "System & Audit Data (Read-Only)"
+msgstr "Datos de Sistema y Auditoría (Solo Lectura)"
+
+#: apps/payments/payment/admin.py:212
+msgid "Transaction Data"
+msgstr "Datos de la Transacción"
+
+#: apps/payments/payment/admin.py:251
+msgid "Payment approved and tickets assigned successfully."
+msgstr "Pago aprobado y tickets asignados con éxito."
+
+#: apps/payments/payment/admin.py:264
+msgid "Payment status changed and associated tickets have been revoked."
+msgstr "El estatus del pago cambió y los tickets asociados han sido revocados."
+
+#: apps/payments/payment/admin.py:274
+msgid "An error occurred while processing the state change: "
+msgstr "Ocurrió un error al procesar el cambio de estatus: "
+
+#: apps/payments/payment/admin.py:284
+msgid "Associated tickets have been revoked."
+msgstr "Los tickets asociados han sido revocados."
+
+#: apps/payments/payment/admin.py:288
+#, python-format
+msgid "Could not revoke tickets. Deletion cancelled. Error: %(error)s"
+msgstr "No se pudieron revocar los tickets. Eliminación cancelada. Error: %(error)s"
+
+#: apps/payments/payment/admin.py:301
+msgid "Approve selected payments"
+msgstr "Aprobar pagos seleccionados"
+
+#: apps/payments/payment/admin.py:308
+msgid "Reject selected payments"
+msgstr "Rechazar pagos seleccionados"
+
+#: apps/payments/payment/admin.py:315
+msgid "Delete selected payments (safe)"
+msgstr "Eliminar pagos seleccionados (seguro)"
+
+#: apps/payments/payment/admin.py:340
+#, python-format
+msgid "Error processing payment %(id)s: %(error)s"
+msgstr "Error procesando el pago %(id)s: %(error)s"
+
+#: apps/payments/payment/admin.py:349
+#, python-brace-format
+msgid "{success_count} payments were successfully {action_name}d."
+msgstr "{success_count} pagos fueron {action_name} con éxito."
+
+#: apps/payments/payment/admin.py:352
+#, python-brace-format
+msgid "Failed to process {error_count} payments."
+msgstr "Falló el procesamiento de {error_count} pagos."
+
+#: apps/payments/payment/form.py:37
+msgid "Reference Number"
+msgstr "Número de Referencia"
+
+#: apps/payments/payment/form.py:38
+msgid "Sender's Email (Zelle)"
+msgstr "Email del Emisor (Zelle)"
+
+#: apps/payments/payment/form.py:39
+msgid "Binance Pay ID"
+msgstr "Pay ID de Binance"
+
+#: apps/payments/payment/form.py:142 apps/payments/payment_method/form.py:168
+msgid "This field is required for the selected payment method."
+msgstr "Este campo es obligatorio para el método de pago seleccionado."
+
+#: apps/payments/payment/form.py:195
+msgid ""
+"A payment with this exact reference, date, and amount has already been "
+"reported."
+msgstr "Ya se ha reportado un pago con esta misma referencia, fecha y monto."
+
+#: apps/payments/payment/serializers_async.py:65
+msgid "This participation already has a payment reported."
+msgstr "Esta participación ya tiene un pago reportado."
+
+#: apps/payments/payment/serializers_async.py:69
+msgid "Participation not found."
+msgstr "Participación no encontrada."
+
+#: apps/payments/payment/serializers_async.py:99
+#, python-format
+msgid "Missing required details for this payment method: %(fields)s"
+msgstr "Faltan detalles requeridos para este método de pago: %(fields)s"
+
+#: apps/payments/payment/serializers_async.py:107
+msgid "Payment method not found."
+msgstr "Método de pago no encontrado."
+
+#: apps/payments/payment/services_async.py:58
+#: apps/payments/payment/services_sync.py:60
+#: apps/payments/payment/services_sync.py:236
+#, python-format
+msgid "Payment method '%(method_name)s' is not available for this raffle."
+msgstr "El método de pago '%(method_name)s' no está disponible para esta rifa."
+
+#: apps/payments/payment/services_async.py:59
+#: apps/payments/payment/services_sync.py:61
+msgid "method_name"
+msgstr "nombre_del_metodo"
+
+#: apps/payments/payment/services_async.py:79
+#: apps/payments/payment/services_sync.py:81
+#, python-format
+msgid "No exchange rate available for the date %(date)s."
+msgstr "No hay tasa de cambio disponible para la fecha %(date)s."
+
+#: apps/payments/payment/services_async.py:104
+#: apps/payments/payment/services_sync.py:106
+msgid "Unexpected currency combination."
+msgstr "Combinación de monedas inesperada."
+
+#: apps/payments/payment/views.py:100
+msgid "Missing required parameters"
+msgstr "Faltan parámetros obligatorios"
+
+#: apps/payments/payment/views.py:119
+msgid "Invalid ID provided"
+msgstr "El ID proporcionado es inválido"
+
+#: apps/payments/payment/views.py:124
+msgid "Invalid date format. Use YYYY-MM-DD."
+msgstr "Formato de fecha inválido. Use AAAA-MM-DD."
+
+#: apps/payments/payment/views.py:155
+msgid "This raffle is not available for calculation."
+msgstr "Esta rifa no está disponible para realizar cálculos."
+
+#: apps/payments/payment/views.py:184
+msgid "Invalid raffle or payment method ID"
+msgstr "ID de rifa o método de pago inválido."
+
+#: apps/payments/payment/views.py:211
+msgid "Payment reported successfully. Awaiting verification."
+msgstr "Pago reportado con éxito. En espera de verificación."
+
+#: apps/payments/payment/views.py:219
+msgid "A payment with these exact details has already been reported."
+msgstr "Ya se ha reportado un pago con estos mismos detalles."
+
+#: apps/payments/payment_method/admin.py:41
+msgid ""
+"This payment method is in use and its critical details cannot be modified. "
+"Only the 'Account Nickname' and 'Is Active?' status can be changed."
+msgstr ""
+"Este método de pago está en uso y sus detalles críticos no pueden ser "
+"modificados. Solo el 'Alias de la Cuenta' y el estatus '¿Está Activo?' "
+"pueden cambiarse."
+
+#: apps/payments/payment_method/admin.py:60
+msgid "Account Configuration"
+msgstr "Configuración de la Cuenta"
+
+#: apps/payments/payment_method/admin.py:72
+msgid ""
+"Fill in the required details for the selected payment method below. The "
+"system will show/hide fields automatically."
+msgstr ""
+"Completa los detalles necesarios para el método de pago seleccionado a "
+"continuación. El sistema mostrará/ocultará los campos automáticamente."
+
+#: apps/payments/payment_method/admin.py:104
+msgid "Delete selected payment methods"
+msgstr "Eliminar métodos de pago seleccionados"
+
+#: apps/payments/payment_method/admin.py:122
+#, python-brace-format
+msgid "{deletable_objects} payment methods were successfully deleted."
+msgstr "{deletable_objects} métodos de pago fueron eliminados con éxito."
+
+#: apps/payments/payment_method/admin.py:130
+#, python-brace-format
+msgid ""
+"{protected_objects} payment methods could not be deleted because they are in "
+"use."
+msgstr ""
+"{protected_objects} métodos de pago no pudieron ser eliminados porque están "
+"en uso."
+
+#: apps/payments/payment_method/form.py:31
+msgid "Phone"
+msgstr "Teléfono"
+
+#: apps/payments/payment_method/form.py:40
+msgid "ID Number/RIF"
+msgstr "Cédula/RIF"
+
+#: apps/payments/payment_method/form.py:56
+msgid "Selecciona un banco"
+msgstr "Selecciona un banco"
+
+#: apps/payments/payment_method/form.py:62
+msgid "--- Selecciona un banco ---"
+msgstr "--- Selecciona un banco ---"
+
+#: apps/payments/payment_method/form.py:63
+msgid "Select the bank associated with the account."
+msgstr "Selecciona el banco asociado a la cuenta."
+
+#: apps/payments/payment_method/form.py:67
+msgid "Account Number"
+msgstr "Número de Cuenta"
+
+#: apps/payments/payment_method/form.py:69
+msgid "Enter the full bank account number, typically 20 digits."
+msgstr ""
+"Ingresa el número de cuenta bancaria completo, que usualmente tiene 20 "
+"dígitos."
+
+#: apps/payments/payment_method/form.py:73
+msgid "Holder Name"
+msgstr "Nombre del Titular"
+
+#: apps/payments/payment_method/form.py:77
+msgid ""
+"Enter the full name of the account holder, at least first and last name."
+msgstr ""
+"Ingresa el nombre completo del titular de la cuenta, al menos nombre y "
+"apellido."
+
+#: apps/payments/payment_method/form.py:85
+msgid "Enter a valid email address for the account holder (e.g., for Zelle)."
+msgstr "Ingresa un correo electrónico válido del titular (ej. para Zelle)."
+
+#: apps/payments/payment_method/form.py:92
+msgid "Enter the Binance Pay ID associated with the account."
+msgstr "Ingresa el Pay ID de Binance asociado a la cuenta."
+
+#: apps/raffles/apps.py:7
+msgid "Raffles Management"
+msgstr "Gestión de Rifas"
+
+#: apps/raffles/models.py:26
+msgid "In Progress"
+msgstr "En Progreso"
+
+#: apps/raffles/models.py:27
+msgid "Processing Winners"
+msgstr "Procesando Ganadores"
+
+#: apps/raffles/models.py:28
+msgid "Finished"
+msgstr "Finalizado"
+
+#: apps/raffles/models.py:29
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#: apps/raffles/models.py:38
+msgid "Title"
+msgstr "Título"
+
+#: apps/raffles/models.py:40
+msgid "Slug"
+msgstr "Slug"
+
+#: apps/raffles/models.py:44
+msgid "Unique identifier for URL. Auto-generated from title."
+msgstr "Identificador único para la URL. Se autogenera desde el título."
+
+#: apps/raffles/models.py:46
+msgid "Description"
+msgstr "Descripción"
+
+#: apps/raffles/models.py:48
+msgid "Promotional Message"
+msgstr "Mensaje Promocional"
+
+#: apps/raffles/models.py:50
+msgid "Catchy text to display when this is the main raffle."
+msgstr "Texto llamativo para mostrar cuando esta sea la rifa principal."
+
+#: apps/raffles/models.py:53
+msgid "Currency"
+msgstr "Moneda"
+
+#: apps/raffles/models.py:59
+msgid "Ticket Price"
+msgstr "Precio del Ticket"
+
+#: apps/raffles/models.py:62
+msgid "Price in the selected currency."
+msgstr "Precio en la moneda seleccionada."
+
+#: apps/raffles/models.py:64
+msgid "Total Tickets"
+msgstr "Total de Tickets"
+
+#: apps/raffles/models.py:66
+msgid "Minimum Ticket Purchase"
+msgstr "Compra Mínima de Tickets"
+
+#: apps/raffles/models.py:69
+msgid "Minimum number of tickets a participant must buy at once."
+msgstr "Cantidad mínima de tickets que un participante debe comprar a la vez."
+
+#: apps/raffles/models.py:81
+msgid "Is Publicly Visible?"
+msgstr "¿Es Visible Públicamente?"
+
+#: apps/raffles/models.py:84
+msgid "Check this to make the raffle visible to participants on the website."
+msgstr ""
+"Marca esto para hacer la rifa visible a los participantes en el sitio web."
+
+#: apps/raffles/models.py:88
+msgid "Main Image"
+msgstr "Imagen Principal"
+
+#: apps/raffles/models.py:90
+msgid "Banner image for the raffle."
+msgstr "Imagen de banner para la rifa."
+
+#: apps/raffles/models.py:94
+msgid "Available Payment Methods"
+msgstr "Métodos de Pago Disponibles"
+
+#: apps/raffles/models.py:95
+msgid "Select the payment methods available for this raffle."
+msgstr "Selecciona los métodos de pago disponibles para esta rifa."
+
+#: apps/raffles/models.py:97
+msgid "Start Date"
+msgstr "Fecha de Inicio"
+
+#: apps/raffles/models.py:99
+msgid "End Date"
+msgstr "Fecha de Fin"
+
+#: apps/raffles/models.py:103
+msgid ""
+"Optional. Leave blank if the raffle ends based on manual decision or ticket "
+"sales."
+msgstr ""
+"Opcional. Dejar en blanco si la rifa finaliza por decisión manual o al "
+"venderse todos los tickets."
+
+#: apps/raffles/models.py:112
+msgid "Raffles"
+msgstr "Rifas"
+
+#: apps/raffles/models.py:152
+msgid "Display Order"
+msgstr "Orden de Visualización"
+
+#: apps/raffles/models.py:154
+msgid "Order of importance for display (1 = most important)."
+msgstr "Orden de importancia para mostrar (1 = más importante)."
+
+#: apps/raffles/models.py:157
+msgid "Prize Level Title"
+msgstr "Título del Nivel de Premio"
+
+#: apps/raffles/models.py:160
+msgid "E.g., 'Grand Prize', 'Second Prize', 'Consolation Prize'."
+msgstr "Ej: 'Primer Premio', 'Segundo Premio', 'Premio de Consolación'."
+
+#: apps/raffles/models.py:163
+msgid "Prize Name"
+msgstr "Nombre del Premio"
+
+#: apps/raffles/models.py:164
+msgid "Prize Description"
+msgstr "Descripción del Premio"
+
+#: apps/raffles/models.py:168
+msgid "Prize Image"
+msgstr "Imagen del Premio"
+
+#: apps/raffles/models.py:172
+msgid "Promotional image of the prize."
+msgstr "Imagen promocional del premio."
+
+#: apps/raffles/models.py:175
+msgid "Winner Photo"
+msgstr "Foto del Ganador"
+
+#: apps/raffles/models.py:179
+msgid "Photo of the winner with their prize."
+msgstr "Foto del ganador con su premio."
+
+#: apps/raffles/models.py:189
+msgid "Winner"
+msgstr "Ganador"
+
+#: apps/raffles/models.py:192
+msgid "Winner Ticket Number"
+msgstr "Número del Ticket Ganador"
+
+#: apps/raffles/models.py:194
+msgid "Delivered At"
+msgstr "Fecha de Entrega"
+
+#: apps/raffles/models.py:203 apps/raffles/models.py:237
+msgid "Prize"
+msgstr "Premio"
+
+#: apps/raffles/models.py:204
+msgid "Prizes"
+msgstr "Premios"
+
+#: apps/raffles/models.py:231
+msgid "Scheduled"
+msgstr "Programado"
+
+#: apps/raffles/models.py:232
+msgid "Completed"
+msgstr "Completado"
+
+#: apps/raffles/models.py:233
+msgid "Rolled Over"
+msgstr "Pospuesto"
+
+#: apps/raffles/models.py:240
+msgid "Lottery Name"
+msgstr "Nombre de la Lotería"
+
+#: apps/raffles/models.py:243
+msgid "Draw Time"
+msgstr "Hora del Sorteo"
+
+#: apps/raffles/models.py:243
+msgid "Date and time of the external lottery draw."
+msgstr "Fecha y hora del sorteo de la lotería externa."
+
+#: apps/raffles/models.py:247
+msgid "Winning Number"
+msgstr "Número Ganador"
+
+#: apps/raffles/models.py:256
+msgid "Draw"
+msgstr "Sorteo"
+
+#: apps/raffles/models.py:257
+msgid "Draws"
+msgstr "Sorteos"
+
+#: apps/raffles/prize/admin.py:75
+msgid "Promotional Image"
+msgstr "Imagen Promocional"
+
+#: apps/raffles/prize/admin.py:77
+msgid "Winner Details"
+msgstr "Detalles del Ganador"
+
+#: apps/raffles/prize/admin.py:92
+msgid "Image Preview"
+msgstr "Vista Previa de la Imagen"
+
+#: apps/raffles/prize/admin.py:99 apps/raffles/prize/admin.py:108
+msgid "No image"
+msgstr "Sin imagen"
+
+#: apps/raffles/prize/admin.py:101
+msgid "Winner Photo Preview"
+msgstr "Vista Previa de la Foto del Ganador"
+
+#: apps/raffles/raffle/admin.py:32
+msgid "Step 1: Identity & Visibility"
+msgstr "Paso 1: Identidad y Visibilidad"
+
+#: apps/raffles/raffle/admin.py:35
+msgid ""
+"Set the main details of the raffle and control if it's visible to the public."
+msgstr ""
+"Define los detalles principales de la rifa y controla si es visible al "
+"público."
+
+#: apps/raffles/raffle/admin.py:46
+msgid "Step 2: Rules & Pricing"
+msgstr "Paso 2: Reglas y Precios"
+
+#: apps/raffles/raffle/admin.py:55
+msgid "Step 3: Available Payment Methods"
+msgstr "Paso 3: Métodos de Pago Disponibles"
+
+#: apps/raffles/raffle/admin.py:58
+msgid ""
+"Select which payment accounts participants can use for this specific raffle."
+msgstr ""
+"Selecciona qué cuentas de pago pueden usar los participantes para esta rifa."
+
+#: apps/raffles/raffle/admin.py:63
+msgid "Step 4: Timeline"
+msgstr "Paso 4: Cronograma"
+
+#: apps/raffles/raffle/admin.py:65
+msgid "Step 5: Full Description"
+msgstr "Paso 5: Descripción Completa"
+
+#: apps/raffles/raffle/admin.py:73
+msgid "Raffle Summary"
+msgstr "Resumen de la Rifa"
+
+#: apps/raffles/raffle/admin.py:98
+msgid "Live Report Summary"
+msgstr "Resumen del Reporte en Vivo"
+
+#: apps/raffles/raffle/admin.py:105
+msgid "Save the raffle to see the summary."
+msgstr "Guarda la rifa para ver el resumen."
+
+#: apps/raffles/raffle/admin.py:139
+msgid "Tickets Status"
+msgstr "Estatus de los Tickets"
+
+#: apps/raffles/raffle/admin.py:140
+msgid "Sold"
+msgstr "Vendidos"
+
+#: apps/raffles/raffle/admin.py:142
+msgid "Available"
+msgstr "Disponibles"
+
+#: apps/raffles/raffle/admin.py:144 templates/admin/global_history_log.html:26
+msgid "Total"
+msgstr "Total"
+
+#: apps/raffles/raffle/admin.py:155
+msgid "Verification Queue"
+msgstr "Cola de Verificación"
+
+#: apps/raffles/raffle/admin.py:156
+msgid "Pending Payments"
+msgstr "Pagos Pendientes"
+
+#: apps/raffles/views.py:66 apps/raffles/views.py:102 apps/raffles/views.py:107
+msgid "Raffle not found"
+msgstr "Rifa no encontrada"
+
+#: apps/tickets/apps.py:8
+msgid "Assigned Tickets"
+msgstr "Tickets Asignados"
+
+#: apps/tickets/models.py:29
+msgid "Ticket Number"
+msgstr "Número de Ticket"
+
+#: apps/tickets/models.py:31
+msgid "Assigned At"
+msgstr "Fecha de Asignación"
+
+#: apps/tickets/models.py:36
+msgid "Ticket"
+msgstr "Ticket"
+
+#: apps/tickets/models.py:37
+msgid "Tickets"
+msgstr "Tickets"
+
+#: apps/tickets/services.py:34
+#, python-brace-format
+msgid "Participation {participation.id} already has tickets assigned."
+msgstr "La participación {participation.id} ya tiene tickets asignados."
+
+#: apps/tickets/services.py:57
+#, python-brace-format
+msgid "Not enough available tickets in raffle {raffle.id} "
+msgstr "No hay suficientes tickets disponibles en la rifa {raffle.id}. "
+
+#: apps/users/admin.py:159
+msgid "Permissions Count"
+msgstr "Cantidad de Permisos"
+
+#: apps/users/apps.py:9
+msgid "Authentication and Authorization"
+msgstr "Autenticación y Autorización"
+
+#: apps/users/models.py:32
+msgid "The Email field must be set"
+msgstr "El campo de Email es obligatorio"
+
+#: apps/users/models.py:50
+msgid "Superuser must have is_staff=True"
+msgstr "Un superusuario debe tener is_staff=True"
+
+#: apps/users/models.py:52
+msgid "Superuser must have is_superuser=True"
+msgstr "Un superusuario debe tener is_superuser=True"
+
+#: apps/users/models.py:64
+msgid "email address"
+msgstr "dirección de correo electrónico"
+
+#: apps/users/models.py:67
+msgid "Required. Will be stored in lowercase."
+msgstr "Requerido. Se guardará en minúsculas."
+
+#: apps/users/models.py:69
+msgid "first name"
+msgstr "nombre"
+
+#: apps/users/models.py:70
+msgid "last name"
+msgstr "apellido"
+
+#: apps/users/models.py:74
+msgid "identification number"
+msgstr "cédula de identidad"
+
+#: apps/users/models.py:86
+msgid "A user with that identification number already exists."
+msgstr "Ya existe un usuario con esa cédula de identidad."
+
+#: apps/users/models.py:102
+msgid "avatar"
+msgstr "avatar"
+
+#: apps/users/models.py:106
+msgid "User profile picture"
+msgstr "Foto de perfil del usuario"
+
+#: apps/users/models.py:109
+msgid "staff status"
+msgstr "estatus de personal"
+
+#: apps/users/models.py:111
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+"Indica si el usuario puede iniciar sesión en este sitio de administración."
+
+#: apps/users/models.py:114
+msgid "active"
+msgstr "activo"
+
+#: apps/users/models.py:117
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts."
+msgstr ""
+"Indica si este usuario debe ser tratado como activo. Desmarca esta opción en "
+"lugar de eliminar la cuenta."
+
+#: apps/users/models.py:122
+msgid "chief auditor status"
+msgstr "estatus de auditor jefe"
+
+#: apps/users/models.py:125
+msgid "Designates that this user has access to the audit management panel."
+msgstr "Indica que este usuario tiene acceso al panel de gestión de auditoría."
+
+#: apps/users/models.py:128
+msgid "date joined"
+msgstr "fecha de registro"
+
+#: apps/users/models.py:141 templates/admin/object_history.html:22
+msgid "User"
+msgstr "Usuario"
+
+#: apps/users/models.py:142
+msgid "Users"
+msgstr "Usuarios"
+
+#: apps/users/models.py:168
+#, python-brace-format
+msgid "The system user ({email}) is read-only and cannot be modified."
+msgstr ""
+"El usuario de sistema ({email}) es de solo lectura y no puede ser modificado."
+
+#: apps/users/models.py:183
+#, python-brace-format
+msgid "The system user ({email}) cannot be deleted."
+msgstr "El usuario de sistema ({email}) no puede ser eliminado."
+
+#: apps/users/models.py:264
+msgid "Group"
+msgstr "Grupo"
+
+#: apps/users/models.py:265
+msgid "Groups"
+msgstr "Grupos"
+
+#: apps/utils/apps.py:9
+msgid "Utils"
+msgstr "Utilidades"
+
+#: apps/utils/enums.py:16
+msgid "US Dollar"
+msgstr "Dólar Americano"
+
+#: apps/utils/enums.py:17
+msgid "Venezuelan Bolívar"
+msgstr "Bolívar Venezolano"
+
+#: apps/utils/validators.py:48
+msgid "Invalid ID. Must be a valid personal ID (V, E, P) like 'V-12345678'."
+msgstr ""
+"Cédula inválida. Debe ser una cédula personal válida (V, E, P) como "
+"'V-12345678'."
+
+#: apps/utils/validators.py:69
+msgid ""
+"Invalid Payer ID format. Use a format like 'V-12345678' or 'J-123456789'."
+msgstr ""
+"Formato de Cédula/RIF del pagador inválido. Usa un formato como 'V-12345678' "
+"o 'J-123456789'."
+
+#: apps/utils/validators.py:91
+msgid ""
+"Invalid phone number. Must be a valid Venezuelan cell number (e.g., (04XX) "
+"XXX-XXXX)."
+msgstr ""
+"Número de teléfono inválido. Debe ser un número celular venezolano válido "
+"(ej. (04XX) XXX-XXXX)."
+
+#: apps/utils/validators.py:104
+msgid "Name can only contain letters and spaces."
+msgstr "El nombre solo puede contener letras y espacios."
+
+#: apps/utils/validators.py:107
+msgid "Please provide at least a first and last name."
+msgstr "Por favor, ingresa al menos un nombre y un apellido."
+
+#: config/settings/base.py:116
+msgid "English"
+msgstr "Inglés"
+
+#: config/settings/base.py:117
+msgid "Spanish"
+msgstr "Español"
+
+#: config/urls.py:52
+msgid "Mr. Dolar's Management System"
+msgstr "Sistema de Gestión de Mr. Dolar"
+
+#: templates/admin/404.html:4 templates/admin/404.html:8
+msgid "Page not found"
+msgstr "Página no encontrada"
+
+#: templates/admin/404.html:10
+msgid "We’re sorry, but the requested page could not be found."
+msgstr "Lo sentimos, pero la página solicitada no pudo ser encontrada."
+
+#: templates/admin/500.html:6 templates/admin/app_index.html:10
+#: templates/admin/auth/user/change_password.html:20
+#: templates/admin/base.html:448 templates/admin/change_form.html:27
+#: templates/admin/change_list.html:36
+#: templates/admin/delete_confirmation.html:14
+#: templates/admin/delete_selected_confirmation.html:14
+#: templates/admin/invalid_setup.html:6 templates/admin/object_history.html:6
+#: templates/registration/logged_out.html:4
+#: templates/registration/password_change_done.html:13
+#: templates/registration/password_change_form.html:15
+#: templates/registration/password_reset_complete.html:6
+#: templates/registration/password_reset_confirm.html:8
+#: templates/registration/password_reset_done.html:6
+#: templates/registration/password_reset_form.html:8
+#: templates/simple_history/object_history_form.html:7
+msgid "Home"
+msgstr "Inicio"
+
+#: templates/admin/500.html:7
+msgid "Server error"
+msgstr "Error del servidor"
+
+#: templates/admin/500.html:11
+msgid "Server error (500)"
+msgstr "Error del servidor (500)"
+
+#: templates/admin/500.html:14
+msgid "Server Error <em>(500)</em>"
+msgstr "Error del Servidor <em>(500)</em>"
+
+#: templates/admin/500.html:15
+msgid ""
+"There’s been an error. It’s been reported to the site administrators via "
+"email and should be fixed shortly. Thanks for your patience."
+msgstr ""
+"Ha ocurrido un error. Ha sido reportado a los administradores del sitio vía "
+"email y debería ser solucionado en breve. Gracias por tu paciencia."
+
+#: templates/admin/actions.html:8
+msgid "Run"
+msgstr "Ejecutar"
+
+#: templates/admin/actions.html:16
+msgid "Click here to select the objects across all pages"
+msgstr "Haz clic aquí para seleccionar los objetos en todas las páginas"
+
+#: templates/admin/actions.html:16
+#, python-format
+msgid "Select all %(total_count)s %(module_name)s"
+msgstr "Seleccionar todos los %(total_count)s %(module_name)s"
+
+#: templates/admin/actions.html:18
+msgid "Clear selection"
+msgstr "Limpiar selección"
+
+#: templates/admin/app_index.html:8 templates/admin/base.html:445
+msgid "Breadcrumbs"
+msgstr "Ruta de navegación"
+
+#: templates/admin/app_list.html:8
+#, python-format
+msgid "Models in the %(name)s application"
+msgstr "Modelos en la aplicación %(name)s"
+
+#: templates/admin/app_list.html:12
+msgid "Model name"
+msgstr "Nombre del modelo"
+
+#: templates/admin/app_list.html:13
+msgid "Add link"
+msgstr "Enlace para añadir"
+
+#: templates/admin/app_list.html:14
+msgid "Change or view list link"
+msgstr "Enlace para cambiar o ver lista"
+
+#: templates/admin/app_list.html:29
+msgid "Add"
+msgstr "Añadir"
+
+#: templates/admin/app_list.html:36 templates/admin/edit_inline/stacked.html:20
+#: templates/admin/edit_inline/tabular.html:40
+msgid "View"
+msgstr "Ver"
+
+#: templates/admin/app_list.html:38 templates/admin/edit_inline/stacked.html:20
+#: templates/admin/edit_inline/tabular.html:40
+msgid "Change"
+msgstr "Cambiar"
+
+#: templates/admin/app_list.html:50
+msgid "You don’t have permission to view or edit anything."
+msgstr "No tienes permiso para ver o editar nada."
+
+#: templates/admin/auth/user/add_form.html:6
+msgid "After you’ve created a user, you’ll be able to edit more user options."
+msgstr "Después de crear un usuario, podrás editar más opciones de usuario."
+
+#: templates/admin/auth/user/change_password.html:6
+#: templates/admin/change_form.html:5 templates/admin/change_list.html:5
+#: templates/admin/login.html:5
+#: templates/registration/password_change_form.html:5
+#: templates/registration/password_reset_confirm.html:4
+#: templates/registration/password_reset_form.html:4
+msgid "Error:"
+msgstr "Error:"
+
+#: templates/admin/auth/user/change_password.html:26
+#: templates/admin/auth/user/change_password.html:91
+#: templates/admin/base.html:412
+#: templates/registration/password_change_done.html:4
+msgid "Change password"
+msgstr "Cambiar contraseña"
+
+#: templates/admin/auth/user/change_password.html:28
+msgid "Set password"
+msgstr "Establecer contraseña"
+
+#: templates/admin/auth/user/change_password.html:48
+#: templates/admin/change_form.html:73 templates/admin/change_list.html:54
+#: templates/registration/password_change_form.html:26
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "Por favor, corrige el error a continuación."
+msgstr[1] "Por favor, corrige los errores a continuación."
+msgstr[2] "Por favor, corrige los errores a continuación."
+
+#: templates/admin/auth/user/change_password.html:52
+#, python-format
+msgid "Enter a new password for the user <strong>%(username)s</strong>."
+msgstr ""
+"Ingresa una nueva contraseña para el usuario <strong>%(username)s</strong>."
+
+#: templates/admin/auth/user/change_password.html:56
+msgid ""
+"This action will <strong>enable</strong> password-based authentication for "
+"this user."
+msgstr ""
+"Esta acción <strong>habilitará</strong> la autenticación por contraseña para "
+"este usuario."
+
+#: templates/admin/auth/user/change_password.html:95
+msgid "Disable password-based authentication"
+msgstr "Deshabilitar autenticación por contraseña"
+
+#: templates/admin/auth/user/change_password.html:100
+msgid "Enable password-based authentication"
+msgstr "Habilitar autenticación por contraseña"
+
+#: templates/admin/base.html:341
+msgid "Skip to main content"
+msgstr "Saltar al contenido principal"
+
+#: templates/admin/base.html:369
+msgid "Welcome,"
+msgstr "Bienvenido,"
+
+#: templates/admin/base.html:382
+msgid "User menu"
+msgstr "Menú de usuario"
+
+#: templates/admin/base.html:395
+msgid "View site"
+msgstr "Ver sitio"
+
+#: templates/admin/base.html:403
+#: templates/registration/password_change_done.html:4
+msgid "Documentation"
+msgstr "Documentación"
+
+#: templates/admin/base.html:422
+#: templates/registration/password_change_done.html:7
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: templates/admin/base_site.html:5
+msgid "Django site admin"
+msgstr "Administración del sitio Django"
+
+#: templates/admin/base_site.html:17
+msgid "Django Administration"
+msgstr "Administración de Django"
+
+#: templates/admin/base_site.html:24
+msgid "All rights reserved."
+msgstr "Todos los derechos reservados."
+
+#: templates/admin/base_site.html:26
+msgid "Developed by"
+msgstr "Desarrollado por"
+
+#: templates/admin/change_form.html:37
+#: templates/admin/change_list_object_tools.html:9
+#, python-format
+msgid "Add %(name)s"
+msgstr "Añadir %(name)s"
+
+#: templates/admin/change_form_object_tools.html:7
+#: templates/admin/object_history.html:10
+#: templates/simple_history/object_history_form.html:11
+#: templates/simple_history/object_history_form.html:27
+msgid "History"
+msgstr "Historial"
+
+#: templates/admin/change_form_object_tools.html:11
+#: templates/admin/edit_inline/stacked.html:22
+#: templates/admin/edit_inline/tabular.html:42
+#: templates/simple_history/object_history_form.html:29
+msgid "View on site"
+msgstr "Ver en el sitio"
+
+#: templates/admin/change_list.html:92 templates/admin/submit_line.html:4
+msgid "Save"
+msgstr "Guardar"
+
+#: templates/admin/change_list.html:101
+msgid "Filter"
+msgstr "Filtrar"
+
+#: templates/admin/change_list.html:107
+msgid "Hide counts"
+msgstr "Ocultar contadores"
+
+#: templates/admin/change_list.html:109
+msgid "Show counts"
+msgstr "Mostrar contadores"
+
+#: templates/admin/change_list.html:115
+msgid "Clear all filters"
+msgstr "Limpiar todos los filtros"
+
+#: templates/admin/change_list_results.html:16
+msgid "Remove from sorting"
+msgstr "Quitar del ordenamiento"
+
+#: templates/admin/change_list_results.html:17
+#, python-format
+msgid "Sorting priority: %(priority_number)s"
+msgstr "Prioridad de ordenamiento: %(priority_number)s"
+
+#: templates/admin/change_list_results.html:18
+msgid "Toggle sorting"
+msgstr "Alternar ordenamiento"
+
+#: templates/admin/color_theme_toggle.html:3
+msgid "Toggle theme (current theme: auto)"
+msgstr "Cambiar tema (tema actual: auto)"
+
+#: templates/admin/color_theme_toggle.html:4
+msgid "Toggle theme (current theme: light)"
+msgstr "Cambiar tema (tema actual: claro)"
+
+#: templates/admin/color_theme_toggle.html:5
+msgid "Toggle theme (current theme: dark)"
+msgstr "Cambiar tema (tema actual: oscuro)"
+
+#: templates/admin/currencies/exchangerate/change_list.html:14
+msgid "Fetch Rate from BCV"
+msgstr "Obtener Tasa del BCV"
+
+#: templates/admin/delete_confirmation.html:18
+#: templates/admin/submit_line.html:14
+msgid "Delete"
+msgstr "Eliminar"
+
+#: templates/admin/delete_confirmation.html:25
+#, python-format
+msgid ""
+"Deleting the %(object_name)s “%(escaped_object)s” would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+"Eliminar el %(object_name)s “%(escaped_object)s” resultaría en la "
+"eliminación de objetos relacionados, pero tu cuenta no tiene permiso para "
+"eliminar los siguientes tipos de objetos:"
+
+#: templates/admin/delete_confirmation.html:30
+#, python-format
+msgid ""
+"Deleting the %(object_name)s “%(escaped_object)s” would require deleting the "
+"following protected related objects:"
+msgstr ""
+"Eliminar el %(object_name)s “%(escaped_object)s” requeriría eliminar los "
+"siguientes objetos relacionados protegidos:"
+
+#: templates/admin/delete_confirmation.html:35
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s “%(escaped_object)s”? "
+"All of the following related items will be deleted:"
+msgstr ""
+"¿Estás seguro de que quieres eliminar el %(object_name)s "
+"“%(escaped_object)s”? Todos los siguientes elementos relacionados serán "
+"eliminados:"
+
+#: templates/admin/delete_confirmation.html:37
+#: templates/admin/delete_selected_confirmation.html:31
+msgid "Objects"
+msgstr "Objetos"
+
+#: templates/admin/delete_confirmation.html:44
+#: templates/admin/delete_selected_confirmation.html:42
+msgid "Yes, I’m sure"
+msgstr "Sí, estoy seguro"
+
+#: templates/admin/delete_confirmation.html:45
+#: templates/admin/delete_selected_confirmation.html:43
+msgid "No, take me back"
+msgstr "No, llévame de vuelta"
+
+#: templates/admin/delete_selected_confirmation.html:17
+msgid "Delete multiple objects"
+msgstr "Eliminar múltiples objetos"
+
+#: templates/admin/delete_selected_confirmation.html:23
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would result in deleting related "
+"objects, but your account doesn't have permission to delete the following "
+"types of objects:"
+msgstr ""
+"Eliminar los %(objects_name)s seleccionados resultaría en la eliminación de "
+"objetos relacionados, pero tu cuenta no tiene permiso para eliminar los "
+"siguientes tipos de objetos:"
+
+#: templates/admin/delete_selected_confirmation.html:26
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would require deleting the following "
+"protected related objects:"
+msgstr ""
+"Eliminar los %(objects_name)s seleccionados requeriría eliminar los "
+"siguientes objetos relacionados protegidos:"
+
+#: templates/admin/delete_selected_confirmation.html:29
+#, python-format
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+"¿Estás seguro de que quieres eliminar los %(objects_name)s seleccionados? "
+"Todos los siguientes objetos y sus elementos relacionados serán eliminados:"
+
+#: templates/admin/edit_inline/tabular.html:26
+msgid "Delete?"
+msgstr "¿Eliminar?"
+
+#: templates/admin/filter.html:4
+#, python-format
+msgid " By %(filter_title)s "
+msgstr " Por %(filter_title)s "
+
+#: templates/admin/global_history_log.html:14
+#: templates/admin/global_history_log.html:65
+#: templates/admin/global_history_log.html:121
+#: templates/simple_history/object_history_list.html:32
+msgid "Created"
+msgstr "Creado"
+
+#: templates/admin/global_history_log.html:18
+#: templates/admin/global_history_log.html:66
+#: templates/admin/global_history_log.html:123
+#: templates/simple_history/object_history_list.html:36
+msgid "Updated"
+msgstr "Actualizado"
+
+#: templates/admin/global_history_log.html:22
+#: templates/admin/global_history_log.html:67
+#: templates/admin/global_history_log.html:125
+#: templates/simple_history/object_history_list.html:40
+msgid "Deleted"
+msgstr "Eliminado"
+
+#: templates/admin/global_history_log.html:35
+msgid "Model"
+msgstr "Modelo"
+
+#: templates/admin/global_history_log.html:39
+msgid "Select model"
+msgstr "Seleccionar modelo"
+
+#: templates/admin/global_history_log.html:40
+msgid "All Models"
+msgstr "Todos los Modelos"
+
+#: templates/admin/global_history_log.html:49
+#: templates/admin/global_history_log.html:55
+msgid "User Email"
+msgstr "Email del Usuario"
+
+#: templates/admin/global_history_log.html:59
+msgid "Action Type"
+msgstr "Tipo de Acción"
+
+#: templates/admin/global_history_log.html:63
+msgid "Select action type"
+msgstr "Seleccionar tipo de acción"
+
+#: templates/admin/global_history_log.html:64
+msgid "All Actions"
+msgstr "Todas las Acciones"
+
+#: templates/admin/global_history_log.html:77
+msgid "Select date from"
+msgstr "Seleccionar fecha desde"
+
+#: templates/admin/global_history_log.html:82
+msgid "Select date to"
+msgstr "Seleccionar fecha hasta"
+
+#: templates/admin/global_history_log.html:87
+#: templates/admin/global_history_log.html:89
+msgid "Apply filters"
+msgstr "Aplicar filtros"
+
+#: templates/admin/global_history_log.html:91
+#: templates/admin/global_history_log.html:93
+msgid "Clear filters"
+msgstr "Limpiar filtros"
+
+#: templates/admin/global_history_log.html:104
+msgid "Recent Activity"
+msgstr "Actividad Reciente"
+
+#: templates/admin/global_history_log.html:134
+msgid "View user profile"
+msgstr "Ver perfil de usuario"
+
+#: templates/admin/global_history_log.html:141
+#: templates/simple_history/object_history_list.html:54
+msgid "System/Anonymous"
+msgstr "Sistema/Anónimo"
+
+#: templates/admin/global_history_log.html:160
+#: templates/simple_history/object_history_list.html:70
+msgid "Changes Made"
+msgstr "Cambios Realizados"
+
+#: templates/admin/global_history_log.html:193
+#: templates/simple_history/object_history_list.html:114
+msgid "No Recent Activity"
+msgstr "Sin Actividad Reciente"
+
+#: templates/admin/global_history_log.html:194
+msgid "No records found matching the applied filters."
+msgstr "No se encontraron registros que coincidan con los filtros aplicados."
+
+#: templates/admin/global_history_log.html:206
+#, python-format
+msgid ""
+"\n"
+"                                Showing %(start)s to %(end)s of %(total)s "
+"entries\n"
+"                            "
+msgstr ""
+"\n"
+"                                Mostrando %(start)s a %(end)s de %(total)s "
+"entradas\n"
+"                            "
+
+#: templates/admin/global_history_log.html:212
+#: templates/simple_history/object_history_list.html:133
+msgid "Page navigation"
+msgstr "Navegación de página"
+
+#: templates/admin/global_history_log.html:218
+#: templates/admin/global_history_log.html:219
+#: templates/simple_history/object_history_list.html:139
+#: templates/simple_history/object_history_list.html:140
+msgid "First page"
+msgstr "Primera página"
+
+#: templates/admin/global_history_log.html:219
+#: templates/simple_history/object_history_list.html:142
+msgid "First"
+msgstr "Primera"
+
+#: templates/admin/global_history_log.html:224
+#: templates/admin/global_history_log.html:225
+#: templates/simple_history/object_history_list.html:148
+#: templates/simple_history/object_history_list.html:149
+msgid "Previous page"
+msgstr "Página anterior"
+
+#: templates/admin/global_history_log.html:225
+#: templates/simple_history/object_history_list.html:151
+msgid "Previous"
+msgstr "Anterior"
+
+#: templates/admin/global_history_log.html:237
+#: templates/admin/global_history_log.html:238
+#: templates/simple_history/object_history_list.html:164
+#: templates/simple_history/object_history_list.html:165
+msgid "Page"
+msgstr "Página"
+
+#: templates/admin/global_history_log.html:246
+#: templates/admin/global_history_log.html:247
+#: templates/simple_history/object_history_list.html:173
+#: templates/simple_history/object_history_list.html:174
+msgid "Next page"
+msgstr "Página siguiente"
+
+#: templates/admin/global_history_log.html:247
+#: templates/simple_history/object_history_list.html:176
+msgid "Next"
+msgstr "Siguiente"
+
+#: templates/admin/global_history_log.html:252
+#: templates/admin/global_history_log.html:253
+#: templates/simple_history/object_history_list.html:182
+#: templates/simple_history/object_history_list.html:183
+msgid "Last page"
+msgstr "Última página"
+
+#: templates/admin/global_history_log.html:253
+#: templates/simple_history/object_history_list.html:185
+msgid "Last"
+msgstr "Última"
+
+#: templates/admin/includes/object_delete_summary.html:2
+msgid "Summary"
+msgstr "Resumen"
+
+#: templates/admin/index.html:23
+msgid "Recent actions"
+msgstr "Acciones recientes"
+
+#: templates/admin/index.html:24
+msgid "My actions"
+msgstr "Mis acciones"
+
+#: templates/admin/index.html:28
+msgid "None available"
+msgstr "Ninguna disponible"
+
+#: templates/admin/index.html:33
+msgid "Added:"
+msgstr "Añadido:"
+
+#: templates/admin/index.html:33
+msgid "Changed:"
+msgstr "Modificado:"
+
+#: templates/admin/index.html:33
+msgid "Deleted:"
+msgstr "Eliminado:"
+
+#: templates/admin/index.html:43
+msgid "Unknown content"
+msgstr "Contenido desconocido"
+
+#: templates/admin/invalid_setup.html:12
+msgid ""
+"Something’s wrong with your database installation. Make sure the appropriate "
+"database tables have been created, and make sure the database is readable by "
+"the appropriate user."
+msgstr ""
+"Algo está mal con la instalación de tu base de datos. Asegúrate de que las "
+"tablas apropiadas de la base de datos hayan sido creadas, y asegúrate de que "
+"la base de datos sea legible por el usuario apropiado."
+
+#: templates/admin/login.html:34
+msgid "Company Logo"
+msgstr "Logo de la Empresa"
+
+#: templates/admin/login.html:40
+msgid "Welcome"
+msgstr "Bienvenido"
+
+#: templates/admin/login.html:41
+msgid "Please sign in to your account"
+msgstr "Por favor, inicia sesión en tu cuenta"
+
+#: templates/admin/login.html:47
+msgid ""
+"\n"
+"                        Please correct the error below.\n"
+"                    "
+msgid_plural ""
+"\n"
+"                        Please correct the errors below.\n"
+"                    "
+msgstr[0] ""
+"\n"
+"                        Por favor, corrige el error a continuación.\n"
+"                    "
+msgstr[1] ""
+"\n"
+"                        Por favor, corrige los errores a continuación.\n"
+"                    "
+msgstr[2] ""
+"\n"
+"                        Por favor, corrige los errores a continuación.\n"
+"                    "
+
+#: templates/admin/login.html:64
+#, python-format
+msgid ""
+"You are authenticated as %(username)s, but are not authorized to access this "
+"page. Would you like to login to a different account?"
+msgstr ""
+"Estás autenticado como %(username)s, pero no tienes autorización para "
+"acceder a esta página. ¿Te gustaría iniciar sesión con una cuenta diferente?"
+
+#: templates/admin/login.html:121
+msgid "SIGN IN"
+msgstr "INICIAR SESIÓN"
+
+#: templates/admin/login.html:128
+msgid "Forgot your password?"
+msgstr "¿Olvidaste tu contraseña?"
+
+#: templates/admin/nav_sidebar.html:4
+msgid "Toggle navigation"
+msgstr "Alternar navegación"
+
+#: templates/admin/nav_sidebar.html:7
+msgid "Sidebar"
+msgstr "Barra lateral"
+
+#: templates/admin/nav_sidebar.html:10
+msgid "Start typing to filter…"
+msgstr "Empieza a escribir para filtrar…"
+
+#: templates/admin/nav_sidebar.html:11
+msgid "Filter navigation items"
+msgstr "Filtrar elementos de navegación"
+
+#: templates/admin/object_history.html:21
+msgid "Date/time"
+msgstr "Fecha/hora"
+
+#: templates/admin/object_history.html:23
+msgid "Action"
+msgstr "Acción"
+
+#: templates/admin/object_history.html:37
+#, python-format
+msgid "Pagination %(name)s entries"
+msgstr "Paginación de entradas de %(name)s"
+
+#: templates/admin/object_history.html:51
+msgid "entry"
+msgid_plural "entries"
+msgstr[0] "entrada"
+msgstr[1] "entradas"
+msgstr[2] "entradas"
+
+#: templates/admin/object_history.html:54
+msgid ""
+"This object doesn’t have a change history. It probably wasn’t added via this "
+"admin site."
+msgstr ""
+"Este objeto no tiene un historial de cambios. Probablemente no fue añadido a "
+"través de este sitio de administración."
+
+#: templates/admin/pagination.html:5
+#, python-format
+msgid "Pagination %(name)s"
+msgstr "Paginación %(name)s"
+
+#: templates/admin/pagination.html:21 templates/admin/search_form.html:11
+msgid "Show all"
+msgstr "Mostrar todos"
+
+#: templates/admin/popup_response.html:3
+msgid "Popup closing…"
+msgstr "Cerrando ventana emergente…"
+
+#: templates/admin/search_form.html:4
+#, python-format
+msgid "Search %(name)s"
+msgstr "Buscar %(name)s"
+
+#: templates/admin/search_form.html:9
+msgid "Search"
+msgstr "Buscar"
+
+#: templates/admin/search_form.html:11
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] "%(counter)s resultado"
+msgstr[1] "%(counter)s resultados"
+msgstr[2] "%(counter)s resultados"
+
+#: templates/admin/search_form.html:11
+#, python-format
+msgid "%(full_result_count)s total"
+msgstr "%(full_result_count)s en total"
+
+#: templates/admin/submit_line.html:5
+msgid "Save as new"
+msgstr "Guardar como nuevo"
+
+#: templates/admin/submit_line.html:6
+msgid "Save and add another"
+msgstr "Guardar y añadir otro"
+
+#: templates/admin/submit_line.html:7
+msgid "Save and continue editing"
+msgstr "Guardar y continuar editando"
+
+#: templates/admin/submit_line.html:7
+msgid "Save and view"
+msgstr "Guardar y ver"
+
+#: templates/admin/submit_line.html:10
+#: templates/simple_history/submit_line.html:7
+msgid "Close"
+msgstr "Cerrar"
+
+#: templates/admin/widgets/related_widget_wrapper.html:11
+#, python-format
+msgid "Change selected %(model)s"
+msgstr "Cambiar %(model)s seleccionado"
+
+#: templates/admin/widgets/related_widget_wrapper.html:19
+#, python-format
+msgid "Add another %(model)s"
+msgstr "Añadir otro %(model)s"
+
+#: templates/admin/widgets/related_widget_wrapper.html:27
+#, python-format
+msgid "Delete selected %(model)s"
+msgstr "Eliminar %(model)s seleccionado"
+
+#: templates/admin/widgets/related_widget_wrapper.html:34
+#, python-format
+msgid "View selected %(model)s"
+msgstr "Ver %(model)s seleccionado"
+
+#: templates/registration/logged_out.html:10
+msgid "Thanks for spending some quality time with the web site today."
+msgstr "Gracias por pasar un tiempo de calidad con el sitio web hoy."
+
+#: templates/registration/logged_out.html:12
+msgid "Log in again"
+msgstr "Iniciar sesión de nuevo"
+
+#: templates/registration/password_change_done.html:14
+#: templates/registration/password_change_form.html:16
+msgid "Password change"
+msgstr "Cambio de contraseña"
+
+#: templates/registration/password_change_done.html:19
+msgid "Your password was changed."
+msgstr "Tu contraseña fue cambiada."
+
+#: templates/registration/password_change_form.html:30
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+"Por favor, ingresa tu contraseña anterior, por seguridad, y luego ingresa tu "
+"nueva contraseña dos veces para que podamos verificar que la escribiste "
+"correctamente."
+
+#: templates/registration/password_change_form.html:56
+#: templates/registration/password_reset_confirm.html:38
+msgid "Change my password"
+msgstr "Cambiar mi contraseña"
+
+#: templates/registration/password_reset_complete.html:7
+#: templates/registration/password_reset_done.html:7
+#: templates/registration/password_reset_form.html:9
+msgid "Password reset"
+msgstr "Restablecimiento de contraseña"
+
+#: templates/registration/password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr "Tu contraseña ha sido establecida. Ya puedes iniciar sesión."
+
+#: templates/registration/password_reset_complete.html:15
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: templates/registration/password_reset_confirm.html:9
+msgid "Password reset confirmation"
+msgstr "Confirmación de restablecimiento de contraseña"
+
+#: templates/registration/password_reset_confirm.html:17
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Por favor, ingresa tu nueva contraseña dos veces para que podamos verificar "
+"que la escribiste correctamente."
+
+#: templates/registration/password_reset_confirm.html:25
+msgid "New password:"
+msgstr "Nueva contraseña:"
+
+#: templates/registration/password_reset_confirm.html:32
+msgid "Confirm password:"
+msgstr "Confirmar contraseña:"
+
+#: templates/registration/password_reset_confirm.html:44
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"El enlace de restablecimiento de contraseña era inválido, posiblemente "
+"porque ya ha sido utilizado. Por favor, solicita un nuevo restablecimiento "
+"de contraseña."
+
+#: templates/registration/password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+"Te hemos enviado por correo electrónico las instrucciones para establecer tu "
+"contraseña, si existe una cuenta con el correo que introdujiste. Deberías "
+"recibirlas en breve."
+
+#: templates/registration/password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+"Si no recibes un correo electrónico, por favor asegúrate de haber "
+"introducido la dirección con la que te registraste y revisa tu carpeta de "
+"spam."
+
+#: templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+"Estás recibiendo este correo porque solicitaste un restablecimiento de "
+"contraseña para tu cuenta de usuario en %(site_name)s."
+
+#: templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr "Por favor, ve a la siguiente página y elige una nueva contraseña:"
+
+#: templates/registration/password_reset_email.html:8
+msgid "In case you’ve forgotten, you are:"
+msgstr "En caso de que lo hayas olvidado, tu usuario es:"
+
+#: templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr "¡Gracias por usar nuestro sitio!"
+
+#: templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr "El equipo de %(site_name)s"
+
+#: templates/registration/password_reset_form.html:15
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"¿Olvidaste tu contraseña? Ingresa tu dirección de correo electrónico a "
+"continuación y te enviaremos las instrucciones para establecer una nueva."
+
+#: templates/registration/password_reset_form.html:22
+msgid "Email address:"
+msgstr "Dirección de correo electrónico:"
+
+#: templates/registration/password_reset_form.html:28
+msgid "Reset my password"
+msgstr "Restablecer mi contraseña"
+
+#: templates/simple_history/object_history.html:7
+msgid ""
+"Choose a date from the list below to revert to a previous version of this "
+"object."
+msgstr ""
+"Elige una fecha de la lista a continuación para revertir a una versión "
+"anterior de este objeto."
+
+#: templates/simple_history/object_history.html:14
+msgid "This object doesn't have a change history."
+msgstr "Este objeto no tiene un historial de cambios."
+
+#: templates/simple_history/object_history_form.html:12
+#, python-format
+msgid "View %(verbose_name)s"
+msgstr "Ver %(verbose_name)s"
+
+#: templates/simple_history/object_history_form.html:12
+#, python-format
+msgid "Revert %(verbose_name)s"
+msgstr "Revertir %(verbose_name)s"
+
+#: templates/simple_history/object_history_form.html:33
+msgid ""
+"Press the 'Revert' button below to revert to this version of the object."
+msgstr "Presiona el botón 'Revertir' para volver a esta versión del objeto."
+
+#: templates/simple_history/object_history_form.html:33
+msgid "Press the 'Change History' button below to edit the history."
+msgstr "Presiona el botón 'Historial de Cambios' para editar el historial."
+
+#: templates/simple_history/object_history_list.html:15
+msgid "History for"
+msgstr "Historial de"
+
+#: templates/simple_history/object_history_list.html:84
+msgid "Change reason"
+msgstr "Motivo del cambio"
+
+#: templates/simple_history/object_history_list.html:115
+msgid "No history records found for this object."
+msgstr "No se encontraron registros de historial para este objeto."
+
+#: templates/simple_history/object_history_list.html:127
+#, python-format
+msgid ""
+"\n"
+"                    Showing %(start)s to %(end)s of %(total)s entries\n"
+"                  "
+msgstr ""
+"\n"
+"                    Mostrando %(start)s a %(end)s de %(total)s entradas\n"
+"                  "
+
+#: templates/simple_history/submit_line.html:4
+msgid "Revert"
+msgstr "Revertir"
+
+#: templates/simple_history/submit_line.html:6
+msgid "Change History"
+msgstr "Historial de Cambios"

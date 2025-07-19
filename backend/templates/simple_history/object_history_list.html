@@ -1,0 +1,197 @@
+{% load i18n static %}
+{% load url from simple_history_compat %}
+{% load admin_urls %}
+{% load getattribute from getattributes %}
+{% block extrastyle %}
+    <link rel="stylesheet"
+          href="{% static "admin/css/global_history_log.css" %}">
+{% endblock extrastyle %}
+{% block content %}
+    <section class="content">
+        <div class="card audit-log-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i>
+                    {% trans "History for" %} {{ opts.verbose_name }}
+                </h3>
+            </div>
+            <div class="card-body">
+                {% if page_obj %}
+                    <div class="timeline">
+                        <div class="timeline-indicator"></div>
+                        {% for record in page_obj %}
+                            <div class="timeline-item">
+                                <div class="timeline-marker"></div>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="d-flex align-items-center mb-3 flex-wrap flex-gap-8">
+                                                    {% if record.history_type == "+" %}
+                                                        <span class="audit-badge created">
+                                                            <i class="fas fa-plus"></i> {% trans "Created" %}
+                                                        </span>
+                                                    {% elif record.history_type == "~" %}
+                                                        <span class="audit-badge updated">
+                                                            <i class="fas fa-edit"></i> {% trans "Updated" %}
+                                                        </span>
+                                                    {% elif record.history_type == "-" %}
+                                                        <span class="audit-badge deleted">
+                                                            <i class="fas fa-trash"></i> {% trans "Deleted" %}
+                                                        </span>
+                                                    {% endif %}
+                                                    <span class="text-muted d-flex align-items-center flex-gap-4">
+                                                        <i class="fas fa-user"></i>
+                                                        <span>
+                                                            {% if record.history_user %}
+                                                                {% url admin_user_view record.history_user_id as admin_user_url %}
+                                                                {% if admin_user_url %}
+                                                                    <a href="{{ admin_user_url }}">{{ record.history_user }}</a>
+                                                                {% else %}
+                                                                    {{ record.history_user }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                {% trans "System/Anonymous" %}
+                                                            {% endif %}
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <a href="{% url opts|admin_urlname:'simple_history' object.pk record.pk %}"
+                                                       class="font-weight-bold">{{ record.history_object }}</a>
+                                                    <br>
+                                                    <small class="text-muted d-flex align-items-center mt-1 flex-gap-4">
+                                                        <i class="fas fa-tag"></i> {{ opts.verbose_name }}
+                                                    </small>
+                                                </div>
+                                                {% if record.history_delta_changes %}
+                                                    <div class="changes-container">
+                                                        <h6 class="mb-3 d-flex align-items-center flex-gap-8">
+                                                            <i class="fas fa-list-alt"></i> {% trans "Changes Made" %}:
+                                                        </h6>
+                                                        {% for change in record.history_delta_changes %}
+                                                            <div class="change-item">
+                                                                <div class="field-name">{{ change.field|capfirst }}:</div>
+                                                                <div class="old-value">{{ change.old|default:"-" }}</div>
+                                                                <i class="fas fa-arrow-right text-muted"></i>
+                                                                <div class="new-value">{{ change.new|default:"-" }}</div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if record.history_change_reason %}
+                                                    <div class="mt-3">
+                                                        <strong>{% trans "Change reason" %}:</strong>
+                                                        {{ record.history_change_reason }}
+                                                    </div>
+                                                {% endif %}
+                                                {% for column in history_list_display %}
+                                                    <div class="mt-2">
+                                                        <strong>{{ column|capfirst }}:</strong>
+                                                        {{ record|getattribute:column|default:"-" }}
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="col-md-4 text-md-right text-center">
+                                                <div class="text-muted mb-2 d-flex align-items-center justify-content-md-end justify-content-center flex-gap-8">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                    {{ record.history_date|date:"d/m/Y" }}
+                                                </div>
+                                                <div class="text-muted d-flex align-items-center justify-content-md-end justify-content-center flex-gap-8">
+                                                    <i class="fas fa-clock"></i>
+                                                    {{ record.history_date|date:"H:i:s" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h4>{% trans "No Recent Activity" %}</h4>
+                        <p>{% trans "No history records found for this object." %}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="dataTables_info">
+                                {% blocktrans with start=page_obj.start_index end=page_obj.end_index total=page_obj.paginator.count %}
+                    Showing {{ start }} to {{ end }} of {{ total }} entries
+                  {% endblocktrans %}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <nav aria-label="{% trans "Page navigation" %}">
+                                <ul class="pagination justify-content-md-end justify-content-center mb-0">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page=1"
+                                               aria-label="{% trans "First page" %}"
+                                               title="{% trans "First page" %}">
+                                                <i class="fas fa-angle-double-left"></i>
+                                                <span>{% trans "First" %}</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.previous_page_number }}"
+                                               aria-label="{% trans "Previous page" %}"
+                                               title="{% trans "Previous page" %}">
+                                                <i class="fas fa-angle-left"></i>
+                                                <span>{% trans "Previous" %}</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > page_obj.number|add:"-2" and num < page_obj.number|add:"2" %}
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                   href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ num }}"
+                                                   aria-label="{% trans "Page" %} {{ num }}"
+                                                   title="{% trans "Page" %} {{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.next_page_number }}"
+                                               aria-label="{% trans "Next page" %}"
+                                               title="{% trans "Next page" %}">
+                                                <i class="fas fa-angle-right"></i>
+                                                <span>{% trans "Next" %}</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?{% if request.GET.urlencode %}{{ request.GET.urlencode }}&{% endif %}page={{ page_obj.paginator.num_pages }}"
+                                               aria-label="{% trans "Last page" %}"
+                                               title="{% trans "Last page" %}">
+                                                <i class="fas fa-angle-double-right"></i>
+                                                <span>{% trans "Last" %}</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}

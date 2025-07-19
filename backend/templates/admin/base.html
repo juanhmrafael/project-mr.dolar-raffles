@@ -1,0 +1,625 @@
+{% load i18n static %}
+<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}"
+      dir="{{ LANGUAGE_BIDI|yesno:"rtl,ltr,auto" }}">
+    <head>
+        <meta name="description"
+              content="{% block meta_description %}
+                           Django Admin Interface
+                       {% endblock meta_description %}">
+        <meta name="keywords"
+              content="{% block meta_keywords %}
+                           django, admin, site, management
+                       {% endblock meta_keywords %}">
+        <title>
+            {% block title %}
+            {% endblock title %}
+        </title>
+        <link rel="stylesheet"
+              href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock stylesheet %}">
+        <link rel="icon"
+              type="image/x-icon"
+              href="{% static "assets/img/favicon.ico" %}">
+        <link rel="stylesheet"
+              href="{% static "assets/fontawesome-free-6.7.2-web/css/all.min.css" %}">
+        {% block dark-mode-vars %}
+            <link rel="stylesheet" href="{% static "admin/css/dark_mode.css" %}">
+            <script src="{% static "admin/js/theme.js" %}"></script>
+        {% endblock dark-mode-vars %}
+        {% if not is_popup and is_nav_sidebar_enabled %}
+            <link rel="stylesheet" href="{% static "admin/css/nav_sidebar.css" %}">
+            <script src="{% static "admin/js/nav_sidebar.js" %}" defer></script>
+        {% endif %}
+        {% block extrastyle %}
+        {% endblock extrastyle %}
+        {% if LANGUAGE_BIDI %}
+            <link rel="stylesheet"
+                  href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock stylesheet_rtl %}">
+        {% endif %}
+        {% block extrahead %}
+            <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+            <script src="{% static 'admin/js/vendor/select2/select2.full.min.js' %}"></script>
+        {% endblock extrahead %}
+        {% block responsive %}
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="{% static "admin/css/responsive.css" %}">
+            {% if LANGUAGE_BIDI %}
+                <link rel="stylesheet" href="{% static "admin/css/responsive_rtl.css" %}">
+            {% endif %}
+        {% endblock responsive %}
+        {% block blockbots %}
+            <meta name="robots" content="NONE,NOARCHIVE">
+        {% endblock blockbots %}
+        <!-- Custom Dropdown Styles -->
+        <style>
+            /**
+             * Dropdown de usuario mejorado para Django Admin
+             * Implementa un menú desplegable moderno y accesible
+             * Utiliza variables CSS personalizadas del sistema
+             */
+
+            /* Contenedor principal del user-tools */
+            #user-tools {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 0;
+                /* Permite que flex-items se encojan */
+            }
+
+            /* Información del usuario con layout flexible */
+            .user-info {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 0;
+                /* Permite truncation */
+                flex: 1;
+                /* Ocupa el espacio disponible */
+            }
+
+            /* Detalles del usuario con truncation inteligente */
+            .user-details {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                /* Permite truncation */
+                flex: 1;
+            }
+
+            .user-details span {
+                color: var(--header-color);
+                font-size: 0.9rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+
+            .user-details strong {
+                color: var(--header-color);
+                font-weight: 600;
+            }
+
+            /* Dropdown con ancho fijo para estabilidad */
+            .user-dropdown {
+                position: relative;
+                display: inline-block;
+                z-index: 1001;
+                flex-shrink: 0;
+                /* No se reduce nunca */
+            }
+
+            .user-dropdown-toggle {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: 0.375rem;
+                color: var(--header-color);
+                font-size: inherit;
+                font-family: var(--font-family-primary);
+                transition: all 0.2s ease;
+                white-space: nowrap;
+                /* Evita que se rompa */
+            }
+
+            .user-dropdown-toggle:hover {
+                background-color: hsla(0, 0%, 100%, 0.1);
+            }
+
+            .user-dropdown-toggle:focus {
+                outline: 2px solid var(--primary);
+                outline-offset: 2px;
+            }
+
+            .user-dropdown-arrow {
+                margin-left: 0.25rem;
+                transition: transform 0.2s ease;
+                font-size: 0.75rem;
+                color: var(--header-color);
+            }
+
+            .user-dropdown.open .user-dropdown-arrow {
+                transform: rotate(180deg);
+            }
+
+            .user-dropdown-menu {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                background: var(--header-bg);
+                border: 1px solid var(--header-color);
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px -5px hsla(25, 20%, 20%, 0.15),
+                    0 10px 10px -5px hsla(25, 20%, 20%, 0.08);
+                min-width: 200px;
+                z-index: 9999;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.2s ease;
+                backdrop-filter: blur(10px);
+            }
+
+            .user-dropdown.open .user-dropdown-menu {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .user-dropdown-menu-item {
+                display: block;
+                padding: 0.75rem 1rem;
+                text-align: left;
+                border: none;
+                background: none;
+                color: var(--body-fg);
+                text-decoration: none;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            .user-dropdown-menu-item:first-child {
+                border-top-left-radius: 0.5rem;
+                border-top-right-radius: 0.5rem;
+            }
+
+            .user-dropdown-menu-item:last-child {
+                border-bottom-left-radius: 0.5rem;
+                border-bottom-right-radius: 0.5rem;
+            }
+
+            .user-dropdown-menu-item:hover,
+            .user-dropdown-menu-item:focus {
+                background-color: var(--selected-bg);
+                color: var(--link-fg);
+                outline: none;
+            }
+
+            .user-dropdown-menu-item i {
+                margin-right: 0.5rem;
+                width: 1rem;
+                text-align: center;
+                color: var(--body-quiet-color);
+                transition: color 0.2s ease;
+            }
+
+            .user-dropdown-menu-item:hover i,
+            .user-dropdown-menu-item:focus i {
+                color: var(--link-fg);
+            }
+
+            .user-dropdown-divider {
+                height: 1px;
+                background-color: var(--hairline-color);
+                margin: 0.25rem 0;
+            }
+
+            /* Responsive breakpoints con estrategia mobile-first */
+
+            /* Pantallas muy pequeñas (320px - 480px) */
+            @media (max-width: 480px) {
+                #user-tools {
+                    gap: 0.5rem;
+                }
+
+                .user-info {
+                    gap: 0.5rem;
+                }
+
+                .user-avatar {
+                    width: 2rem;
+                    height: 2rem;
+                    font-size: 0.8rem;
+                }
+
+                .user-details span {
+                    font-size: 0.8rem;
+                }
+
+                /* Truncation más agresivo para nombres largos */
+                .user-details span {
+                    max-width: 120px;
+                }
+            }
+
+            /* Pantallas medianas (481px - 768px) */
+            @media (min-width: 481px) and (max-width: 768px) {
+                .user-details span {
+                    max-width: 150px;
+                }
+            }
+
+            /* Pantallas grandes (769px - 1024px) */
+            @media (min-width: 769px) and (max-width: 1024px) {
+                .user-details span {
+                    max-width: 200px;
+                }
+            }
+
+            /* Pantallas muy grandes (1025px+) */
+            @media (min-width: 1025px) {
+                .user-details span {
+                    max-width: 250px;
+                }
+            }
+
+            /* Manejo especial para pantallas ultra-anchas */
+            @media (min-width: 1400px) {
+                .user-details span {
+                    max-width: none;
+                    /* Sin límite en pantallas muy anchas */
+                }
+            }
+
+            /* Hide original user-links si existen */
+            .user-links {
+                display: none;
+            }
+
+            /* Mejoras adicionales para la integración */
+            .user-dropdown-menu::before {
+                content: '';
+                position: absolute;
+                top: -8px;
+                right: 1rem;
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid var(--border-color);
+            }
+
+            .user-dropdown-menu::after {
+                content: '';
+                position: absolute;
+                top: -7px;
+                right: 1rem;
+                width: 0;
+                height: 0;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid var(--header-bg);
+            }
+
+            /* Efecto de focus más suave */
+            .user-dropdown-menu-item:focus {
+                box-shadow: inset 3px 0 0 var(--primary);
+            }
+
+            /* Animaciones suaves para cambios de tamaño */
+            .user-details span,
+            .user-avatar,
+            .user-dropdown-toggle {
+                transition: all 0.2s ease;
+            }
+
+
+            /* Fallback para navegadores que no soportan text-overflow */
+            @supports not (text-overflow: ellipsis) {
+                .user-details span {
+                    max-width: 100px;
+                    word-break: break-word;
+                }
+            }
+        </style>
+    </head>
+    <body class="{% if is_popup %}
+                     popup
+                 {% endif %}
+                 {% block bodyclass %}
+                 {% endblock bodyclass %}"
+          data-admin-utc-offset="{% now "Z" %}">
+        <a href="#content-start" class="skip-to-content-link">{% translate "Skip to main content" %}</a>
+        <!-- Container -->
+        <div id="container">
+            {% if not is_popup %}
+                <!-- Header -->
+                {% block header %}
+                    <header id="header">
+                        <div id="branding">
+                            {% block branding %}
+                            {% endblock branding %}
+                        </div>
+                        {% block usertools %}
+                            {% if has_permission %}
+                                <div id="user-tools" class="user-tools">
+                                    <div class="user-info">
+                                        <!-- User Avatar -->
+                                        {% if user.avatar %}
+                                            <img src="{{ user.avatar.url }}"
+                                                 alt="Avatar of {{ user.get_full_name|default:user.get_username }}"
+                                                 class="user-avatar">
+                                        {% else %}
+                                            <!-- Default avatar if no image -->
+                                            <div class="user-avatar">{{ user.get_full_name.0|default:user.get_username.0|upper }}</div>
+                                        {% endif %}
+                                        <!-- User Information -->
+                                        <div class="user-details">
+                                            {% block welcome-msg %}
+                                                <span>
+                                                    {% translate "Welcome," %}
+                                                    <strong>{% firstof user.get_full_name user.get_username %}</strong>
+                                                </span>
+                                            {% endblock welcome-msg %}
+                                        </div>
+                                    </div>
+                                    {% block userlinks %}
+                                        <div class="user-dropdown" id="userDropdown">
+                                            <button class="user-dropdown-toggle"
+                                                    type="button"
+                                                    id="userDropdownToggle"
+                                                    aria-haspopup="true"
+                                                    aria-expanded="false"
+                                                    aria-label="{% translate 'User menu' %}">
+                                                <i class="fas fa-cog"></i>
+                                                <span class="user-dropdown-arrow">
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </span>
+                                            </button>
+                                            <div class="user-dropdown-menu"
+                                                 id="userDropdownMenu"
+                                                 role="menu"
+                                                 aria-labelledby="userDropdownToggle">
+                                                {% if site_url %}
+                                                    <a href="{{ site_url }}" class="user-dropdown-menu-item" role="menuitem">
+                                                        <i class="fas fa-external-link-alt"></i>
+                                                        {% translate "View site" %}
+                                                    </a>
+                                                {% endif %}
+                                                {% if user.is_active and user.is_staff %}
+                                                    {% url "django-admindocs-docroot" as docsroot %}
+                                                    {% if docsroot %}
+                                                        <a href="{{ docsroot }}" class="user-dropdown-menu-item" role="menuitem">
+                                                            <i class="fas fa-book"></i>
+                                                            {% translate "Documentation" %}
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% if user.has_usable_password %}
+                                                    <a href="{% url "admin:password_change" %}"
+                                                       class="user-dropdown-menu-item"
+                                                       role="menuitem">
+                                                        <i class="fas fa-key"></i>
+                                                        {% translate "Change password" %}
+                                                    </a>
+                                                {% endif %}
+                                                {% if site_url or docsroot or user.has_usable_password %}<div class="user-dropdown-divider"></div>{% endif %}
+                                                <!-- SOLUCIÓN: Enlace de logout que mantiene la funcionalidad POST -->
+                                                <a href="#"
+                                                   class="user-dropdown-menu-item logout-link"
+                                                   role="menuitem"
+                                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                    <i class="fas fa-sign-out-alt"></i>
+                                                    {% translate "Log out" %}
+                                                </a>
+                                                <div class="user-dropdown-divider"></div>
+                                                <div style="padding: 0.5rem;">{% include "admin/color_theme_toggle.html" %}</div>
+                                            </div>
+                                        </div>
+                                        <!-- Formulario de logout oculto (se mantiene igual) -->
+                                        <form id="logout-form"
+                                              method="post"
+                                              action="{% url "admin:logout" %}"
+                                              style="display: none">
+                                            {% csrf_token %}
+                                        </form>
+                                    {% endblock userlinks %}
+                                </div>
+                            {% endif %}
+                        {% endblock usertools %}
+                        {% block nav-global %}
+                        {% endblock nav-global %}
+                    </header>
+                {% endblock header %}
+                <!-- END Header -->
+                {% block nav-breadcrumbs %}
+                    <nav aria-label="{% translate "Breadcrumbs" %}">
+                        {% block breadcrumbs %}
+                            <div class="breadcrumbs">
+                                <a href="{% url "admin:index" %}">{% translate "Home" %}</a>
+                                {% if title %}&rsaquo; {{ title }}{% endif %}
+                            </div>
+                        {% endblock breadcrumbs %}
+                    </nav>
+                {% endblock nav-breadcrumbs %}
+            {% endif %}
+            <div class="main" id="main">
+                {% if not is_popup and is_nav_sidebar_enabled %}
+                    {% block nav-sidebar %}
+                        {% include "admin/nav_sidebar.html" %}
+                    {% endblock nav-sidebar %}
+                {% endif %}
+                <main id="content-start" class="content" tabindex="-1">
+                    {% block messages %}
+                        {% if messages %}
+                            <ul class="messagelist">
+                                {% for message in messages %}
+                                    <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endblock messages %}
+                    <!-- Content -->
+                    <div id="content" class="{% block coltype %}colM{% endblock coltype %}">
+                        {% block pretitle %}
+                        {% endblock pretitle %}
+                        {% block content_title %}
+                            {% if title %}<h1>{{ title }}</h1>{% endif %}
+                        {% endblock content_title %}
+                        {% block content_subtitle %}
+                            {% if subtitle %}<h2>{{ subtitle }}</h2>{% endif %}
+                        {% endblock content_subtitle %}
+                        {% block content %}
+                            {% block object-tools %}
+                            {% endblock object-tools %}
+                            {{ content }}
+                        {% endblock content %}
+                        {% block sidebar %}
+                        {% endblock sidebar %}
+                        <br class="clear">
+                    </div>
+                    <!-- END Content -->
+                </main>
+            </div>
+            <footer id="footer">
+                {% block footer %}
+                {% endblock footer %}
+            </footer>
+        </div>
+        <!-- END Container -->
+        <!-- SVGs -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="base-svgs">
+            <symbol viewBox="0 0 24 24" id="icon-auto">
+            <path d="M0 0h24v24H0z" fill="currentColor" />
+            <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2V4a8 8 0 1 0 0 16z" />
+            </symbol>
+            <symbol viewBox="0 0 24 24" id="icon-moon">
+            <path d="M0 0h24v24H0z" fill="currentColor" />
+            <path d="M10 7a7 7 0 0 0 12 4.9v.1c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2h.1A6.979 6.979 0 0 0 10 7zm-6 5a8 8 0 0 0 15.062 3.762A9 9 0 0 1 8.238 4.938 7.999 7.999 0 0 0 4 12z" />
+            </symbol>
+            <symbol viewBox="0 0 24 24" id="icon-sun">
+            <path d="M0 0h24v24H0z" fill="currentColor" />
+            <path d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM11 1h2v3h-2V1zm0 19h2v3h-2v-3zM3.515 4.929l1.414-1.414L7.05 5.636 5.636 7.05 3.515 4.93zM16.95 18.364l1.414-1.414 2.121 2.121-1.414 1.414-2.121-2.121zm2.121-14.85l1.414 1.415-2.121 2.121-1.414-1.414 2.121-2.121zM5.636 16.95l1.414 1.414-2.121 2.121-1.414-1.414 2.121-2.121zM23 11v2h-3v-2h3zM4 11v2H1v-2h3z" />
+            </symbol>
+        </svg>
+        <!-- END SVGs -->
+        <!-- Dropdown JavaScript -->
+        <script>
+            /**
+             * Inicializa el dropdown de usuario con manejo de eventos
+             * y funcionalidades de accesibilidad
+             */
+            document.addEventListener('DOMContentLoaded', function() {
+                const dropdown = document.getElementById('userDropdown');
+                const toggle = document.getElementById('userDropdownToggle');
+                const menu = document.getElementById('userDropdownMenu');
+
+                if (!dropdown || !toggle || !menu) return;
+
+                // Toggle dropdown on click
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const isOpen = dropdown.classList.contains('open');
+
+                    if (isOpen) {
+                        closeDropdown();
+                    } else {
+                        openDropdown();
+                    }
+                });
+
+                // Handle keyboard navigation
+                toggle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggle.click();
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        if (!dropdown.classList.contains('open')) {
+                            openDropdown();
+                        }
+                        focusFirstMenuItem();
+                    }
+                });
+
+                // Handle menu item keyboard navigation
+                menu.addEventListener('keydown', function(e) {
+                    const menuItems = menu.querySelectorAll('.user-dropdown-menu-item');
+                    const currentIndex = Array.from(menuItems).findIndex(item =>
+                        document.activeElement === item
+                    );
+
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const nextIndex = (currentIndex + 1) % menuItems.length;
+                        menuItems[nextIndex].focus();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        const prevIndex = currentIndex === 0 ? menuItems.length - 1 : currentIndex - 1;
+                        menuItems[prevIndex].focus();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeDropdown();
+                        toggle.focus();
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        closeDropdown();
+                    }
+                });
+
+                // Close on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && dropdown.classList.contains('open')) {
+                        closeDropdown();
+                        toggle.focus();
+                    }
+                });
+
+                /**
+                 * Abre el dropdown y actualiza los atributos ARIA
+                 */
+                function openDropdown() {
+                    dropdown.classList.add('open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                    menu.setAttribute('aria-hidden', 'false');
+                }
+
+                /**
+                 * Cierra el dropdown y actualiza los atributos ARIA
+                 */
+                function closeDropdown() {
+                    dropdown.classList.remove('open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    menu.setAttribute('aria-hidden', 'true');
+                }
+
+                /**
+                 * Enfoca el primer elemento del menú
+                 */
+                function focusFirstMenuItem() {
+                    const firstItem = menu.querySelector('.user-dropdown-menu-item');
+                    if (firstItem) {
+                        firstItem.focus();
+                    }
+                }
+            });
+        </script>
+        {% block extrabody %}
+        {% endblock extrabody %}
+    </body>
+</html>

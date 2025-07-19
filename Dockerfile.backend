@@ -1,0 +1,145 @@
+# Dockerfile de Backend para PRODUCCIÓN
+# ====================================================================================================
+# Propósito: Este Dockerfile define el proceso para construir una imagen de contenedor Docker
+# optimizada, segura y eficiente para la aplicación Django en un entorno de producción.
+# Utiliza una estrategia de construcción multi-etapa (multi-stage build) para minimizar el tamaño
+# de la imagen final y reducir su superficie de ataque, excluyendo herramientas de compilación
+# y dependencias innecesarias en la imagen final.
+#
+# Referencia canónica para builds multi-etapa: https://docs.docker.com/build/building/multi-stage/
+# ====================================================================================================
+
+
+# --- Etapa 1: 'builder' ---
+# Propósito: Esta etapa se dedica exclusivamente a preparar las dependencias. Instala las
+# herramientas de compilación necesarias y convierte los archivos de requerimientos de formato
+# '.in' (definiciones abstractas) a '.txt' (versiones fijadas y concretas). Al aislar
+# este proceso, nos aseguramos de que ninguna de estas herramientas de desarrollo
+# (como pip-tools o compiladores de C) contamine la imagen final de producción.
+FROM python:3.13-alpine AS builder
+
+# Propósito: Establecer variables de entorno estándar para optimizar la ejecución de Python en Docker.
+# - PYTHONDONTWRITEBYTECODE=1: Evita que Python escriba archivos .pyc en el disco, lo cual es innecesario en contenedores.
+# - PYTHONUNBUFFERED=1: Asegura que la salida de Python (logs) se envíe directamente a la terminal sin ser almacenada
+#   en un búfer, lo cual es crucial para la visualización de logs en tiempo real con 'docker logs'.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Propósito: Instalar las herramientas de compilación del sistema operativo y las de Python.
+# - 'build-base': Es un metapaquete de Alpine que instala las herramientas esenciales (gcc, make)
+#   necesarias para compilar algunas dependencias de Python que tienen extensiones en C.
+# - 'pip install --upgrade pip': Asegura que estamos usando la última versión de pip.
+# - 'pip install pip-tools==7.4.1': Instala una versión fija de pip-tools, la herramienta que
+#   usaremos para compilar los archivos de requerimientos, garantizando builds reproducibles.
+RUN apk add --no-cache build-base && \
+    pip install --upgrade pip && \
+    pip install pip-tools==7.4.1
+
+# Propósito: Establecer el directorio de trabajo para los comandos subsecuentes dentro de esta etapa.
+WORKDIR /app
+
+# Propósito: Copiar los archivos de definición de requerimientos al directorio de trabajo del contenedor.
+# Se copian solo estos archivos primero para aprovechar al máximo la caché de capas de Docker. Si estos
+# archivos no cambian, Docker reutilizará la capa de 'RUN pip-compile' en builds futuros, acelerando el proceso.
+COPY ./backend/requirements /app/requirements
+
+# Propósito: Compilar los requerimientos de producción.
+# 'pip-compile' lee el archivo 'base.in' y genera un 'base.txt' con todas las dependencias
+# y sub-dependencias fijadas a versiones específicas. Esto es fundamental para la reproducibilidad
+# y estabilidad del entorno de producción.
+RUN pip-compile requirements/base.in -o requirements/base.txt
+
+
+# --- Etapa 2: 'prod-deps' ---
+# Propósito: Esta etapa intermedia instala las dependencias de producción de Python en un entorno limpio.
+# Al separar la instalación de dependencias del código de la aplicación, creamos una capa de Docker
+# que rara vez cambiará, mejorando drásticamente los tiempos de construcción posteriores.
+FROM python:3.13-alpine AS prod-deps
+
+# Propósito: Re-establecer las variables de entorno estándar para Python en esta nueva etapa.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Propósito: Instalar las dependencias a nivel de sistema operativo que son estrictamente necesarias
+# para la EJECUCIÓN de la aplicación en producción.
+# - 'postgresql-libs': Contiene las librerías cliente de PostgreSQL, necesarias para que psycopg2 (driver de Python) se conecte a la base de datos.
+# - 'libjpeg-turbo-dev', 'zlib-dev': Dependencias comunes para la librería Pillow, usada por Django para procesar imágenes.
+# - 'netcat-openbsd': Provee el comando 'nc', utilizado en el script 'entrypoint.sh' para verificar la conectividad de la base de datos.
+# - 'su-exec': Una utilidad ligera similar a 'sudo', usada en el 'entrypoint.sh' para ejecutar procesos como un usuario sin privilegios (privilege drop).
+RUN apk add --no-cache postgresql-libs libjpeg-turbo-dev zlib-dev netcat-openbsd su-exec
+
+# Propósito: Establecer el directorio de trabajo para esta etapa.
+WORKDIR /home/appuser/app
+
+# Propósito: Copiar el archivo de requerimientos de producción ya compilado desde la etapa 'builder'.
+COPY --from=builder /app/requirements/base.txt ./requirements.txt
+
+# Propósito: Instalar las dependencias de Python para producción.
+# --mount=type=cache,target=/root/.cache/pip: Es una directiva de BuildKit que monta una caché de pip.
+#   Esto acelera drásticamente las instalaciones de paquetes en builds sucesivos.
+# --no-cache-dir: Evita que pip guarde paquetes en su caché local, reduciendo el tamaño de la capa.
+# Referencia oficial para --mount: https://docs.docker.com/build/guide/mounts/
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir -r requirements.txt
+
+
+# --- Etapa 3: 'production' (Imagen Final) ---
+# Propósito: Esta es la etapa final que construye la imagen que se desplegará en producción.
+# Es una imagen minimalista, segura y optimizada que solo contiene lo estrictamente necesario para correr la aplicación.
+FROM python:3.13-alpine AS production
+
+# Propósito: Re-establecer las variables de entorno estándar para Python en la etapa final.
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# Propósito: Instalar las dependencias de SO de tiempo de ejecución (runtime), sin herramientas de compilación.
+# Se repiten algunas de la etapa anterior para que esta etapa sea autónoma si fuera necesario,
+# pero como hereda de una base limpia, el impacto es mínimo.
+RUN apk add --no-cache postgresql-client netcat-openbsd su-exec
+
+# Propósito: Crear un usuario y grupo sin privilegios para ejecutar la aplicación.
+# Principio de Menor Privilegio: Es una práctica de seguridad fundamental. Si un atacante compromete
+# la aplicación, solo tendrá los permisos limitados del 'appuser', no los de 'root',
+# lo que reduce drásticamente el daño potencial al sistema anfitrión.
+RUN addgroup -S appuser && adduser -S -G appuser appuser
+
+# Propósito: Establecer el directorio de trabajo final para la aplicación.
+WORKDIR /home/appuser/app
+
+# Propósito: Copiar las dependencias de Python ya instaladas desde la etapa 'prod-deps'.
+# Esta es una operación de copia de archivos extremadamente rápida. Evita reinstalar todo y
+# aprovecha la capa de caché creada en la etapa anterior.
+COPY --from=prod-deps /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=prod-deps /usr/local/bin /usr/local/bin
+
+# Propósito: Copiar el código fuente de la aplicación y el script de entrada.
+# --chown=appuser:appuser: Asegura que los archivos copiados pertenezcan al usuario sin privilegios
+# 'appuser', evitando problemas de permisos en tiempo de ejecución.
+COPY --chown=appuser:appuser ./backend /home/appuser/app
+COPY --chown=appuser:appuser ./entrypoint.sh /home/appuser/app/entrypoint.sh
+
+# Propósito: Otorgar permisos de ejecución al script 'entrypoint.sh'. Sin este permiso,
+# el contenedor no podría ejecutar el script al arrancar.
+RUN chmod +x /home/appuser/app/entrypoint.sh
+
+# NOTA IMPORTANTE: La instrucción 'USER appuser' se omite deliberadamente aquí.
+# El contenedor se iniciará como 'root' por defecto. Esto es intencional y necesario para que
+# el script 'entrypoint.sh' pueda realizar tareas privilegiadas (como 'chown' en los volúmenes montados).
+# La caída de privilegios (cambio a 'appuser') se gestiona de forma segura dentro del propio
+# script 'entrypoint.sh' usando 'su-exec' antes de lanzar el proceso principal de la aplicación.
+
+# Propósito: Define el script que se ejecutará al iniciar el contenedor.
+# El 'entrypoint.sh' es responsable de tareas de inicialización como esperar a la base de datos
+# y ejecutar migraciones antes de lanzar el proceso principal de la aplicación.
+# Referencia: https://docs.docker.com/reference/dockerfile/#entrypoint
+ENTRYPOINT ["/home/appuser/app/entrypoint.sh"]
+
+# Propósito: Define el comando por defecto que se pasará al ENTRYPOINT.
+# Este es el proceso que mantendrá el contenedor en ejecución.
+# - 'gunicorn': Es un servidor WSGI de nivel de producción, robusto y eficiente.
+# - '--bind 0.0.0.0:8000': Le dice a Gunicorn que escuche en todas las interfaces de red del contenedor en el puerto 8000.
+# - '--workers 3': Define el número de procesos de trabajo. Un buen punto de partida es (2 * N° de CPUs) + 1.
+# - '-k uvicorn.workers.UvicornWorker': Especifica el uso de trabajadores Uvicorn, necesarios para que
+#   Gunicorn pueda servir aplicaciones ASGI como Django 3.0+ de forma asíncrona y de alto rendimiento.
+# - 'config.asgi:application': El punto de entrada a la aplicación ASGI de Django.
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "5", "-k", "uvicorn.workers.UvicornWorker", "config.asgi:application"]

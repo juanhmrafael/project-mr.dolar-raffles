@@ -1,0 +1,136 @@
+# ==============================================================================
+# ### ARCHIVO DE DEPENDENCIAS PRINCIPALES (`base.in`) ###
+#
+# Propósito: Este archivo define las dependencias del núcleo de la aplicación
+# para el entorno de producción. Cada librería está justificada para futuras
+# consultas sobre la arquitectura del sistema.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# --- Frameworks y Núcleo Asíncrono ---
+# ------------------------------------------------------------------------------
+# Propósito: El corazón de la aplicación, basado en una arquitectura asíncrona.
+
+# Framework web principal. La versión 5+ tiene soporte robusto para ASGI (async).
+django~=5.2
+
+# Toolkit para construir APIs. Proporciona serializadores, vistas, etc.
+djangorestframework~=3.16
+
+# Fork de DRF con soporte 'async' nativo y mejorado.
+# Se usa en lugar de DRF nativo para las APIViews para garantizar un comportamiento
+# no bloqueante de extremo a extremo y evitar problemas de compatibilidad `async`.
+adrf~=0.1
+
+# ------------------------------------------------------------------------------
+# --- Servidor de Aplicaciones y Workers Asíncronos ---
+# ------------------------------------------------------------------------------
+# Propósito: El stack estándar de oro para servir aplicaciones ASGI en producción.
+
+# Gestor de procesos WSGI/ASGI. Gestiona y supervisa los workers de la aplicación.
+# No ejecuta el código asíncrono por sí mismo, delega en Uvicorn.
+gunicorn~=23.0
+
+# Servidor ASGI de alto rendimiento. Se ejecuta DENTRO de los procesos de Gunicorn.
+# El flag [standard] instala optimizaciones como `uvloop` para un mayor rendimiento.
+uvicorn[standard]~=0.34
+
+# ------------------------------------------------------------------------------
+# --- Conectividad con la Base de Datos ---
+# ------------------------------------------------------------------------------
+
+# Driver de PostgreSQL con soporte nativo para `asyncio`.
+# Es OBLIGATORIO para que el ORM de Django pueda realizar consultas a la base de
+# datos de forma no bloqueante en un contexto asíncrono.
+# La versión [binary] evita la necesidad de compilarlo durante la instalación.
+psycopg[binary]~=3.2
+
+# ------------------------------------------------------------------------------
+# --- Configuración y Utilidades Generales ---
+# ------------------------------------------------------------------------------
+
+# Gestiona la configuración de la aplicación desde variables de entorno o archivos .env.
+# Permite separar los secretos y la configuración del código fuente (Twelve-Factor App).
+python-decouple~=3.8
+
+# Procesa y manipula imágenes. Requerido por el ImageField de Django.
+pillow~=11.3
+
+# ------------------------------------------------------------------------------
+# --- Tareas en Segundo Plano (Background Tasks) ---
+# ------------------------------------------------------------------------------
+# Propósito: Ejecutar tareas pesadas o de larga duración sin bloquear la API.
+
+# Framework de colas de tareas distribuidas. Para ejecutar tareas como envío de
+# emails, notificaciones, reportes o scraping en segundo plano.
+celery~=5.5
+
+# Backend de resultados para Celery que usa la base de datos de Django.
+# Permite consultar el estado y el resultado de las tareas desde el Admin.
+django-celery-results~=2.6
+
+# Cliente de Python para Redis. Redis se utiliza como 'message broker' para Celery
+# (comunica la API con los workers) y también como backend de caché.
+redis~=6.2.0
+
+# Integración de Redis con Django. Proporciona una API de caché mejorada y
+# facilita la configuración de las conexiones a Redis en `settings.py`.
+django-redis~=6.0
+
+#Para tareas periodicas en Celery
+django-celery-beat~=2.8
+
+# ------------------------------------------------------------------------------
+# --- Seguridad y Red ---
+# ------------------------------------------------------------------------------
+
+# Gestiona las cabeceras CORS (Cross-Origin Resource Sharing).
+# Esencial para permitir que aplicaciones frontend alojadas en otros dominios
+# puedan consumir esta API de forma segura.
+django-cors-headers~=4.7
+
+# Middleware para limitar la tasa de peticiones (Rate Limiting).
+# Protege los endpoints contra ataques de fuerza bruta, abuso por bots y DoS.
+django-ratelimit~=4.1
+
+# Proporciona campos de modelo que cifran automáticamente su contenido antes de
+# guardarlo en la base de datos. Crítico para almacenar datos sensibles (PII).
+django-encrypted-model-fields~=0.6.5
+
+# ------------------------------------------------------------------------------
+# --- Auditoría y Documentación ---
+# ------------------------------------------------------------------------------
+
+# Almacena un historial automático de todos los cambios realizados en los modelos.
+# Fundamental para auditoría, trazabilidad y depuración ("quién cambió qué y cuándo").
+django-simple-history~=3.10
+
+# Generador de esquemas OpenAPI 3. Introspecciona el código (views, serializers)
+# para crear documentación de API interactiva (Swagger UI / ReDoc) de forma automática.
+drf-spectacular~=0.28
+
+# ------------------------------------------------------------------------------
+# --- Clientes HTTP y Scraping ---
+# ------------------------------------------------------------------------------
+# Propósito: Consumir datos de fuentes externas que no tienen API.
+# IMPORTANTE: Estas tareas son bloqueantes y DEBEN ejecutarse en segundo plano
+# con Celery para no degradar el rendimiento del servidor asíncrono.
+
+# Cliente HTTP síncrono y fácil de usar para realizar peticiones web.
+requests~=2.32
+
+# Librería para parsear documentos HTML y XML (web scraping).
+bs4~=0.0
+
+# ------------------------------------------------------------------------------
+# --- Mejoras para el Admin de Django ---
+# ------------------------------------------------------------------------------
+# Propósito: Mejorar la usabilidad y funcionalidad del panel de administración.
+
+# Añade filtros por rango (ej: por fecha o numérico) a la vista de lista del admin.
+django-admin-rangefilter==0.13
+
+# Reemplaza los widgets <select> del admin por widgets de Select2.
+# Ofrece búsqueda y carga de opciones vía AJAX, esencial para ForeignKeys con
+# miles de registros, mejorando drásticamente el rendimiento y la UX del admin.
+django-select2~=8.4

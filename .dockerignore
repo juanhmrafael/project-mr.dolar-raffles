@@ -1,0 +1,78 @@
+# .dockerignore: Lista de exclusión para el contexto de build de Docker
+# =======================================================================================
+# Propósito: Especificar archivos y directorios a excluir del "contexto de build".
+# Esto previene la fuga de secretos y acelera las construcciones al reducir el tamaño
+# del contexto enviado al daemon de Docker.
+# =======================================================================================
+
+# Ignorar el historial y la configuración de Git.
+.git
+.gitignore
+
+# Ignorar entornos virtuales de Python locales.
+.venv
+venv/
+env/
+
+# Ignorar archivos de caché y compilados de Python.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar archivos de configuración de IDEs.
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ¡CRÍTICO! Ignorar archivos de entorno y secretos para que no terminen en la imagen.
+.env
+.env.*
+*.env
+
+
+# Ignorar los archivos de Docker para evitar recursividad o conflictos.
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# Documentation
+*.md
+docs/
+
+# Ignorar la base de datos local de SQLite si se usara en algún momento.
+db.sqlite3
+
+# Ignorar directorios de artefactos generados localmente.
+# El contenedor debe generar los suyos propios.
+/backend/staticfiles
+/backend/mediafiles
+
+# ¡CRÍTICO! Ignorar el directorio de dependencias de Node.js.
+# Es pesado y debe ser manejado dentro del contenedor durante la construcción.
+node_modules
+/frontend/node_modules
+
+# Ignorar artefactos de build de Angular.
+/frontend/dist
+/frontend/.angular
+
+# Ignorar logs locales.
+*.log
+
+# Cache directories
+.npm/
+.yarn/
+.cache/

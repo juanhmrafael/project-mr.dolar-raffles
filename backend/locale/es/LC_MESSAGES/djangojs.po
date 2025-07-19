@@ -1,0 +1,87 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-07-02 16:59-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? "
+"1 : 2;\n"
+
+#: static/js/SelectFilter2.js:45
+#, javascript-format
+msgid "Available %s"
+msgstr "%s disponibles"
+
+#: static/js/SelectFilter2.js:49
+#, javascript-format
+msgid ""
+"Choose %s by selecting them and then select the \"Choose\" arrow button."
+msgstr "Elija %s seleccionándolos y luego presione el botón de flecha \"Elegir\"."
+
+#: static/js/SelectFilter2.js:61
+#, javascript-format
+msgid "Type into this box to filter down the list of available %s."
+msgstr "Escriba en este cuadro para filtrar la lista de %s disponibles."
+
+#: static/js/SelectFilter2.js:66 static/js/SelectFilter2.js:126
+msgid "Filter"
+msgstr "Filtrar"
+
+#: static/js/SelectFilter2.js:73
+#, javascript-format
+msgid "Choose all %s"
+msgstr "Elegir todos los %s"
+
+#: static/js/SelectFilter2.js:85
+#, javascript-format
+msgid "Choose selected %s"
+msgstr "Elegir %s seleccionados"
+
+#: static/js/SelectFilter2.js:93
+#, javascript-format
+msgid "Remove selected %s"
+msgstr "Quitar %s seleccionados"
+
+#: static/js/SelectFilter2.js:105
+#, javascript-format
+msgid "Chosen %s"
+msgstr "%s elegidos"
+
+#: static/js/SelectFilter2.js:109
+#, javascript-format
+msgid ""
+"Remove %s by selecting them and then select the \"Remove\" arrow button."
+msgstr "Quite %s seleccionándolos y luego presione el botón de flecha \"Quitar\"."
+
+#: static/js/SelectFilter2.js:121
+#, javascript-format
+msgid "Type into this box to filter down the list of selected %s."
+msgstr "Escriba en este cuadro para filtrar la lista de %s seleccionados."
+
+#: static/js/SelectFilter2.js:142
+msgid "(click to clear)"
+msgstr "(clic para limpiar)"
+
+#: static/js/SelectFilter2.js:146
+#, javascript-format
+msgid "Remove all %s"
+msgstr "Quitar todos los %s"
+
+#: static/js/SelectFilter2.js:240
+#, javascript-format
+msgid "%s selected option not visible"
+msgid_plural "%s selected options not visible"
+msgstr[0] "%s opción seleccionada no visible"
+msgstr[1] "%s opciones seleccionadas no visibles"

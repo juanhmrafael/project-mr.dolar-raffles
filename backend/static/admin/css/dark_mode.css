@@ -1,0 +1,183 @@
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Colores principales para modo oscuro */
+        --primary: hsl(35, 65%, 65%);
+        --primary-fg: hsl(0, 0%, 5%);
+
+        /* Texto y fondos optimizados */
+        --body-fg: hsl(0, 0%, 95%);
+        --body-bg: hsl(25, 15%, 8%);
+        --body-quiet-color: hsl(0, 0%, 70%);
+        --body-medium-color: hsl(0, 0%, 85%);
+        --body-loud-color: hsl(0, 0%, 98%);
+
+        /* Breadcrumbs oscuros */
+        --breadcrumbs-link-fg: hsl(0, 0%, 95%);
+        --breadcrumbs-bg: hsl(25, 20%, 12%);
+
+        /* Enlaces con tonos cálidos */
+        --link-fg: hsl(35, 80%, 70%);
+        --link-hover-color: hsl(35, 85%, 75%);
+        --link-selected-fg: hsl(35, 75%, 65%);
+
+        /* Bordes sutiles */
+        --hairline-color: hsl(25, 15%, 18%);
+        --border-color: hsl(25, 15%, 22%);
+
+        /* Estados de error */
+        --error-fg: hsl(0, 85%, 75%);
+
+        /* Mensajes con fondos oscuros */
+        --message-debug-bg: hsl(25, 15%, 12%);
+        --message-debug-icon: url(../img/icon-debug-dark.svg);
+        --message-info-bg: hsl(200, 25%, 12%);
+        --message-info-icon: url(../img/icon-info-dark.svg);
+        --message-success-bg: hsl(142, 30%, 10%);
+        --message-success-icon: url(../img/icon-yes-dark.svg);
+        --message-warning-bg: hsl(35, 40%, 12%);
+        --message-warning-icon: url(../img/icon-alert-dark.svg);
+        --message-error-bg: hsl(15, 35%, 12%);
+        --message-error-icon: url(../img/icon-no-dark.svg);
+
+        /* Fondos alternativos */
+        --darkened-bg: hsl(25, 15%, 10%);
+        --selected-bg: hsl(25, 20%, 15%);
+        --selected-row: hsl(25, 18%, 13%);
+
+        /* Botones oscuros */
+        --close-button-bg: hsl(25, 15%, 25%);
+        --close-button-hover-bg: hsl(25, 20%, 35%);
+        color-scheme: dark;
+    }
+}
+
+html[data-theme="dark"] {
+    /* Colores principales para modo oscuro */
+    --primary: hsl(35, 65%, 65%);
+    --primary-fg: hsl(0, 0%, 5%);
+
+    /* Texto y fondos optimizados */
+    --body-fg: hsl(0, 0%, 95%);
+    --body-bg: hsl(25, 15%, 8%);
+    --body-quiet-color: hsl(0, 0%, 70%);
+    --body-medium-color: hsl(0, 0%, 85%);
+    --body-loud-color: hsl(0, 0%, 98%);
+
+    /* Breadcrumbs oscuros */
+    --breadcrumbs-link-fg: hsl(0, 0%, 95%);
+    --breadcrumbs-bg: hsl(25, 20%, 12%);
+
+    /* Enlaces con tonos cálidos */
+    --link-fg: hsl(35, 80%, 70%);
+    --link-hover-color: hsl(35, 85%, 75%);
+    --link-selected-fg: hsl(35, 75%, 65%);
+
+    /* Bordes sutiles */
+    --hairline-color: hsl(25, 15%, 18%);
+    --border-color: hsl(25, 15%, 22%);
+
+    /* Estados de error */
+    --error-fg: hsl(0, 85%, 75%);
+
+    /* Mensajes con fondos oscuros */
+    --message-debug-bg: hsl(25, 15%, 12%);
+    --message-debug-icon: url(../img/icon-debug-dark.svg);
+    --message-info-bg: hsl(200, 25%, 12%);
+    --message-info-icon: url(../img/icon-info-dark.svg);
+    --message-success-bg: hsl(142, 30%, 10%);
+    --message-success-icon: url(../img/icon-yes-dark.svg);
+    --message-warning-bg: hsl(35, 40%, 12%);
+    --message-warning-icon: url(../img/icon-alert-dark.svg);
+    --message-error-bg: hsl(15, 35%, 12%);
+    --message-error-icon: url(../img/icon-no-dark.svg);
+
+    /* Fondos alternativos */
+    --darkened-bg: hsl(25, 15%, 10%);
+    --selected-bg: hsl(25, 20%, 15%);
+    --selected-row: hsl(25, 18%, 13%);
+
+    /* Botones oscuros */
+    --close-button-bg: hsl(25, 15%, 25%);
+    --close-button-hover-bg: hsl(25, 20%, 35%);
+    color-scheme: dark;
+}
+
+/* THEME SWITCH - Modernizado */
+.theme-toggle {
+    cursor: pointer;
+    border: none;
+    padding: 8px;
+    background: transparent;
+    vertical-align: middle;
+    margin-inline-start: 8px;
+    margin-top: -1px;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: inherit;
+}
+
+.theme-toggle svg {
+    vertical-align: middle;
+    height: 1.25rem;
+    width: 1.25rem;
+    display: none;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-toggle:hover svg {
+    transform: scale(1.1);
+}
+
+/*
+  Fully hide screen reader text so we only show the one matching the current
+  theme.
+  */
+.theme-toggle .visually-hidden {
+    display: none;
+}
+
+html[data-theme="auto"] .theme-toggle .theme-label-when-auto {
+    display: block;
+}
+
+html[data-theme="dark"] .theme-toggle .theme-label-when-dark {
+    display: block;
+}
+
+html[data-theme="light"] .theme-toggle .theme-label-when-light {
+    display: block;
+}
+
+/* ICONS - Mejorados */
+.theme-toggle svg.theme-icon-when-auto,
+.theme-toggle svg.theme-icon-when-dark,
+.theme-toggle svg.theme-icon-when-light {
+    fill: var(--header-color);
+    color: transparent;
+}
+
+html[data-theme="auto"] .theme-toggle svg.theme-icon-when-auto {
+    display: block;
+}
+
+html[data-theme="dark"] .theme-toggle svg.theme-icon-when-dark {
+    display: block;
+}
+
+html[data-theme="light"] .theme-toggle svg.theme-icon-when-light {
+    display: block;
+}

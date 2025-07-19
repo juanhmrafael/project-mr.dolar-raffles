@@ -1,0 +1,38 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+{% block title %}
+    {% if subtitle %}{{ subtitle }} |{% endif %}
+    {{ title }} | {{ site_title|default:_("Django site admin") }}
+{% endblock title %}
+{% block branding %}
+<div class="branding-container" style="display: flex; align-items: center; padding: 10px 20px;">
+    <!-- Company Logo -->
+    <img src="{% static "assets/img/logo.svg" %}" 
+         alt="Logo" 
+         style="height: 40px; margin-right: 15px;">
+    
+    <!-- Site Title -->
+    <h1 id="site-name">
+        <a href="{% url "admin:index" %}">
+            {{ site_header|default:_("Django Administration") }}
+        </a>
+    </h1>
+</div>
+{% endblock branding %}
+{% block nav-global %}{% endblock nav-global %}
+{% block footer %}
+    <p>&copy; {% now "Y" %} Mr. Dólar. {% translate "All rights reserved." %}</p>
+    <div class="developer-info">
+        <span>{% translate "Developed by" %}</span>
+        <a href="https://www.linkedin.com/in/juanhmrafael/"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="developer-link">
+            <svg class="contact-icon" viewBox="0 0 24 24">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+            </svg>
+            Juan Rafael
+        </a>
+    </div>
+{% endblock footer %}

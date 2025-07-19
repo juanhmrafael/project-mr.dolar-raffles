@@ -1,0 +1,10 @@
+# requirements/development.in
+# ---------------------------
+# Dependencias solo para el entorno de desarrollo.
+
+# Hereda todas las dependencias de producción.
+-r base.in
+
+# Herramientas de desarrollo y depuración.
+pip-tools~=7.4
+django-debug-toolbar~=5.2
