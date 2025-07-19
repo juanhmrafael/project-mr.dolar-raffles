@@ -21,7 +21,7 @@ FROM alpine:3.22 AS production-server
 
 # Propósito: Instalar Nginx con soporte SSL desde los repositorios de Alpine.
 # Esto nos da la funcionalidad HTTPS necesaria sobre la base más segura posible.
-RUN apk add --no-cache nginx
+RUN apk add --no-cache nginx nginx-mod-http-ssl
 
 # Propósito: Copiar los artefactos del frontend desde la etapa de construcción anterior.
 COPY --from=frontend-builder /app/dist/frontend/browser /usr/share/nginx/html
