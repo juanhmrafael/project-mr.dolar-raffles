@@ -1,0 +1,127 @@
+<div class="animate-bounce-in-modern">
+    @if (store.hasNoRaffles() || !store.mainRaffle()) {
+    <!-- Estado Vacío: Sin rifas o sin rifa activa -->
+    <section class="text-center py-12 md:py-20">
+        <div class="card-glass p-6 md:p-8 max-w-2xl mx-auto">
+            <lucide-icon
+                name="Ticket"
+                class="size-24 md:size-32 text-primary/60 mx-auto animate-float"
+            ></lucide-icon>
+
+            <h2 class="text-2xl md:text-5xl font-bold mb-4 gradient-text">
+                ¡Bienvenido a Mr. Dólar!
+            </h2>
+
+            <p
+                class="text-sm md:text-xl text-muted-foreground mb-6 max-w-lg mx-auto"
+            >
+                Actualmente no tenemos rifas activas, pero estamos preparando
+                nuevas oportunidades para ti. ¡Vuelve pronto!
+            </p>
+
+            <!-- Call to action -->
+            <div class="space-y-4">
+                <button class="btn btn-primary btn-lg animate-pulse-glow">
+                    <lucide-icon name="Bell" class="size-5"></lucide-icon>
+                    Notificarme de Nuevas Rifas
+                </button>
+
+                <p class="text-sm text-muted-foreground">
+                    <lucide-icon
+                        name="Clock"
+                        class="size-4 inline mr-1"
+                    ></lucide-icon>
+                    ¡Vuelve pronto para no perderte nada!
+                </p>
+            </div>
+
+            <!-- Decoración adicional -->
+            <div class="mt-12 flex justify-center space-x-4 opacity-30">
+                <div
+                    class="size-2 bg-primary rounded-full animate-bounce"
+                    style="animation-delay: 0s"
+                ></div>
+                <div
+                    class="size-2 bg-secondary rounded-full animate-bounce"
+                    style="animation-delay: 0.1s"
+                ></div>
+                <div
+                    class="size-2 bg-accent rounded-full animate-bounce"
+                    style="animation-delay: 0.2s"
+                ></div>
+            </div>
+        </div>
+    </section>
+    }
+    <!-- Contenido cuando hay rifa activa -->
+
+    <!-- RIFA PRINCIPAL -->
+    @if (store.mainRaffle(); as raffle) {
+    <section
+        id="current"
+        aria-labelledby="current-raffle-heading"
+        class="animate-slide-down"
+    >
+        <!-- Componente de rifa principal con wrapper mejorado -->
+        <div class="relative">
+            <div
+                class="absolute inset-0 bg-gradient-primary opacity-5 rounded-2xl blur-xl"
+            ></div>
+            <app-current-raffle [raffle]="raffle" class="relative z-10 block" />
+        </div>
+    </section>
+    }
+
+    <!-- RIFAS ANTERIORES -->
+    @if (store.secondaryRaffles().length > 0) { @defer (on viewport) {
+    <section id="previous" aria-labelledby="past-raffles-heading">
+        <div class="flex-between mb-4 md:mb-6">
+            <div>
+                <h2
+                    id="past-raffles-heading"
+                    class="text-xl md:text-2xl lg:text-3xl font-bold text-foreground flex items-center gap-3"
+                >
+                    <lucide-icon
+                        name="History"
+                        class="size-6 text-muted-foreground"
+                    ></lucide-icon>
+                    Rifas Anteriores
+                </h2>
+                <p class="text-muted-foreground mt-1">
+                    Revisa los resultados de rifas pasadas
+                </p>
+            </div>
+
+            <a
+                href="#"
+                class="nav-link text-xs md:text-sm font-medium inline-flex items-center gap-2 px-4 py-2 transition-all"
+            >
+                Ver Todas
+                <lucide-icon name="ArrowRight" class="size-4"></lucide-icon>
+            </a>
+        </div>
+
+        <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+        >
+            @for (raffle of store.secondaryRaffles(); track raffle.slug; let i =
+            $index) {
+            <app-raffle-card
+                [raffle]="raffle"
+                class="animate-fade-in"
+                [style.animation-delay]="(i * 100) + 'ms'"
+            />
+            }
+        </div>
+    </section>
+    } @placeholder {
+    <div class="h-32 md:h-48"></div>
+    } @loading (after 100ms; minimum 500ms) {
+    <div class="text-center h-32 md:h-48 flex-center text-muted-foreground">
+        <div class="space-y-2">
+            <div class="loading-spinner size-6 md:size-8 mx-auto"></div>
+            <p class="text-sm md:text-base">Cargando rifas anteriores...</p>
+        </div>
+    </div>
+    } }
+</div>

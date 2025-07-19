@@ -1,0 +1,14 @@
+<div class="flex min-h-screen flex-col">
+    <app-header class="sticky top-0 z-50" [logoUrl]="logoUrl()" [navLinks]="navLinks()" [user]="user()"
+        (logoutClicked)="logoutClicked.emit()" [theme]="theme()" (themeToggleClicked)="themeToggleClicked.emit()" />
+
+    <main class="flex-grow overflow-y-auto container mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+        <router-outlet />
+    </main>
+
+    <app-footer [companyName]="companyName()" [tagline]="footerTagline()" [description]="footerDescription()"
+        [links]="footerLinks()" [quickLinks]="footerQuickLinks()" [socialLinks]="footerSocialLinks()"
+        [contactInfo]="footerContactInfo()" [logoUrl]="logoUrl()" />
+
+    <app-back-to-top></app-back-to-top>
+</div>

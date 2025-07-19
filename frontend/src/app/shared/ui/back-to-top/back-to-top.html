@@ -1,0 +1,11 @@
+@if (showButton()) {
+<button type="button" (click)="scrollToTop()"
+    class="fixed bottom-6 right-6 z-50 btn btn-primary size-12 rounded-full p-0 shadow-2xl hover:shadow-3xl transition-all duration-moderate animate-bounce-in group"
+    aria-label="Volver arriba">
+
+    <svg class="size-6 group-hover:-translate-y-1 transition-transform duration-moderate" fill="none"
+        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+    </svg>
+</button>
+}

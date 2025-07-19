@@ -1,0 +1,98 @@
+<!-- La estructura 'flex flex-col' es crucial para que la tarjeta pueda estirar su contenido. -->
+<article class="card-elevated group flex flex-col overflow-hidden h-full">
+    <!-- Imagen -->
+    <div class="overflow-hidden">
+        <img
+            [ngSrc]="raffle().image"
+            [alt]="'Imagen de ' + raffle().title"
+            width="600"
+            height="375"
+            priority="true"
+            class="aspect-[16/10] w-full object-cover transition-transform duration-moderate ease-natural group-hover:scale-105"
+        />
+    </div>
+
+    <!-- Contenido de la tarjeta -->
+    <!-- 'flex-1' hace que esta sección crezca y ocupe todo el espacio vertical disponible, empujando el botón hacia abajo. -->
+    <div class="flex flex-1 flex-col p-4">
+        <!-- Título y Fecha -->
+        <div>
+            <h3 class="text-lg font-bold text-foreground truncate">
+                {{ raffle().title }}
+            </h3>
+            <p class="mt-1 text-sm text-muted-foreground">
+                {{ raffle().status_display }}
+                <!-- La fecha ahora se mostrará en español gracias a la configuración global -->
+                @if (raffle().status === 'IN_PROGRESS' || raffle().status ===
+                'FINISHED') {
+                <span>: {{ raffle().end_date | date:'longDate' }}</span>
+                }
+            </p>
+        </div>
+
+        <!-- Sección de Ganadores -->
+        <!-- 'flex-1' aquí también para asegurar que el contenido se expanda -->
+        <div class="mt-4 flex-1 space-y-3">
+            <h4 class="text-sm font-semibold text-foreground">Resultados:</h4>
+
+            @switch (raffle().status) { @case ('FINISHED') { @if
+            (winnerSummary(); as summary) {
+            <div class="flex items-center gap-3">
+                <div class="avatar avatar-md avatar-accent shrink-0">
+                    <span>{{ mainWinnerInitial() }}</span>
+                </div>
+                <div class="text-left">
+                    <p class="truncate font-bold text-primary">
+                        {{ summary.main_winner_name }}
+                    </p>
+                    <p class="text-xs text-muted-foreground">
+                        Ganador de: {{ summary.prize_won }}
+                    </p>
+                </div>
+            </div>
+            @if (summary.other_winners_count > 0) {
+            <p class="pl-12 text-sm text-muted-foreground">
+                + {{ summary.other_winners_count }} otro(s) ganador(es)
+            </p>
+            } } @else {
+            <div
+                class="flex items-center gap-3 rounded-md border border-dashed border-border p-3 text-muted-foreground"
+            >
+                <lucide-icon name="Clock" class="size-5 shrink-0"></lucide-icon>
+                <span class="text-sm">Resultados pendientes.</span>
+            </div>
+            } } @case ('PROCESSING_WINNERS') {
+            <div
+                class="flex items-center gap-3 rounded-md border border-dashed border-border p-3 text-muted-foreground"
+            >
+                <lucide-icon
+                    name="Sparkles"
+                    class="size-5 shrink-0"
+                ></lucide-icon>
+                <span class="text-sm">Eligiendo a los afortunados...</span>
+            </div>
+            } @case ('IN_PROGRESS') {
+            <div class="flex items-center gap-3 p-3 text-green-500">
+                <lucide-icon
+                    name="Hourglass"
+                    class="size-5 shrink-0"
+                ></lucide-icon>
+                <span class="text-sm">¡Aún puedes participar!</span>
+            </div>
+            } }
+        </div>
+
+        <!-- Botón de Acción -->
+        <button class="btn btn-outline-primary btn-md mt-6">
+            <lucide-icon
+                [name]="buttonConfig().icon"
+                class="size-4"
+            ></lucide-icon>
+            <span>{{ buttonConfig().text }}</span>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm md:btn-md mt-6">
+            <lucide-icon name="Search" class="size-4"></lucide-icon>
+            <span>Consultar mis tickets</span>
+        </button>
+    </div>
+</article>

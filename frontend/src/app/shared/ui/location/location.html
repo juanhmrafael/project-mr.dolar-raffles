@@ -1,0 +1,239 @@
+<!-- Header corregido - elementos en columna -->
+<div class="text-center mb-8 md:mb-12">
+    <!-- Badge arriba -->
+    <div class="mb-4">
+        <div class="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm md:text-base font-semibold animate-bounce-in">
+            <lucide-icon name="HandCoins" class="size-4 md:size-5 animate-wiggle"></lucide-icon>
+            Punto de Pago Oficial
+        </div>
+    </div>
+    
+    <!-- Título abajo -->
+    <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight mb-4 gradient-text animate-slide-down">
+        Dos Experiencias, Un Lugar
+    </h1>
+    
+    <p class="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-slide-up">
+        Visítanos en nuestro local <span class="text-primary font-semibold">Mr. Dólar</span> para pagar tu rifa
+        en efectivo de forma segura y disfrutar del auténtico sabor que ya conoces.
+    </p>
+</div>
+
+<!-- Grid principal con altura completa -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 animate-fade-in min-h-[600px]">
+    <!-- Mapa - Altura completa -->
+    <div class="order-2 lg:order-1 flex flex-col">
+        <div class="card-glass p-4 md:p-6 flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg md:text-xl font-bold text-foreground flex items-center gap-2">
+                    <lucide-icon name="MapPin" class="size-5 text-primary animate-pulse"></lucide-icon>
+                    Nuestra Ubicación
+                </h3>
+                <div class="badge badge-accent text-xs">
+                    <lucide-icon name="Navigation" class="size-3 mr-1"></lucide-icon>
+                    GPS Activo
+                </div>
+            </div>
+            
+            <!-- Mapa con altura flexible -->
+            <div class="relative rounded-xl overflow-hidden border-2 border-primary/30 shadow-lg group flex-1 min-h-[400px]">
+                <div class="absolute inset-0 bg-gradient-to-br from-muted/30 to-muted/60 flex-center">
+                    @if (safeMapUrl()) {
+                        <iframe
+                            [src]="safeMapUrl()"
+                            class="absolute inset-0 w-full h-full transition-all duration-moderate group-hover:scale-105"
+                            style="border: 0"
+                            allowfullscreen=""
+                            loading="lazy"
+                            title="Ubicación de {{ locationInfo().name }}"
+                        ></iframe>
+                    } @else {
+                        <div class="w-full h-full flex-center bg-gradient-to-br from-muted/50 to-muted/70">
+                            <div class="text-center animate-float">
+                                <lucide-icon name="MapPin" class="size-16 text-primary/60 mb-3 mx-auto"></lucide-icon>
+                                <p class="text-sm md:text-base text-muted-foreground font-medium">Mapa no disponible</p>
+                                <p class="text-xs text-muted-foreground/70 mt-1">Configura tu ubicación</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Overlay con botón de direcciones -->
+                <div class="absolute bottom-4 right-4 flex gap-2">
+                    <button
+                        (click)="openInGoogleMaps()"
+                        class="btn btn-primary btn-sm animate-pulse-glow"
+                        title="Abrir en Google Maps"
+                    >
+                        <lucide-icon name="Navigation" class="size-3 md:size-4"></lucide-icon>
+                        <span class="hidden sm:inline ml-1">Cómo llegar</span>
+                    </button>
+                </div>
+
+                <!-- Indicador de distancia -->
+                <div class="absolute top-4 left-4">
+                    <div class="bg-card/90 backdrop-blur-sm px-3 py-1 rounded-full border border-border/50">
+                        <span class="text-xs font-medium text-foreground flex items-center gap-1">
+                            <lucide-icon name="Clock" class="size-3 text-primary"></lucide-icon>
+                            A solo minutos de ti
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de información - Altura completa con scroll interno -->
+    <div class="order-1 lg:order-2 flex flex-col">
+        <div class="flex-1 space-y-4 md:space-y-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Información básica -->
+            <div class="card-elevated p-4 md:p-5 hover:shadow-lg transition-all duration-moderate">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-foreground flex items-center gap-2">
+                        <lucide-icon name="Info" class="size-4 text-primary"></lucide-icon>
+                        Información del Local
+                    </h3>
+                    <div class="badge badge-primary text-xs">Verificado</div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                        <lucide-icon name="MapPin" class="size-4 text-secondary mt-0.5 flex-shrink-0"></lucide-icon>
+                        <div>
+                            <span class="text-sm md:text-base text-foreground font-medium block">{{ locationInfo().address }}</span>
+                            <span class="text-xs text-muted-foreground">Dirección principal</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                        <lucide-icon name="Phone" class="size-4 text-accent flex-shrink-0"></lucide-icon>
+                        <div>
+                            <a
+                                [href]="'tel:' + locationInfo().phone"
+                                class="text-sm md:text-base text-primary hover:text-primary/80 transition-colors font-medium block"
+                            >
+                                {{ locationInfo().phone }}
+                            </a>
+                            <span class="text-xs text-muted-foreground">Toca para llamar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horarios -->
+            <div class="card-elevated p-4 md:p-5 hover:shadow-lg transition-all duration-moderate">
+                <h3 class="font-bold text-foreground mb-4 flex items-center gap-2">
+                    <lucide-icon name="Clock" class="size-4 text-primary"></lucide-icon>
+                    Horarios de Atención
+                </h3>
+
+                <div class="space-y-3">
+                    @for (schedule of locationInfo().hours; track schedule.day) {
+                        <div class="flex justify-between items-center p-2 rounded-lg hover:bg-muted/20 transition-colors">
+                            <span class="text-sm text-muted-foreground font-medium">{{ schedule.day }}</span>
+                            <span class="text-sm font-semibold text-foreground bg-primary/10 px-2 py-1 rounded">{{ schedule.time }}</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Pago en efectivo -->
+            <div class="card-elevated p-4 md:p-5 border-l-4 border-l-accent bg-gradient-to-r from-accent/5 to-transparent hover:shadow-lg transition-all duration-moderate">
+                <h3 class="font-bold text-foreground mb-3 flex items-center gap-2">
+                    <lucide-icon name="Banknote" class="size-4 text-accent animate-pulse"></lucide-icon>
+                    Pago en Efectivo
+                </h3>
+                <p class="text-sm md:text-base text-muted-foreground leading-relaxed">
+                    {{ locationInfo().paymentInfo }}
+                </p>
+                <div class="mt-3 flex items-center gap-2 text-xs text-accent">
+                    <lucide-icon name="Shield" class="size-3"></lucide-icon>
+                    <span>Pago 100% seguro y confiable</span>
+                </div>
+            </div>
+
+            <!-- Características del local -->
+            @if (locationInfo().features.length > 0) {
+                <div class="card-elevated p-4 md:p-5 hover:shadow-lg transition-all duration-moderate">
+                    <h3 class="font-bold text-foreground mb-4 flex items-center gap-2">
+                        <lucide-icon name="Star" class="size-4 text-primary"></lucide-icon>
+                        ¿Por qué visitarnos?
+                    </h3>
+
+                    <div class="grid grid-cols-1 gap-3">
+                        @for (feature of locationInfo().features; track feature; let i = $index) {
+                            <div 
+                                class="flex items-center gap-3 p-2 rounded-lg hover:bg-primary/5 transition-all duration-subtle animate-slide-in-right"
+                                [style.animation-delay]="(i * 50) + 'ms'"
+                            >
+                                <div class="size-6 bg-accent/20 rounded-full flex-center flex-shrink-0">
+                                    <lucide-icon name="Check" class="size-3 text-accent"></lucide-icon>
+                                </div>
+                                <span class="text-sm text-muted-foreground">{{ feature }}</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Botones de acción fijos al final -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 pt-4 border-t border-border/50">
+            <button
+                (click)="openInGoogleMaps()"
+                class="btn btn-primary btn-sm md:btn-md w-full animate-pulse-glow"
+            >
+                <lucide-icon name="Navigation" class="size-3 md:size-4"></lucide-icon>
+                <span class="ml-1">Direcciones</span>
+            </button>
+
+            <a
+                [href]="'tel:' + locationInfo().phone"
+                class="btn btn-outline-primary btn-sm md:btn-md w-full"
+            >
+                <lucide-icon name="Phone" class="size-3 md:size-4"></lucide-icon>
+                <span class="ml-1">Llamar</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Call to action promocional -->
+<div class="mt-8 md:mt-12 card-pattern p-6 md:p-8 text-center relative overflow-hidden animate-slide-up">
+    <div class="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-accent/5 opacity-50"></div>
+    
+    <div class="relative z-10">
+        <div class="flex justify-center mb-4">
+            <div class="flex items-center gap-2 bg-gradient-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-bold">
+                <lucide-icon name="Utensils" class="size-4"></lucide-icon>
+                <lucide-icon name="Ticket" class="size-4"></lucide-icon>
+                Combo Perfecto
+            </div>
+        </div>
+        
+        <h2 class="text-xl md:text-2xl lg:text-3xl font-bold mb-3 gradient-text">
+            Mientras Pagas, Sacia tu Apetito
+        </h2>
+        
+        <p class="text-sm md:text-base text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
+            Nuestras famosas <span class="text-primary font-semibold">arepas de 4 ingredientes</span> y 
+            <span class="text-secondary font-semibold">almuerzos ejecutivos</span> te esperan. 
+            ¡Haz que tu visita valga el doble!
+        </p>
+        
+        <div class="flex flex-wrap justify-center gap-2 mb-4">
+            <span class="badge badge-primary animate-bounce" style="animation-delay: 0s;">
+                <lucide-icon name="Ticket" class="size-3 mr-1"></lucide-icon>
+                Rifas Emocionantes
+            </span>
+            <span class="badge badge-secondary animate-bounce" style="animation-delay: 0.1s;">
+                <lucide-icon name="Utensils" class="size-3 mr-1"></lucide-icon>
+                Comida Deliciosa
+            </span>
+            <span class="badge badge-accent animate-bounce" style="animation-delay: 0.2s;">
+                <lucide-icon name="Heart" class="size-3 mr-1"></lucide-icon>
+                Ambiente Familiar
+            </span>
+        </div>
+    </div>
+</div>

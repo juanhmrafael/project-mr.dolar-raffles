@@ -1,0 +1,14 @@
+button {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+button:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 8px 0 hsl(0 0% 0%), 0 12px 24px hsl(0 0% 0% / 0.4), 0 0 15px hsl(var(--primary) / 0.5);
+}
+
+button:active {
+    transform: translateY(-1px) scale(1);
+    box-shadow: 0 4px 0 hsl(0 0% 0%), 0 6px 12px hsl(0 0% 0% / 0.3);
+}

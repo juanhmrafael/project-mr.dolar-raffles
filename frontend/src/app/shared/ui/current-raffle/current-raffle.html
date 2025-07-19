@@ -1,0 +1,146 @@
+<div class="grid grid-cols-1 gap-8 xl:grid-cols-2 xl:gap-12">
+    <!-- Columna de la Imagen -->
+    <div class="flex-center animate-float">
+        <div>
+            <!-- Header de la sección principal -->
+            <div class="text-center mb-8">
+                <div
+                    class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4"
+                >
+                    <lucide-icon
+                        name="Zap"
+                        class="size-4 animate-pulse"
+                    ></lucide-icon>
+                    Rifa Activa
+                </div>
+                <h1
+                    id="current-raffle-heading"
+                    class="text-2xl md:text-3xl font-bold gradient-text mb-2"
+                >
+                    ¡Aún tienes oportunidad de ganar!
+                </h1>
+                <img
+                    [ngSrc]="raffle().image"
+                    [alt]="'Imagen de ' + raffle().title"
+                    width="800"
+                    height="600"
+                    priority="true"
+                    class="rounded-2xl shadow-2xl aspect-4/3 w-full object-cover drop-shadow-lg"
+                />
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna de Detalles -->
+    <div class="flex flex-col justify-center text-center">
+        <h2
+            class="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl lg:text-6xl"
+        >
+            {{ raffle().title }}
+        </h2>
+
+        <!-- ✅ CORRECCIÓN FINAL: Se eliminó 'max-w-2xl' para permitir que el texto fluya correctamente. -->
+        <p class="mt-4 text-xl text-muted-foreground">
+            {{ raffle().promotional_message }}
+        </p>
+
+        <!-- Sección de Premios -->
+        <div class="my-8 space-y-6">
+            <!-- ... (el resto del código de premios se mantiene igual) ... -->
+            @if (mainPrize(); as prize) {
+            <div class="animate-fade-in">
+                <p
+                    class="flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-muted-foreground"
+                >
+                    <lucide-icon
+                        name="Trophy"
+                        class="size-4 text-gold-500"
+                    ></lucide-icon>
+                    <span>{{ prize.level_title }}</span>
+                </p>
+                <p class="text-5xl sm:text-7xl font-black gradient-text">
+                    {{ prize.name }}
+                </p>
+            </div>
+            } @if (otherPrizes().length > 0) {
+            <div class="space-y-3 animate-fade-in">
+                <h3
+                    class="text-base font-bold tracking-wider text-muted-foreground"
+                >
+                    Otros Premios
+                </h3>
+                <div class="grid gap-3 sm:grid-cols-2">
+                    @for (prize of otherPrizes(); track prize.name) {
+                    <div
+                        class="flex items-center gap-3 rounded-lg border border-border bg-card/50 p-3 shadow-sm transition-all hover:border-primary/50 hover:shadow-md"
+                    >
+                        <lucide-icon
+                            name="Award"
+                            class="size-6 shrink-0 text-primary"
+                        ></lucide-icon>
+                        <div class="text-left">
+                            <p class="font-semibold text-foreground">
+                                {{ prize.level_title }}
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ prize.name }}
+                            </p>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- ... (el resto del componente: contador, barra de progreso, botón) ... -->
+        @if (timeLeft(); as time) {
+        <div class="flex justify-center gap-4 sm:gap-6 my-6">
+            @for (unit of timeUnits; track unit.key) {
+            <div
+                class="flex flex-col items-center rounded-md bg-muted/50 p-2 text-center w-16"
+            >
+                <span class="text-3xl font-bold text-primary"
+                    >{{ time[unit.key] | number:'2.0-0' }}</span
+                >
+                <span class="text-xs text-muted-foreground"
+                    >{{ unit.label }}</span
+                >
+            </div>
+            }
+        </div>
+        }
+        <!-- Barra de Progreso -->
+        <div class="space-y-2 my-6">
+            <div class="flex-between text-sm">
+                <span class="text-muted-foreground">Boletos vendidos</span>
+                <!-- ✅ USA LA SEÑAL COMPUTADA AQUÍ -->
+                <span class="font-bold text-foreground"
+                    >{{ progressPercentage() }}%</span
+                >
+            </div>
+            <div
+                class="w-full bg-muted rounded-full h-3 overflow-hidden border border-border/50"
+            >
+                <!-- ✅ Y USA LA MISMA SEÑAL COMPUTADA AQUÍ -->
+                <div
+                    class="h-full bg-primary/40 transition-all duration-slow ease-smooth rounded-full"
+                    [style.width.%]="progressPercentage()"
+                ></div>
+            </div>
+        </div>
+        <div
+            class="mt-8 flex w-full flex-col-reverse gap-4 sm:w-auto sm:flex-row sm:justify-center xl:justify-end"
+        >
+            <button class="btn btn-secondary btn-md">
+                <lucide-icon name="Search" class="size-5"></lucide-icon>
+                <span>Consultar mis tickets</span>
+            </button>
+
+            <button class="btn btn-primary btn-md animate-pulse-glow">
+                <lucide-icon name="Ticket" class="size-5"></lucide-icon>
+                <span>¡Participar Ahora!</span>
+            </button>
+        </div>
+    </div>
+</div>
