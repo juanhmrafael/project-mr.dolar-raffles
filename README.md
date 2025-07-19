@@ -122,7 +122,7 @@ Este comando construye las imágenes finales y optimizadas que se ejecutarán en
 # Propósito: Construye TODAS las imágenes definidas en el docker-compose.yml.
 # Docker Compose es lo suficientemente inteligente para entender las dependencias de construcción.
 # Construirá 'backend' y 'frontend' primero, y luego 'nginx' que depende de la imagen del frontend.
-docker-compose build
+docker compose build
 ```
 
 **Análisis del Proceso:**
@@ -139,7 +139,7 @@ Una vez que las imágenes están construidas, este comando las pone en marcha.
 # Propósito: Inicia o actualiza la pila de producción en segundo plano.
 # -d (detached): Esencial para producción. Ejecuta los contenedores en segundo plano.
 # --remove-orphans: Si ha renombrado o eliminado un servicio, este flag limpia los contenedores antiguos.
-docker-compose up -d --remove-orphans
+docker compose up -d --remove-orphans
 ```
 
 **Análisis del Proceso:**
@@ -157,7 +157,7 @@ Este comando detiene la aplicación de forma segura.
 
 ```bash
 # Propósito: Detiene y elimina los contenedores, pero preserva los volúmenes de datos críticos.
-docker-compose down
+docker compose down
 ```
 
 ### 2.4. Reseteo Completo del Entorno (Operación de Alto Riesgo)
@@ -166,7 +166,7 @@ docker-compose down
 
 ```bash
 # --volumes: Instruye a 'down' para eliminar también los volúmenes de datos asociados.
-docker-compose down --volumes
+docker compose down --volumes
 ```
 
 ---
@@ -177,19 +177,19 @@ docker-compose down --volumes
 
 | Propósito y Cuándo Usarlo                               | Comando                                                            |
 | :------------------------------------------------------ | :----------------------------------------------------------------- |
-| **Aplicar cambios a la estructura de la DB**            | `docker-compose exec backend python manage.py migrate`             |
-| **Crear un superusuario para el admin de Django**       | `docker-compose exec backend python manage.py createsuperuser`     |
-| **Acceder a un shell interactivo dentro del backend**   | `docker-compose exec backend /bin/sh`                              |
-| **Acceder a la consola de la base de datos (psql)**     | `docker-compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB`    |
+| **Aplicar cambios a la estructura de la DB**            | `docker compose exec backend python manage.py migrate`             |
+| **Crear un superusuario para el admin de Django**       | `docker compose exec backend python manage.py createsuperuser`     |
+| **Acceder a un shell interactivo dentro del backend**   | `docker compose exec backend /bin/sh`                              |
+| **Acceder a la consola de la base de datos (psql)**     | `docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB`    |
 
 ### 3.2. Comandos Útiles de Docker para la Gestión del Entorno
 
 | Propósito y Cuándo Usarlo                               | Comando                                                            |
 | :------------------------------------------------------ | :----------------------------------------------------------------- |
-| **Ver el estado de todos los contenedores en ejecución**| `docker-compose ps`                                                |
-| **Ver los logs de todos los servicios en tiempo real**  | `docker-compose logs -f`                                           |
-| **Ver los logs de un servicio específico (ej. backend)**| `docker-compose logs -f backend`                                   |
-| **Forzar la reconstrucción de una imagen específica**   | `docker-compose build --no-cache backend`                          |
+| **Ver el estado de todos los contenedores en ejecución**| `docker compose ps`                                                |
+| **Ver los logs de todos los servicios en tiempo real**  | `docker compose logs -f`                                           |
+| **Ver los logs de un servicio específico (ej. backend)**| `docker compose logs -f backend`                                   |
+| **Forzar la reconstrucción de una imagen específica**   | `docker compose build --no-cache backend`                          |
 | **Ver todas las imágenes de Docker en el sistema**      | `docker image ls`                                                  |
 | **Ver todos los volúmenes de datos gestionados**        | `docker volume ls`                                                 |
 | **Limpieza profunda del sistema (¡Destructivo!)**       | `docker system prune -a --volumes`                                 |

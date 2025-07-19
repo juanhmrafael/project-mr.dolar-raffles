@@ -73,7 +73,13 @@ elif [ "$role" = "worker" ]; then
     # El comando de Celery se pasa a través de "$@".
     echo "Entrypoint: Entregando control al trabajador de Celery..."
     exec su-exec appuser "$@"
-
+# --- Lógica para el Rol 'beat' ---
+elif [ "$role" = "beat" ]; then
+    echo "Entrypoint: Rol 'beat' detectado. Iniciando planificador de Celery..."
+    # Eliminación segura del archivo pid para prevenir errores al reiniciar.
+    rm -f /home/appuser/app/celerybeat.pid
+    echo "Entrypoint: Entregando control a Celery Beat..."
+    exec su-exec appuser "$@"
 else
     echo "Error: Rol desconocido '$role'. Use 'web' o 'worker'."
     exit 1
