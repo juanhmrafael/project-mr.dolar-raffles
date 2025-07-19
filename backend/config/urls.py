@@ -14,8 +14,8 @@ from auditing.sites import audit_admin_site
 # Las URLs que deben ser traducidas (casi todas las que ve el usuario)
 # Por ahora, solo el admin.
 urlpatterns = i18n_patterns(
-    path("admin/", admin.site.urls),
-    path("audit-admin/", audit_admin_site.urls),
+    path("admin-mr.dolar-ganaconsandra/", admin.site.urls),
+    path("audit-admin-mr.dolar-ganaconsandra/", audit_admin_site.urls),
     prefix_default_language=False,
 )
 
