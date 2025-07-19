@@ -12,8 +12,8 @@
 !.env.dev.example
 .devcontainer
 .gitignore
-nginx/certs/
-
+nginx/certs/cert.pem
+nginx/certs/key.pem
 # --- Archivos de Base de Datos ---
 # Nunca subas la base de datos de desarrollo local.
 db.sqlite3
