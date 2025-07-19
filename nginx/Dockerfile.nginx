@@ -26,6 +26,11 @@ RUN apk add --no-cache nginx
 # Propósito: Copiar los artefactos del frontend desde la etapa de construcción anterior.
 COPY --from=frontend-builder /app/dist/frontend/browser /usr/share/nginx/html
 
+
+# Copia nuestro archivo de configuración principal, SOBREESCRIBIENDO
+# el archivo por defecto de Alpine. Esto nos da control total.
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
 # Propósito: Copiar la configuración de Nginx directamente a su destino final.
 # Al ser una configuración estática, no se necesita un paso intermedio de "plantillas".
 # Esto elimina la necesidad de 'gettext' y 'envsubst', haciendo la imagen más pequeña y segura.
