@@ -21,11 +21,6 @@
 
             <!-- Call to action -->
             <div class="space-y-4">
-                <button class="btn btn-primary btn-lg animate-pulse-glow">
-                    <lucide-icon name="Bell" class="size-5"></lucide-icon>
-                    Notificarme de Nuevas Rifas
-                </button>
-
                 <p class="text-sm text-muted-foreground">
                     <lucide-icon
                         name="Clock"
@@ -67,7 +62,11 @@
             <div
                 class="absolute inset-0 bg-gradient-primary opacity-5 rounded-2xl blur-xl"
             ></div>
-            <app-current-raffle [raffle]="raffle" class="relative z-10 block" />
+            <app-current-raffle
+                [raffle]="raffle"
+                (lookupTicketsClicked)="openTicketLookupModal($event)"
+                class="relative z-10 block"
+            />
         </div>
     </section>
     }
@@ -108,6 +107,7 @@
             $index) {
             <app-raffle-card
                 [raffle]="raffle"
+                (lookupTicketsClicked)="openTicketLookupModal($event)"
                 class="animate-fade-in"
                 [style.animation-delay]="(i * 100) + 'ms'"
             />
@@ -125,3 +125,10 @@
     </div>
     } }
 </div>
+
+@if (selectedRaffleIdForLookup(); as raffleId) {
+    <app-ticket-lookup-modal
+        [(isOpen)]="isLookupModalOpen"
+        [raffleId]="raffleId"
+    />
+}

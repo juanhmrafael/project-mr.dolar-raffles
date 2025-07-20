@@ -19,8 +19,7 @@ import { User } from '../../shared/models/user.types';
 @Injectable({
     providedIn: 'root',
 })
-export class LayoutConfig {
-    public readonly currentUser = signal<User | undefined>(undefined);
+export class LayoutStore {
     private readonly document = inject(DOCUMENT);
     private readonly platformId = inject(PLATFORM_ID);
 
@@ -35,8 +34,11 @@ export class LayoutConfig {
     public readonly theme = signal<Theme>('light');
 
     public readonly footerLinks = signal<FooterLink[]>([
-        { path: '/privacidad', label: 'Privacidad' },
-        { path: '/terminos', label: 'Términos' },
+        {
+            path: '#',
+            label: 'Términos y Condiciones',
+            action: 'openTermsModal',
+        },
     ]);
 
     public readonly mainNavLinks = signal<NavLink[]>([
@@ -50,15 +52,21 @@ export class LayoutConfig {
     ]);
 
     public readonly footerSocialLinks = signal<SocialLink[]>([
-        { platform: 'facebook', url: '#' },
-        { platform: 'instagram', url: '#' },
-        { platform: 'twitter', url: '#' },
-        { platform: 'whatsapp', url: '#' },
+        // { platform: 'facebook', url: '#' },
+        {
+            platform: 'instagram',
+            url: 'https://www.instagram.com/misterdolar1?igsh=b3BwOGN0czc5dW16',
+        },
+        // { platform: 'twitter', url: '#' },
+        { platform: 'whatsapp', url: 'https://wa.me/584244199668' },
+        {
+            platform: 'tiktok',
+            url: 'https://www.tiktok.com/@misterdolar1valencia?_t=ZM-8yBeKDIXFLy&_r=1',
+        },
     ]);
 
     public readonly footerContactInfo = signal<ContactInfo>({
         phone: '(0424) 419-9668',
-        email: 'info@mrdolar.com',
         address:
             'Entre Manrique y Cantaura, Calle Boyaca, Casa 94 21 Toldo Amarillo, Valencia 2001, Carabobo',
         hours: [
@@ -105,10 +113,5 @@ export class LayoutConfig {
         return window.matchMedia('(prefers-color-scheme: dark)').matches
             ? 'dark'
             : 'light';
-    }
-
-    public logout(): void {
-        console.log('Ejecutando lógica de logout centralizada...');
-        this.currentUser.set(undefined);
     }
 }

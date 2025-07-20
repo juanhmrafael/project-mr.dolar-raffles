@@ -7,8 +7,9 @@ export interface NavLink {
 export type Theme = 'light' | 'dark';
 
 export interface FooterLink {
-    path: string
-    label: string
+    path: string;
+    label: string;
+    action?: 'openTermsModal';
 }
 
 export interface SocialLink {

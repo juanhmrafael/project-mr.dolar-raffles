@@ -1,4 +1,9 @@
-import { Component, input, ChangeDetectionStrategy } from '@angular/core';
+import {
+    Component,
+    input,
+    output,
+    ChangeDetectionStrategy,
+} from '@angular/core';
 import {
     ContactInfo,
     FooterLink,
@@ -15,6 +20,7 @@ import { LucideAngularModule } from 'lucide-angular';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Footer {
+    public readonly termsClicked = output<void>();
     public readonly companyName = input.required<string>();
     public readonly tagline = input.required<string>();
     public readonly links = input<NavLink[]>();

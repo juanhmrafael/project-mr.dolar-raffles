@@ -2,6 +2,7 @@ import {
     Component,
     computed,
     input,
+    output,
     ChangeDetectionStrategy,
 } from '@angular/core';
 import { SecondaryRaffle } from '../../models/raffle';
@@ -18,7 +19,11 @@ type IconName = 'Ticket' | 'Eye' | 'Trophy';
 })
 export class RaffleCard {
     public readonly raffle = input.required<SecondaryRaffle>();
+    protected readonly lookupTicketsClicked = output<number>();
 
+    protected onLookupClick(): void {
+        this.lookupTicketsClicked.emit(this.raffle().id);
+    }
     // La lógica ahora deriva directamente del 'winner_summary'
     public readonly winnerSummary = computed(
         () => this.raffle().winner_summary

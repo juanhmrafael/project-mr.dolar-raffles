@@ -1,0 +1,780 @@
+<!-- 
+  Componente mejorado con enfoque en seguridad y UX intuitiva
+  Sistema de diseño MR. DÓLAR con explicaciones claras de seguridad
+-->
+<app-modal
+    [(isOpen)]="isOpen"
+    title="🔐 Consulta Segura de Tickets"
+    size="xl"
+    [closeOnBackdrop]="viewStatus() !== 'loading'"
+    [closeOnEscape]="viewStatus() !== 'loading'"
+    class="animate-fade-in"
+>
+    <!-- Contenido Principal del Modal -->
+    <div class="flex flex-col min-h-[500px]">
+        @switch (viewStatus()) {
+
+        <!-- Estado 1: Formulario de Consulta -->
+        @case ('form') {
+        <div class="animate-slide-down">
+            <!-- Header con explicación de seguridad -->
+            <div class="text-center mb-8">
+                <div
+                    class="relative inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-primary mb-4 animate-float"
+                >
+                    <lucide-icon
+                        name="Shield"
+                        class="h-10 w-10 text-primary-foreground"
+                    ></lucide-icon>
+                    <div
+                        class="absolute -top-1 -right-1 w-6 h-6 bg-gradient-accent rounded-full flex items-center justify-center animate-pulse"
+                    >
+                        <lucide-icon
+                            name="Check"
+                            class="h-3 w-3 text-accent-foreground"
+                        ></lucide-icon>
+                    </div>
+                </div>
+                <h3
+                    class="text-2xl font-bold text-foreground mb-3 gradient-text"
+                >
+                    Consulta Segura de Tickets
+                </h3>
+                <p
+                    class="text-muted-foreground max-w-lg mx-auto leading-relaxed"
+                >
+                    Por tu seguridad y la nuestra, necesitamos verificar
+                    <span class="font-semibold text-primary"
+                        >3 datos personales</span
+                    >
+                    que solo tú conoces para proteger tu información privada.
+                </p>
+            </div>
+
+            <!-- Alerta de seguridad -->
+            <div
+                class="bg-gradient-to-r from-primary/10 via-accent/5 to-primary/10 border-2 border-primary/20 rounded-xl p-5 mb-8 relative overflow-hidden"
+            >
+                <div
+                    class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-16 translate-x-16"
+                ></div>
+                <div class="relative">
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center"
+                        >
+                            <lucide-icon
+                                name="ShieldCheck"
+                                class="h-6 w-6 text-primary-foreground"
+                            ></lucide-icon>
+                        </div>
+                        <div class="flex-1">
+                            <h4
+                                class="font-bold text-foreground mb-2 flex items-center gap-2"
+                            >
+                                🛡️ ¿Por qué pedimos 3 datos?
+                            </h4>
+                            <p
+                                class="text-sm text-muted-foreground mb-3 leading-relaxed"
+                            >
+                                Esto evita que alguien más pueda acceder a tu
+                                información con solo adivinar un dato. Los 3
+                                datos deben coincidir exactamente para
+                                garantizar que eres tú.
+                            </p>
+                            <div
+                                class="flex items-center gap-2 text-xs text-accent font-medium"
+                            >
+                                <lucide-icon
+                                    name="Lock"
+                                    class="h-3 w-3"
+                                ></lucide-icon>
+                                <span
+                                    >Protección de datos personales
+                                    garantizada</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form
+                [formGroup]="lookupForm"
+                (ngSubmit)="onSubmit()"
+                novalidate
+                class="space-y-6"
+            >
+                <!-- Campo Cédula -->
+                <div class="space-y-3">
+                    <label
+                        for="id_number"
+                        class="flex items-center gap-3 text-sm font-semibold text-foreground"
+                    >
+                        <div
+                            class="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xs"
+                        >
+                            1
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon
+                                name="CreditCard"
+                                class="h-4 w-4 text-primary"
+                            ></lucide-icon>
+                            Cédula de Identidad
+                        </div>
+                    </label>
+                    <div class="relative group">
+                        <input
+                            type="text"
+                            id="id_number"
+                            formControlName="identification_number"
+                            class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all duration-moderate font-mono text-lg group-hover:border-primary/50"
+                            placeholder="V-12345678"
+                            [inputMask]="InputMasks['venezuelanId']"
+                        />
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-4"
+                        >
+                            <div
+                                class="w-6 h-6 bg-muted rounded-full flex items-center justify-center"
+                            >
+                                <lucide-icon
+                                    name="User"
+                                    class="h-4 w-4 text-muted-foreground"
+                                ></lucide-icon>
+                            </div>
+                        </div>
+                    </div>
+                    @if (lookupForm.get('identification_number')?.touched &&
+                    lookupForm.get('identification_number')?.errors) {
+                    <div
+                        class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
+                    >
+                        <lucide-icon
+                            name="AlertTriangle"
+                            class="h-4 w-4 flex-shrink-0"
+                        ></lucide-icon>
+                        <span
+                            >Formato inválido. Debe ser como:
+                            <strong>V-12345678</strong></span
+                        >
+                    </div>
+                    }
+                </div>
+
+                <!-- Campo Teléfono -->
+                <div class="space-y-3">
+                    <label
+                        for="phone"
+                        class="flex items-center gap-3 text-sm font-semibold text-foreground"
+                    >
+                        <div
+                            class="w-8 h-8 bg-gradient-secondary rounded-full flex items-center justify-center text-secondary-foreground font-bold text-xs"
+                        >
+                            2
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon
+                                name="Phone"
+                                class="h-4 w-4 text-secondary"
+                            ></lucide-icon>
+                            Número de Teléfono
+                        </div>
+                    </label>
+                    <div class="relative group">
+                        <input
+                            type="tel"
+                            id="phone"
+                            formControlName="phone"
+                            class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-secondary focus:ring-4 focus:ring-secondary/10 focus:outline-none transition-all duration-moderate text-lg group-hover:border-secondary/50"
+                            placeholder="(0412) 123-4567"
+                            [inputMask]="InputMasks['venezuelanPhone']"
+                        />
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-4"
+                        >
+                            <div
+                                class="w-6 h-6 bg-muted rounded-full flex items-center justify-center"
+                            >
+                                <lucide-icon
+                                    name="Smartphone"
+                                    class="h-4 w-4 text-muted-foreground"
+                                ></lucide-icon>
+                            </div>
+                        </div>
+                    </div>
+                    @if (lookupForm.get('phone')?.touched &&
+                    lookupForm.get('phone')?.errors) {
+                    <div
+                        class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
+                    >
+                        <lucide-icon
+                            name="AlertTriangle"
+                            class="h-4 w-4 flex-shrink-0"
+                        ></lucide-icon>
+                        <span
+                            >El número de teléfono es obligatorio para la
+                            verificación</span
+                        >
+                    </div>
+                    }
+                </div>
+
+                <!-- Campo Correo -->
+                <div class="space-y-3">
+                    <label
+                        for="email"
+                        class="flex items-center gap-3 text-sm font-semibold text-foreground"
+                    >
+                        <div
+                            class="w-8 h-8 bg-gradient-accent rounded-full flex items-center justify-center text-accent-foreground font-bold text-xs"
+                        >
+                            3
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <lucide-icon
+                                name="Mail"
+                                class="h-4 w-4 text-accent"
+                            ></lucide-icon>
+                            Correo Electrónico
+                        </div>
+                    </label>
+                    <div class="relative group">
+                        <input
+                            type="text"
+                            id="email"
+                            formControlName="email"
+                            class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-accent focus:ring-4 focus:ring-accent/10 focus:outline-none transition-all duration-moderate text-lg group-hover:border-accent/50"
+                            placeholder="tu@correo.com"
+                            [inputMask]="InputMasks['email']"
+                        />
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-4"
+                        >
+                            <div
+                                class="w-6 h-6 bg-muted rounded-full flex items-center justify-center"
+                            >
+                                <lucide-icon
+                                    name="AtSign"
+                                    class="h-4 w-4 text-muted-foreground"
+                                ></lucide-icon>
+                            </div>
+                        </div>
+                    </div>
+                    @if (lookupForm.get('email')?.touched &&
+                    lookupForm.get('email')?.errors) {
+                    <div
+                        class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
+                    >
+                        <lucide-icon
+                            name="AlertTriangle"
+                            class="h-4 w-4 flex-shrink-0"
+                        ></lucide-icon>
+                        <span>Ingresa un correo electrónico válido</span>
+                    </div>
+                    }
+                </div>
+
+                <!-- Información de contacto y soporte -->
+                <div
+                    class="bg-gradient-to-br from-info/5 to-accent/5 border border-info/20 rounded-xl p-5"
+                >
+                    <div class="flex items-start gap-4">
+                        <div
+                            class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-info to-accent rounded-full flex items-center justify-center"
+                        >
+                            <lucide-icon
+                                name="MessageCircle"
+                                class="h-5 w-5 text-white"
+                            ></lucide-icon>
+                        </div>
+                        <div class="flex-1">
+                            <h5
+                                class="font-bold text-foreground mb-2 flex items-center gap-2"
+                            >
+                                💬 ¿Necesitas ayuda?
+                            </h5>
+                            <p
+                                class="text-sm text-muted-foreground mb-3 leading-relaxed"
+                            >
+                                Si no recuerdas algún dato o tienes problemas,
+                                contáctanos a través de nuestras
+                                <span class="font-semibold text-info"
+                                    >redes sociales</span
+                                >
+                                que encuentras en la parte inferior de nuestra
+                                página.
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <div
+                                    class="inline-flex items-center gap-1 bg-info/10 text-info text-xs px-2 py-1 rounded-full"
+                                >
+                                    <span>Instagram</span>
+                                </div>
+                                <div
+                                    class="inline-flex items-center gap-1 bg-info/10 text-info text-xs px-2 py-1 rounded-full"
+                                >
+                                    <span>WhatsApp</span>
+                                </div>
+                                <div
+                                    class="inline-flex items-center gap-1 bg-info/10 text-info text-xs px-2 py-1 rounded-full"
+                                >
+                                    <span>Tiktok</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        }
+
+        <!-- Estado 2: Cargando -->
+        @case ('loading') {
+        <div
+            class="flex flex-col items-center justify-center py-20 animate-fade-in"
+        >
+            <div class="relative mb-8">
+                <!-- Círculo principal -->
+                <div
+                    class="w-20 h-20 border-4 border-muted border-t-primary rounded-full animate-spin"
+                ></div>
+                <!-- Círculo interno -->
+                <div
+                    class="absolute inset-2 w-16 h-16 border-4 border-muted border-b-accent rounded-full animate-spin"
+                    style="
+                        animation-direction: reverse;
+                        animation-duration: 1.5s;
+                    "
+                ></div>
+                <!-- Icono central -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <lucide-icon
+                        name="Shield"
+                        class="h-8 w-8 text-primary animate-pulse"
+                    ></lucide-icon>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-foreground mb-3">
+                Verificando tu identidad...
+            </h3>
+            <p
+                class="text-muted-foreground text-center max-w-md mb-6 leading-relaxed"
+            >
+                Estamos validando de forma segura los 3 datos proporcionados
+                para encontrar todos tus tickets registrados.
+            </p>
+
+            <!-- Pasos de verificación -->
+            <div class="flex items-center gap-4 text-sm">
+                <div class="flex items-center gap-2 text-primary">
+                    <div
+                        class="w-6 h-6 bg-primary rounded-full flex items-center justify-center"
+                    >
+                        <lucide-icon
+                            name="Check"
+                            class="h-3 w-3 text-primary-foreground"
+                        ></lucide-icon>
+                    </div>
+                    <span>Datos recibidos</span>
+                </div>
+                <div class="w-8 h-0.5 bg-primary/30 relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-primary animate-pulse"
+                    ></div>
+                </div>
+                <div class="flex items-center gap-2 text-muted-foreground">
+                    <div
+                        class="w-6 h-6 border-2 border-muted rounded-full flex items-center justify-center"
+                    >
+                        <div
+                            class="w-2 h-2 bg-primary rounded-full animate-bounce"
+                        ></div>
+                    </div>
+                    <span>Verificando...</span>
+                </div>
+            </div>
+        </div>
+        }
+
+        <!-- Estado 3: Éxito -->
+        @case ('success') {
+        <div class="animate-bounce-in">
+            @if(lookupResult(); as participations) {
+            <!-- Header de éxito con celebración -->
+            <div class="text-center mb-8 relative">
+                <div
+                    class="absolute inset-0 flex items-center justify-center opacity-20"
+                >
+                    <div
+                        class="w-32 h-32 bg-gradient-accent rounded-full animate-pulse"
+                    ></div>
+                </div>
+                <div
+                    class="relative inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-accent mb-4 animate-float"
+                >
+                    <lucide-icon
+                        name="PartyPopper"
+                        class="h-12 w-12 text-accent-foreground"
+                    ></lucide-icon>
+                    <div
+                        class="absolute -top-2 -right-2 w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center animate-bounce"
+                    >
+                        <lucide-icon
+                            name="Check"
+                            class="h-4 w-4 text-primary-foreground"
+                        ></lucide-icon>
+                    </div>
+                </div>
+                <h3 class="text-3xl font-bold text-foreground mb-3">
+                    ¡Verificación Exitosa! 🎉
+                </h3>
+                <p class="text-lg text-muted-foreground mb-2">
+                    Hola
+                    <span class="font-bold text-primary text-xl"
+                        >{{ participations[0].identification_number }}</span
+                    >
+                </p>
+                <p class="text-muted-foreground">
+                    Tus datos han sido verificados correctamente. Aquí están
+                    todos tus tickets.
+                </p>
+            </div>
+            @for (participation of participations; track
+            participation.created_at) {
+            <!-- Tarjeta de información del participante -->
+            <div
+                class="bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/5 border-2 border-primary/20 rounded-2xl p-8 mb-8 relative overflow-hidden"
+            >
+                <!-- Decoración de fondo -->
+                <div
+                    class="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -translate-y-20 translate-x-20"
+                ></div>
+                <div
+                    class="absolute bottom-0 left-0 w-32 h-32 bg-accent/5 rounded-full translate-y-16 -translate-x-16"
+                ></div>
+
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-6">
+                        <h4
+                            class="text-xl font-bold text-foreground flex items-center gap-3"
+                        >
+                            <lucide-icon
+                                name="Calendar"
+                                class="h-5 w-5 text-info"
+                            ></lucide-icon>
+                            <span
+                                >Lote del {{ participation.created_at |
+                                date:'longDate' }}</span
+                            >
+                        </h4>
+                        <div
+                            class="bg-gradient-primary text-primary-foreground px-4 py-2 rounded-full font-bold text-lg shadow-lg"
+                        >
+                            {{ participation.ticket_count }} Tickets
+                        </div>
+                    </div>
+
+                    <!-- Grid de tickets mejorado -->
+                    <div
+                        class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-6"
+                    >
+                        @for (ticket of participation.tickets; track
+                        ticket.ticket_number) {
+                        <div class="group relative">
+                            <div
+                                class="bg-gradient-primary text-primary-foreground rounded-xl p-4 text-center border-3 border-black shadow-[0_6px_0_#000] transition-all duration-moderate hover:shadow-[0_8px_0_#000] hover:-translate-y-2 animate-ticket-shine cursor-pointer"
+                            >
+                                <div class="font-mono text-xl font-black mb-1">
+                                    {{ ticket.ticket_number |
+                                    padStart:participation.ticket_number_digits
+                                    }}
+                                </div>
+                                <div class="text-xs opacity-80 font-medium">
+                                    TICKET
+                                </div>
+                            </div>
+                            <!-- Tooltip mejorado -->
+                            <div
+                                class="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-foreground text-background text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-lg"
+                            >
+                                <div class="font-bold">
+                                    Ticket #{{ ticket.ticket_number }}
+                                </div>
+                                <div
+                                    class="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-foreground"
+                                ></div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Información adicional -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div
+                            [ngClass]="getPaymentStatusContainerClasses(participation.payment_status.code)"
+                        >
+                            <div class="flex items-center gap-3 mb-3">
+                                <lucide-icon
+                                    name="Activity"
+                                    class="h-5 w-5 text-muted-foreground"
+                                ></lucide-icon>
+                                <span class="font-semibold text-foreground"
+                                    >Estado del Pago</span
+                                >
+                            </div>
+                            <div
+                                [ngClass]="getPaymentStatusBadgeClasses(participation.payment_status.code)"
+                            >
+                                <lucide-icon
+                                    [name]="getPaymentStatusIcon(participation.payment_status.code)"
+                                    class="h-4 w-4"
+                                ></lucide-icon>
+                                <span
+                                    >{{ participation.payment_status.display
+                                    }}</span
+                                >
+                            </div>
+                        </div>
+                        <div
+                            class="bg-card/50 border border-border rounded-xl p-4"
+                        >
+                            <div class="flex items-center gap-3 mb-2">
+                                <lucide-icon
+                                    name="Calendar"
+                                    class="h-5 w-5 text-info"
+                                ></lucide-icon>
+                                <span class="font-semibold text-foreground"
+                                    >Participación</span
+                                >
+                            </div>
+                            <div class="text-sm text-muted-foreground">
+                                Registrado correctamente
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            }
+            <!-- Mensaje de buena suerte mejorado -->
+            <div
+                class="bg-gradient-to-r from-accent/10 to-primary/10 border-2 border-accent/30 rounded-2xl p-6 text-center relative overflow-hidden"
+            >
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-accent/5 to-primary/5 animate-pulse"
+                ></div>
+                <div class="relative">
+                    <div class="flex justify-center mb-4">
+                        <lucide-icon
+                            name="Sparkles"
+                            class="h-8 w-8 text-accent animate-wiggle"
+                        ></lucide-icon>
+                        <lucide-icon
+                            name="Star"
+                            class="h-6 w-6 text-primary animate-pulse mx-2 mt-1"
+                        ></lucide-icon>
+                        <lucide-icon
+                            name="Sparkles"
+                            class="h-8 w-8 text-accent animate-wiggle"
+                        ></lucide-icon>
+                    </div>
+                    <h5 class="text-xl font-bold text-foreground mb-2">
+                        ¡Mucha suerte en el sorteo! 🍀
+                    </h5>
+                    <p class="text-muted-foreground mb-4">
+                        Mantente atento a nuestras redes sociales para conocer
+                        los resultados del sorteo.
+                    </p>
+                    <div
+                        class="inline-flex items-center gap-2 bg-info/10 text-info px-4 py-2 rounded-full text-sm font-medium"
+                    >
+                        <lucide-icon name="Bell" class="h-4 w-4"></lucide-icon>
+                        <span
+                            >Síguenos en redes sociales para no perderte
+                            nada</span
+                        >
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Estado 4: Error -->
+        @case ('error') {
+        <div
+            class="flex flex-col items-center justify-center py-20 text-center animate-slide-up"
+        >
+            <div class="relative mb-6">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-destructive/10 border-3 border-destructive/20"
+                >
+                    <lucide-icon
+                        name="ShieldX"
+                        class="h-10 w-10 text-destructive animate-wiggle"
+                    ></lucide-icon>
+                </div>
+                <div
+                    class="absolute -top-2 -right-2 w-8 h-8 bg-warning rounded-full flex items-center justify-center animate-bounce"
+                >
+                    <lucide-icon
+                        name="AlertTriangle"
+                        class="h-4 w-4 text-warning-foreground"
+                    ></lucide-icon>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-destructive mb-3">
+                Datos no encontrados
+            </h3>
+            <p class="text-muted-foreground mb-6 max-w-md">
+                {{ errorMessage() }}
+            </p>
+
+            <!-- Tarjeta de ayuda expandida -->
+            <div
+                class="bg-gradient-to-br from-warning/5 to-info/5 border-2 border-warning/20 rounded-2xl p-6 max-w-lg"
+            >
+                <div class="flex items-start gap-4 mb-4">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-warning to-info rounded-full flex items-center justify-center"
+                    >
+                        <lucide-icon
+                            name="Lightbulb"
+                            class="h-6 w-6 text-white"
+                        ></lucide-icon>
+                    </div>
+                    <div class="flex-1">
+                        <h5 class="font-bold text-foreground mb-2">
+                            ¿Qué puedes hacer?
+                        </h5>
+                        <ul class="space-y-2 text-sm text-muted-foreground">
+                            <li class="flex items-start gap-2">
+                                <lucide-icon
+                                    name="Check"
+                                    class="h-4 w-4 text-accent mt-0.5 flex-shrink-0"
+                                ></lucide-icon>
+                                <span
+                                    >Verifica que los datos sean
+                                    <strong>exactamente</strong> como te
+                                    registraste</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <lucide-icon
+                                    name="Check"
+                                    class="h-4 w-4 text-accent mt-0.5 flex-shrink-0"
+                                ></lucide-icon>
+                                <span
+                                    >Revisa que no haya espacios adicionales o
+                                    caracteres especiales</span
+                                >
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <lucide-icon
+                                    name="Check"
+                                    class="h-4 w-4 text-accent mt-0.5 flex-shrink-0"
+                                ></lucide-icon>
+                                <span
+                                    >Asegúrate de usar el mismo formato de
+                                    cédula (V-, E-, J-)</span
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border-t border-border pt-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <lucide-icon
+                            name="MessageCircle"
+                            class="h-5 w-5 text-info"
+                        ></lucide-icon>
+                        <span class="font-semibold text-foreground"
+                            >¿Sigues teniendo problemas?</span
+                        >
+                    </div>
+                    <p class="text-sm text-muted-foreground mb-4">
+                        Contáctanos por nuestras redes sociales (disponibles en
+                        la la parte inferior de nuestra página) y te ayudaremos
+                        a verificar tu información de forma segura.
+                    </p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <div
+                            class="inline-flex items-center gap-2 bg-info/10 text-info text-sm px-3 py-2 rounded-full"
+                        >
+                            <span>Instagram</span>
+                        </div>
+                        <div
+                            class="inline-flex items-center gap-2 bg-info/10 text-info text-sm px-3 py-2 rounded-full"
+                        >
+                            <span>WhatsApp</span>
+                        </div>
+                        <div
+                            class="inline-flex items-center gap-2 bg-info/10 text-info text-sm px-3 py-2 rounded-full"
+                        >
+                            <span>Tiktok</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        } }
+    </div>
+
+    <!-- Footer del Modal Mejorado -->
+    <ng-container ngProjectAs="[modal-footer]">
+        <div
+            class="flex flex-col sm:flex-row gap-4 pt-8 border-t-2 border-border"
+        >
+            @if (viewStatus() === 'form' || viewStatus() === 'loading') {
+            <button
+                type="button"
+                (click)="isOpen.set(false)"
+                class="btn btn-outline-secondary btn-sm flex-1 sm:flex-none order-2 sm:order-1"
+                [disabled]="viewStatus() === 'loading'"
+            >
+                <lucide-icon name="X" class="h-5 w-5"></lucide-icon>
+                <span>Cancelar</span>
+            </button>
+            <button
+                type="submit"
+                (click)="onSubmit()"
+                class="btn btn-primary btn-sm flex-1 sm:flex-auto order-1 sm:order-2"
+                [disabled]="lookupForm.invalid || viewStatus() === 'loading'"
+            >
+                @if (viewStatus() === 'loading') {
+                <lucide-icon
+                    name="Shield"
+                    class="h-5 w-5 animate-pulse"
+                ></lucide-icon>
+                <span>Verificando Seguridad...</span>
+                } @else {
+                <lucide-icon name="ShieldCheck" class="h-5 w-5"></lucide-icon>
+                <span>Verificar y Consultar</span>
+                }
+            </button>
+            } @if (viewStatus() === 'success' || viewStatus() === 'error') {
+            <button
+                type="button"
+                (click)="startNewLookup()"
+                class="btn btn-outline-primary btn-sm flex-1 sm:flex-none"
+            >
+                <lucide-icon name="RotateCcw" class="h-5 w-5"></lucide-icon>
+                <span>Nueva Consulta</span>
+            </button>
+            <button
+                type="button"
+                (click)="isOpen.set(false)"
+                class="btn btn-primary btn-sm flex-1 sm:flex-none"
+            >
+                <lucide-icon name="Check" class="h-5 w-5"></lucide-icon>
+                <span>Entendido</span>
+            </button>
+            }
+        </div>
+    </ng-container>
+</app-modal>

@@ -90,7 +90,10 @@
             ></lucide-icon>
             <span>{{ buttonConfig().text }}</span>
         </button>
-        <button class="btn btn-outline-secondary btn-sm md:btn-md mt-6">
+        <button
+            (click)="onLookupClick()"
+            class="btn btn-outline-secondary btn-sm md:btn-md mt-6"
+        >
             <lucide-icon name="Search" class="size-4"></lucide-icon>
             <span>Consultar mis tickets</span>
         </button>

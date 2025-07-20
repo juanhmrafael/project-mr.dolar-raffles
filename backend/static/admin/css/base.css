@@ -1772,17 +1772,6 @@ footer .developer-link:focus {
     border-color: var(--link-hover-color);
 }
 
-/* Icono de contacto en el enlace */
-footer .contact-icon {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
 footer .developer-link:hover .contact-icon {
     transform: scale(1.1);
@@ -1795,6 +1784,18 @@ footer .developer-link:hover .contact-icon {
         justify-content: center;
         gap: 12px;
     }
+}
+
+/* Icono de contacto en el enlace */
+footer .contact-icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Avatar de usuario modernizado */

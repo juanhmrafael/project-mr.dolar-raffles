@@ -1,43 +1,31 @@
 import {
     Component,
     ChangeDetectionStrategy,
-    input,
-    output,
+    input, model
 } from '@angular/core';
 import { Header } from '../../shared/ui/header/header';
 import { Footer } from '../../shared/ui/footer/footer';
 import { RouterOutlet } from '@angular/router';
-import {
-    ContactInfo,
-    FooterLink,
-    NavLink,
-    SocialLink,
-} from '../../shared/models/layout.types';
-import { User } from '../../shared/models/user.types';
 import { BackToTop } from '../../shared/ui/back-to-top/back-to-top';
+import { Modal } from '../../shared/ui/modal/modal';
+import { TermsAndConditions } from '../../shared/ui/terms-and-conditions/terms-and-conditions';
+import { LayoutStore } from '../../core/layout/layout-store';
 
 @Component({
     selector: 'app-main-layout',
-    imports: [RouterOutlet, Header, Footer, BackToTop],
+    imports: [
+        RouterOutlet,
+        Header,
+        Footer,
+        BackToTop,
+        Modal,
+        TermsAndConditions,
+    ],
     templateUrl: './main-layout.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayout {
-    // Header
-    public readonly navLinks = input.required<NavLink[]>();
-    public readonly user = input<User>();
-    public readonly logoUrl = input<string>();
-    public readonly companyName = input.required<string>();
-    public readonly theme = input.required<'light' | 'dark'>();
-
-    public readonly themeToggleClicked = output<void>();
-    public readonly logoutClicked = output<void>();
-
-    // Footer
-    public readonly footerTagline = input.required<string>();
-    public readonly footerDescription = input.required<string>();
-    public readonly footerLinks = input.required<FooterLink[]>();
-    public readonly footerQuickLinks = input.required<FooterLink[]>();
-    public readonly footerSocialLinks = input.required<SocialLink[]>();
-    public readonly footerContactInfo = input.required<ContactInfo>();
+    public readonly config = input.required<LayoutStore>();
+    // --- Estado del Modal de Términos ---
+    protected isTermsModalOpen = model(false);
 }

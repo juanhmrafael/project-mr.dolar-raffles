@@ -1,14 +1,54 @@
+<!-- El contenedor principal no cambia -->
 <div class="flex min-h-screen flex-col">
-    <app-header class="sticky top-0 z-50" [logoUrl]="logoUrl()" [navLinks]="navLinks()" [user]="user()"
-        (logoutClicked)="logoutClicked.emit()" [theme]="theme()" (themeToggleClicked)="themeToggleClicked.emit()" />
+    <!--
+      MODERNIZACIÓN CLAVE:
+      Todas las propiedades ahora se leen del input único 'config'.
+      Los eventos (logoutClicked, themeToggleClicked) invocan directamente
+      los métodos del store, simplificando radicalmente el flujo de datos.
+    -->
+    <app-header
+        class="sticky top-0 z-50"
+        [logoUrl]="config().appLogoUrl()"
+        [navLinks]="config().mainNavLinks()"
+        [theme]="config().theme()"
+        (themeToggleClicked)="config().toggleTheme()"
+    />
 
-    <main class="flex-grow overflow-y-auto container mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
+    <main
+        class="flex-grow overflow-y-auto container mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-8"
+    >
         <router-outlet />
     </main>
 
-    <app-footer [companyName]="companyName()" [tagline]="footerTagline()" [description]="footerDescription()"
-        [links]="footerLinks()" [quickLinks]="footerQuickLinks()" [socialLinks]="footerSocialLinks()"
-        [contactInfo]="footerContactInfo()" [logoUrl]="logoUrl()" />
+    <!--
+      MODERNIZACIÓN CLAVE:
+      El footer también consume sus propiedades desde el objeto 'config'.
+      El evento (termsClicked) ahora modifica directamente el signal local 'isTermsModalOpen'.
+    -->
+    <app-footer
+        [companyName]="config().companyName()"
+        [tagline]="config().footerTagline()"
+        [description]="config().footerDescription()"
+        [links]="config().footerLinks()"
+        [quickLinks]="config().footerQuickLinks()"
+        [socialLinks]="config().footerSocialLinks()"
+        [contactInfo]="config().footerContactInfo()"
+        [logoUrl]="config().appLogoUrl()"
+        (termsClicked)="isTermsModalOpen.set(true)"
+    />
 
-    <app-back-to-top></app-back-to-top>
+    <app-back-to-top />
 </div>
+
+@if (isTermsModalOpen()) {
+
+<app-modal
+    [(isOpen)]="isTermsModalOpen"
+    title="Términos y Condiciones de Participación"
+    size="2xl"
+    mobileBehavior="fullscreen"
+>
+    <!-- Contenido del modal no cambia -->
+    <app-terms-and-conditions />
+</app-modal>
+}

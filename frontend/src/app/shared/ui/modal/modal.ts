@@ -229,7 +229,7 @@ export class Modal {
         );
         if (focusableElements.length === 0) return;
 
-        focusableElements[0].focus();
+        // focusableElements[0].focus();
 
         const trapFocusHandler = (event: KeyboardEvent) => {
             this.handleFocusTrap(event, focusableElements);

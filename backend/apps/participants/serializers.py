@@ -100,18 +100,42 @@ class TicketSerializer(AsyncModelSerializer):  # ✅ Hereda de adrf
 class ParticipationStatusSerializer(AsyncModelSerializer):  # ✅ Hereda de adrf
     """Serializer para mostrar el estado completo de una participación."""
 
-    payment_status = serializers.CharField(
-        source="payment.get_status_display", default=_("Pending Payment Report")
-    )
+    payment_status = serializers.SerializerMethodField()
     tickets = TicketSerializer(many=True, read_only=True)
     raffle_title = serializers.CharField(source="raffle.title")
-
+    ticket_number_digits = serializers.IntegerField(
+        source="raffle.ticket_number_digits", read_only=True
+    )
+    
     class Meta:
         model = Participation
         fields = [
+            "identification_number",
+            "created_at",
             "raffle_title",
-            "full_name",
             "ticket_count",
             "payment_status",
             "tickets",
+            "ticket_number_digits",
         ]
+
+    def get_payment_status(self, obj: Participation) -> dict[str, str]:
+        """
+        Genera un objeto estructurado para el estado del pago.
+
+        CRÍTICO: Este método depende de que la consulta original use
+        .select_related('payment') para ser eficiente.
+        """
+        # Caso 1: La participación tiene un pago asociado.
+        # hasattr es seguro y eficiente gracias a select_related.
+        if hasattr(obj, "payment") and obj.payment is not None:
+            return {
+                "code": obj.payment.status,  # Ej: "APPROVED"
+                "display": obj.payment.get_status_display(),  # Ej: "Aprobado"
+            }
+
+        # Caso 2 (Default): La participación no tiene reporte de pago.
+        return {
+            "code": "AWAITING_REPORT",  # Código de máquina para el estado por defecto.
+            "display": _("Pending Payment Report"),  # Texto para la UI.
+        }

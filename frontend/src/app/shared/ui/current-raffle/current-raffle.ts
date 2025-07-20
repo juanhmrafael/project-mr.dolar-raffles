@@ -3,7 +3,7 @@ import {
     computed,
     effect,
     input,
-    signal,
+    signal,output,
     ChangeDetectionStrategy,
 } from '@angular/core';
 import { Prize, TimeLeft } from '../../models/raffle';
@@ -19,9 +19,13 @@ import { EnhancedMainRaffle } from '../../../core/state/raffles-store';
 })
 export class CurrentRaffle {
     public readonly raffle = input.required<EnhancedMainRaffle>();
-
+    protected readonly lookupTicketsClicked = output<number>();
     protected readonly timeLeft = signal<TimeLeft | null>(null);
 
+    protected onLookupClick(): void {
+        this.lookupTicketsClicked.emit(this.raffle().id);
+    }
+    
     public readonly mainPrize = computed<Prize | undefined>(() =>
         this.raffle().prizes.find((p) => p.display_order === 1)
     );

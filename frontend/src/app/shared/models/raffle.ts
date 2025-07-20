@@ -5,11 +5,7 @@
 /**
  * Define los posibles estados de una rifa.
  */
-export type RaffleStatus =
-    | 'IN_PROGRESS'
-    | 'PROCESSING_WINNERS'
-    | 'FINISHED';
-
+export type RaffleStatus = 'IN_PROGRESS' | 'PROCESSING_WINNERS' | 'FINISHED';
 
 // --- Tipos para Métodos de Pago (Unión Discriminada) ---
 
@@ -125,13 +121,19 @@ interface TransferenciaDetails {
 }
 
 // Unión Discriminada: El campo 'method_type' determina la forma de 'details'.
-export type PaymentMethod = BasePaymentMethod & (
-    | { readonly method_type: 'PAGO_MOVIL'; readonly details: PagoMovilDetails; }
-    | { readonly method_type: 'ZELLE'; readonly details: ZelleDetails; }
-    | { readonly method_type: 'BINANCE'; readonly details: BinanceDetails; }
-    | { readonly method_type: 'TRANSFERENCIA'; readonly details: TransferenciaDetails; }
-);
-
+export type PaymentMethod = BasePaymentMethod &
+    (
+        | {
+              readonly method_type: 'PAGO_MOVIL';
+              readonly details: PagoMovilDetails;
+          }
+        | { readonly method_type: 'ZELLE'; readonly details: ZelleDetails }
+        | { readonly method_type: 'BINANCE'; readonly details: BinanceDetails }
+        | {
+              readonly method_type: 'TRANSFERENCIA';
+              readonly details: TransferenciaDetails;
+          }
+    );
 
 // --- Interfaz Principal del Detalle de la Rifa ---
 /**
@@ -166,7 +168,6 @@ export interface RaffleStats {
     readonly tickets_progress_percentage: string; // Se mantiene como string.
 }
 
-
 // --- Crear Participación ---
 
 /**
@@ -191,7 +192,6 @@ export interface ParticipationCreatedResponse {
     readonly created_at: string; // ISO 8601
 }
 
-
 // --- Consultar Tickets ---
 
 /**
@@ -205,7 +205,6 @@ export interface TicketLookupPayload {
     email: string;
 }
 
-
 /**
  * Representa un único ticket asignado a una participación.
  */
@@ -214,15 +213,64 @@ export interface AssignedTicket {
     readonly assigned_at: string; // ISO 8601
 }
 
+/**
+ * Define los posibles códigos de estado de un pago, incluyendo el estado
+ * personalizado para participaciones que aún no han reportado un pago.
+ * Estos códigos son estables, no cambian con la traducción y son seguros
+ * para usar en la lógica de la UI (ej. en un switch o ngClass).
+ */
+export type PaymentStatusCode =
+    | 'PENDING' // El pago fue reportado y está pendiente de verificación.
+    | 'APPROVED' // El pago fue verificado y aprobado.
+    | 'REJECTED' // El pago fue revisado y rechazado.
+    | 'AWAITING_REPORT'; // Estado inicial, aún no se ha reportado un pago.
+
+/**
+ * Representa el objeto de estado de pago estructurado que devuelve la API.
+ * Este diseño separa la lógica (code) de la presentación (display).
+ */
+export interface PaymentStatus {
+    /**
+     * El código de estado, inmutable y seguro para usar en la lógica (if, switch).
+     */
+    readonly code: PaymentStatusCode;
+
+    /**
+     * El texto de visualización, traducido y listo para mostrar directamente al usuario.
+     * Ejemplo: "Aprobado", "Rechazado", "Pendiente de Verificación".
+     */
+    readonly display: string;
+}
 
 /**
  * Representa el estado completo de una participación encontrada.
  */
 export interface ParticipationStatus {
+    /**
+     * El número de identificación del participante.
+     * Ejemplo: "V-27718068"
+     */
+    readonly identification_number: string;
+    /**
+     * La fecha y hora en que se registró esta participación (lote de tickets).
+     * Se presenta en formato ISO 8601.
+     */
     readonly raffle_title: string;
-    readonly full_name: string;
+    readonly created_at: string;
     readonly ticket_count: number;
-    readonly payment_status: string; // Ej: "Pendiente de Reporte de Pago"
+    /**
+     * La clave del estado del pago, para ser usada en la lógica de la aplicación (e.g., switch, ngIf).
+     */
+
+    /**
+     * ✅ NUEVO CAMPO
+     * Indica cuántos dígitos debe tener un número de ticket para su correcta
+     * visualización con padding de ceros a la izquierda. Por ejemplo, un valor de 4
+     * significa que el ticket '5' debe mostrarse como '0005'.
+     * Este valor se deriva de la rifa a la que pertenece esta participación.
+     */
+    readonly ticket_number_digits: number;
+    readonly payment_status: PaymentStatus;
     readonly tickets: readonly AssignedTicket[];
 }
 

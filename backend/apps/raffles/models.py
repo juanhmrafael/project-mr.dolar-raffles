@@ -119,6 +119,26 @@ class Raffle(models.Model):  # Futuro: heredar de ImageOptimizationMixin
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def ticket_number_digits(self) -> int:
+        """
+        Calcula el número de dígitos necesarios para mostrar los números de ticket.
+
+        Basado en el total de tickets, determina la longitud del número más alto
+        (ej., si total_tickets es 10000, los tickets van de 0 a 9999. El número
+        más alto es 9999, que tiene 4 dígitos).
+
+        Returns:
+            int: El número de dígitos para el padding.
+        """
+        if not self.total_tickets or self.total_tickets < 1:
+            return 0  # Caso borde: si no hay tickets, no hay dígitos.
+
+        # La lógica es la longitud del número de ticket más alto (total_tickets - 1).
+        # Por ejemplo, para 100 tickets (0-99), la longitud es len(str(99)) = 2.
+        # Para 10000 tickets (0-9999), la longitud es len(str(9999)) = 4.
+        return len(str(self.total_tickets - 1))
+    
     def save(self, *args, **kwargs):
         """
         Sobrescribe el método save para generar un slug único si no existe.

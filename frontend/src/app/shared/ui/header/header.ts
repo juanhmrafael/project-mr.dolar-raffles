@@ -19,18 +19,12 @@ import { User } from '../../models/user.types';
 export class Header {
     public readonly logoUrl = input<string>();
     public readonly navLinks = input.required<NavLink[]>();
-    public readonly user = input<User>();
     public readonly theme = input.required<'light' | 'dark'>();
 
     public readonly themeToggleClicked = output<void>();
     public readonly logoutClicked = output<void>();
 
     public showMobileMenu = signal<boolean>(false);
-    public showUserMenu = signal<boolean>(false);
-
-    toggleUserMenu(): void {
-        this.showUserMenu.update((show) => !show);
-    }
 
     toggleMobileMenu(): void {
         this.showMobileMenu.update((show) => !show);
@@ -40,19 +34,10 @@ export class Header {
         this.showMobileMenu.set(false);
     }
 
-    closeUserMenu(): void {
-        this.showUserMenu.set(false);
-    }
-
     // Cerrar menús al hacer click fuera o presionar Escape
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: Event): void {
         const target = event.target as HTMLElement;
-
-        // Cerrar user menu si click fuera
-        if (this.showUserMenu() && !target.closest('[data-user-menu]')) {
-            this.showUserMenu.set(false);
-        }
 
         // Cerrar mobile menu si click en backdrop
         if (
@@ -65,7 +50,6 @@ export class Header {
 
     @HostListener('document:keydown.escape')
     onEscapeKey(): void {
-        this.showUserMenu.set(false);
         this.showMobileMenu.set(false);
     }
 
