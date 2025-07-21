@@ -58,22 +58,22 @@ def build_redis_url_with_auth(base_url: str, username: str, password: str) -> st
     )
 
 
-# Leer las URLs base desde el entorno (ahora SIN variables ${})
-RAW_CELERY_BROKER_URL = config("CELERY_BROKER_URL")
-RAW_CELERY_RESULT_BACKEND_URL = config("CELERY_RESULT_BACKEND_URL")
-RAW_CACHE_URL = config("CACHE_URL")
-RAW_CACHE_SELECT2_URL = config("CACHE_SELECT2_URL")
+# Leer las URLs base desde el entorno, usando los nuevos nombres para evitar conflictos.
+RAW_REDIS_BROKER_URL = config("RAW_REDIS_BROKER_URL")
+RAW_REDIS_RESULT_URL = config("RAW_REDIS_RESULT_URL")
+RAW_REDIS_CACHE_URL = config("RAW_REDIS_CACHE_URL")
+RAW_REDIS_SELECT2_URL = config("RAW_REDIS_SELECT2_URL")
 
-# Construir las URLs finales con autenticación
+# Construir las URLs finales con autenticación. ESTA es ahora la única fuente de verdad.
 CELERY_BROKER_URL = build_redis_url_with_auth(
-    RAW_CELERY_BROKER_URL, REDIS_USER, REDIS_PASSWORD
+    RAW_REDIS_BROKER_URL, REDIS_USER, REDIS_PASSWORD
 )
 CELERY_RESULT_BACKEND_URL = build_redis_url_with_auth(
-    RAW_CELERY_RESULT_BACKEND_URL, REDIS_USER, REDIS_PASSWORD
+    RAW_REDIS_RESULT_URL, REDIS_USER, REDIS_PASSWORD
 )
-FINAL_CACHE_URL = build_redis_url_with_auth(RAW_CACHE_URL, REDIS_USER, REDIS_PASSWORD)
+FINAL_CACHE_URL = build_redis_url_with_auth(RAW_REDIS_CACHE_URL, REDIS_USER, REDIS_PASSWORD)
 FINAL_CACHE_SELECT2_URL = build_redis_url_with_auth(
-    RAW_CACHE_SELECT2_URL, REDIS_USER, REDIS_PASSWORD
+    RAW_REDIS_SELECT2_URL, REDIS_USER, REDIS_PASSWORD
 )
 
 

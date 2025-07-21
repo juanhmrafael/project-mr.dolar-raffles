@@ -73,6 +73,15 @@ while ! nc -z $DB_HOST $DB_PORT; do
 done
 echo "Entrypoint: PostgreSQL iniciado correctamente."
 
+# --- PASO 4: VERIFICACIÓN DE DEPENDENCIAS (REDIS) ---
+# Propósito: Asegurar que Redis esté aceptando conexiones.
+# ----------------------------------------------------------------------------------------------------
+echo "Entrypoint: Esperando a que Redis inicie en $REDIS_HOST:$REDIS_PORT..."
+while ! nc -z $REDIS_HOST $REDIS_PORT; do
+  sleep 0.1
+done
+echo "Entrypoint: Redis iniciado correctamente."
+
 
 # --- PASO 4: DESPACHO BASADO EN EL ROL ---
 # Propósito: Ejecutar lógicas diferentes según el rol del contenedor (web, worker, beat).
