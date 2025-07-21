@@ -53,3 +53,34 @@ class TicketAdmin(admin.ModelAdmin):
         Muestra el nombre del participante.
         """
         return obj.participation.full_name
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # Cuando se está editando un objeto existente
+            return [field.name for field in self.model._meta.fields]
+        return self.readonly_fields
+
+    def has_add_permission(self, request):
+        """
+        Deshabilita la creación de nuevos objetos.
+        """
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        """
+        Deshabilita la edición de objetos existentes.
+        Los usuarios aún podrán ver el formulario de cambio, pero no podrán guardar.
+        """
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        """
+        Deshabilita la eliminación de objetos.
+        """
+        return False
+
+    # Opcional: Para eliminar la acción de "eliminar seleccionados" en la vista de lista
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if "delete_selected" in actions:
+            del actions["delete_selected"]
+        return actions

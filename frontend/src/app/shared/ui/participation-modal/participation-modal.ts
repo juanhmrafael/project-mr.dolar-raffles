@@ -139,7 +139,18 @@ export class ParticipationModal {
 
     protected readonly InputMasks = InputMasks;
     protected readonly ticketShortcuts = [5, 10, 25, 50];
-
+    protected readonly stepOrder: readonly ParticipationStep[] = [
+        'personal',
+        'paymentMethod',
+        'tickets',
+        'summary',
+    ];
+    protected readonly stepLabels: Record<string, string> = {
+        personal: 'Datos Personales',
+        paymentMethod: 'Método de Pago',
+        tickets: 'Cantidad de Boletos',
+        summary: 'Resumen y Confirmación',
+    };
     constructor() {
         effect(() => {
             if (!this.isOpen()) {
@@ -153,18 +164,18 @@ export class ParticipationModal {
         this.apiError.set(null);
         this.formErrors.set({});
         const step = this.currentStep();
-        if (step === 'personal') this.currentStep.set('tickets');
-        if (step === 'tickets') this.currentStep.set('paymentMethod');
-        if (step === 'paymentMethod') this.currentStep.set('summary');
+        if (step === 'personal') this.currentStep.set('paymentMethod');
+        if (step === 'paymentMethod') this.currentStep.set('tickets');
+        if (step === 'tickets') this.currentStep.set('summary');
     }
 
     protected previousStep(): void {
         this.apiError.set(null);
         this.formErrors.set({});
         const step = this.currentStep();
-        if (step === 'tickets') this.currentStep.set('personal');
-        if (step === 'paymentMethod') this.currentStep.set('tickets');
-        if (step === 'summary') this.currentStep.set('paymentMethod');
+        if (step === 'paymentMethod') this.currentStep.set('personal');
+        if (step === 'tickets') this.currentStep.set('paymentMethod');
+        if (step === 'summary') this.currentStep.set('tickets');
     }
 
     protected changeTicketCount(amount: number): void {

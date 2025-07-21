@@ -1,8 +1,4 @@
-<app-modal
-    [(isOpen)]="isOpen"
-    size="xl"
-    title="🎫 Formulario de Participación"
->
+<app-modal [(isOpen)]="isOpen" size="xl" title="🎫 Formulario de Participación">
     @if(raffleDetail(); as raffle) {
     <!-- Contenido principal -->
     <div class="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
@@ -14,14 +10,13 @@
             ></div>
             <div
                 class="absolute top-6 left-0 h-0.5 bg-gradient-primary transition-all duration-500 hidden sm:block"
-                [style.width]="((['personal', 'tickets', 'paymentMethod', 'summary'].indexOf(currentStep()) + 1) / 4 * 100) + '%'"
+                [style.width]="((stepOrder.indexOf(currentStep()) + 1) / stepOrder.length * 100) + '%'"
             ></div>
 
             <div
                 class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 relative z-10"
             >
-                @for(step of ['personal', 'tickets', 'paymentMethod',
-                'summary']; track step; let i = $index) {
+                @for(step of stepOrder; track step; let i = $index) {
                 <div class="flex flex-col items-center space-y-2 sm:space-y-3">
                     <!-- Círculo del paso -->
                     <div
@@ -32,8 +27,7 @@
                              'border-border bg-card text-muted-foreground': i > ['personal', 'tickets', 'paymentMethod', 'summary'].indexOf(currentStep())
                          }"
                     >
-                        @if(i < ['personal', 'tickets', 'paymentMethod',
-                        'summary'].indexOf(currentStep())) {
+                        @if(i < stepOrder.indexOf(currentStep())) {
                         <lucide-icon
                             name="Check"
                             class="size-4 sm:size-5"
@@ -54,9 +48,7 @@
                                'text-muted-foreground': i > ['personal', 'tickets', 'paymentMethod', 'summary'].indexOf(currentStep())
                            }"
                         >
-                            {{ step === 'paymentMethod' ? 'Pago' : (step ===
-                            'tickets' ? 'Boletos' : (step === 'personal' ?
-                            'Datos' : 'Resumen')) }}
+                            {{ stepLabels[step] }}
                         </p>
                     </div>
                 </div>
@@ -387,7 +379,30 @@
                         oportunidades
                     </p>
                 </div>
-
+                <div
+                    class="mt-6 space-y-3 bg-gradient-accent/10 border border-accent/20 rounded-xl p-4"
+                >
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-foreground"
+                            >Total (USD):</span
+                        >
+                        <span
+                            class="text-2xl font-extrabold text-success mr-dollar-outline"
+                        >
+                            ${{ totalUSD() | number:'1.2-2' }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-foreground"
+                            >Total (VEF):</span
+                        >
+                        <span
+                            class="text-2xl font-extrabold text-success mr-dollar-outline"
+                        >
+                            {{ totalVEF() | number:'1.2-2' }} Bs
+                        </span>
+                    </div>
+                </div>
                 <!-- Tip motivacional -->
                 <div
                     class="bg-gradient-to-br from-info/5 to-accent/5 border-2 border-info/20 rounded-xl p-6"
@@ -1225,7 +1240,7 @@
     </div>
 
     <!-- Footer con botones -->
-    <ng-container ngProjectAs="[modal-footer]">
+    <ng-container ngProjectAs="modal-footer">
         <div
             class="flex flex-col sm:flex-row gap-4 pt-8 border-t-2 border-border"
         >
