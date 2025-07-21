@@ -124,11 +124,11 @@ services:
     # --- MEJORA DE RESILIENCIA ---
     # Añadido un healthcheck para asegurar que Gunicorn está realmente respondiendo.
     healthcheck:
-      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8000/healthz/ || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 3
-      start_period: 30s # Da tiempo a que Gunicorn arranque antes de empezar a verificar.
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz/"]
+      interval: 20s      # Aumentamos el intervalo entre chequeos
+      timeout: 10s       # Aumentamos el tiempo de espera por respuesta
+      retries: 5         # Aumentamos el número de reintentos
+      start_period: 60s # Da tiempo a que Gunicorn arranque antes de empezar a verificar.
     command: ["web", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "5", "-k", "uvicorn.workers.UvicornWorker", "config.asgi:application"]
 
   # --- Servicio de Trabajador en Segundo Plano: Celery ---

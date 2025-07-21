@@ -95,7 +95,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Propósito: Instalar las dependencias de SO de tiempo de ejecución (runtime), sin herramientas de compilación.
 # Se repiten algunas de la etapa anterior para que esta etapa sea autónoma si fuera necesario,
 # pero como hereda de una base limpia, el impacto es mínimo.
-RUN apk add --no-cache postgresql-client netcat-openbsd su-exec
+RUN apk add --no-cache postgresql-client netcat-openbsd su-exec curl
 
 # Propósito: Crear un usuario y grupo sin privilegios para ejecutar la aplicación.
 # Principio de Menor Privilegio: Es una práctica de seguridad fundamental. Si un atacante compromete
