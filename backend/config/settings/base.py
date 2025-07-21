@@ -162,7 +162,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 
 # Le dice a Django que confíe en las peticiones POST que vienen de localhost en el puerto 80.
-CSRF_TRUSTED_ORIGINS = config("TRUSTED_ORIGINS_FOR_CSRF", cast=Csv())
+CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 
 CACHE_URL_TEMPLATE = config("CACHE_URL")
 CACHE_SELECT2_URL_TEMPLATE = config("CACHE_SELECT2_URL")
