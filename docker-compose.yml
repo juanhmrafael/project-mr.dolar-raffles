@@ -83,7 +83,7 @@ services:
       - redis_data:/data
     # Comando que inicia Redis con nuestro .conf Y APLICA LA SEGURIDAD ACL.
     command: >
-      sh -c "exec redis-server /usr/local/etc/redis/redis.conf --user default off --user appuser on >allcommands ~* allchannels &* +$$(cat /run/secrets/redis_appuser_password)"
+      sh -c "exec redis-server /usr/local/etc/redis/redis.conf --user appuser +$$(cat /run/secrets/redis_appuser_password)"
     networks:
       - app_network
     restart: unless-stopped
