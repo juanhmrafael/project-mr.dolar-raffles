@@ -1,4 +1,4 @@
-# settings/base.py (Versión Final, Canónica y Auditada)
+# settings/base.py (Versión Final Definitiva - Auditada y Corregida)
 
 from pathlib import Path
 
@@ -23,27 +23,19 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 REDIS_USER = config("REDIS_USER", default="appuser")
+REDIS_HOST = config("REDIS_HOST")
+REDIS_PORT = config("REDIS_PORT")
+
 
 # --- BLOQUE 2: CONSTRUCCIÓN SEGURA DE URIs DE CONEXIÓN ---
 # ----------------------------------------------------------------
-# Se construyen las URIs completas usando plantillas del .env y secretos del entorno.
+# Se construyen las URIs completas de forma explícita para evitar errores de parsing.
 
-
-def build_redis_uri(template: str) -> str:
-    """Función auxiliar para construir la URI de Redis con credenciales ACL."""
-    scheme, rest = template.split("://")
-    return f"{scheme}://{REDIS_USER}:{REDIS_PASSWORD}@{rest}"
-
-
-# Plantillas de URL leídas del .env
-CELERY_BROKER_URL_TEMPLATE = config("CELERY_BROKER_URL")
-CACHE_URL_TEMPLATE = config("CACHE_URL")
-CACHE_SELECT2_URL_TEMPLATE = config("CACHE_SELECT2_URL")
-
-# URIs finales y seguras, construidas en tiempo de ejecución
-CELERY_BROKER_URL = build_redis_uri(CELERY_BROKER_URL_TEMPLATE)
-FINAL_CACHE_URL = build_redis_uri(CACHE_URL_TEMPLATE)
-FINAL_CACHE_SELECT2_URL = build_redis_uri(CACHE_SELECT2_URL_TEMPLATE)
+CELERY_BROKER_URL = f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0"
+FINAL_CACHE_URL = f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/1"
+FINAL_CACHE_SELECT2_URL = (
+    f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/2"
+)
 
 
 # --- BLOQUE 3: CONFIGURACIÓN DE APLICACIONES DE DJANGO ---
