@@ -9,6 +9,8 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
+REDIS_USER = config("REDIS_USER", default="appuser")
+REDIS_PASSWORD = config("REDIS_PASSWORD")
 
 # Application definition
 
@@ -162,6 +164,19 @@ CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 # Le dice a Django que confíe en las peticiones POST que vienen de localhost en el puerto 80.
 CSRF_TRUSTED_ORIGINS = config("TRUSTED_ORIGINS_FOR_CSRF", cast=Csv())
 
+CACHE_URL_TEMPLATE = config("CACHE_URL")
+CACHE_SELECT2_URL_TEMPLATE = config("CACHE_SELECT2_URL")
+CELERY_BROKER_URL_TEMPLATE = config("CELERY_BROKER_URL")
+
+def build_redis_uri(template: str) -> str:
+    """Función auxiliar para construir la URI de Redis con credenciales."""
+    # Descomponer la URL base para insertar las credenciales
+    scheme, rest = template.split("://")
+    return f"{scheme}://{REDIS_USER}:{REDIS_PASSWORD}@{rest}"
+
+FINAL_CACHE_URL = build_redis_uri(CACHE_URL_TEMPLATE)
+FINAL_CACHE_SELECT2_URL = build_redis_uri(CACHE_SELECT2_URL_TEMPLATE)
+CELERY_BROKER_URL = build_redis_uri(CELERY_BROKER_URL_TEMPLATE)
 
 # --- CONFIGURACIÓN DE CACHÉ (PARA DJANGO-RATELIMIT Y OTROS USOS) ---
 # Propósito: Define el backend de caché que Django usará.
@@ -169,21 +184,21 @@ CSRF_TRUSTED_ORIGINS = config("TRUSTED_ORIGINS_FOR_CSRF", cast=Csv())
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # La variable CACHE_URL la definimos en .env y .env.prod
-        "LOCATION": config("CACHE_URL"),
+        "LOCATION": FINAL_CACHE_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     },
     "select2": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # La variable CACHE_URL la definimos en .env y .env.prod
-        "LOCATION": config("CACHE_SELECT2"),
+        "LOCATION": FINAL_CACHE_SELECT2_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
     },
 }
+
+
 # ✅ CONFIGURACIÓN CENTRALIZADA PARA DJANGO-SELECT2
 SELECT2_CACHE_BACKEND = "select2"
 
@@ -205,7 +220,7 @@ CELERY_BROKER_URL = config("REDIS_URL")
 # Propósito: La URL del backend de resultados.
 # Celery usa esto para almacenar el estado y los resultados de las tareas.
 # Usaremos Redis para esto también por simplicidad.
-CELERY_RESULT_BACKEND = config("REDIS_URL")
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 # Propósito: Formato de serialización para los datos de las tareas.
 # 'json' es un formato seguro, estándar y recomendado.

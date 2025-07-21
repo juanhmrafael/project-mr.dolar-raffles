@@ -8,7 +8,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.contrib import admin
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
-
+from django.http import HttpResponse
 from auditing.sites import audit_admin_site
 
 # Las URLs que deben ser traducidas (casi todas las que ve el usuario)
@@ -29,6 +29,7 @@ urlpatterns += [
     path("", include("payments.urls", namespace="payments")),
     path("", include("raffles.urls", namespace="raffles")),
     path("", include("participants.urls", namespace="participants")),
+    path("healthz/", lambda request: HttpResponse("OK")),
     # El resto de tus URLs no-traducibles irían aquí.
     # path("api/v1/", include("your_api.urls")),
 ]
