@@ -1,0 +1,183 @@
+@if (prize(); as p) {
+<article
+    class="card-elevated group flex flex-col sm:flex-row gap-4 sm:gap-6 lg:gap-8 overflow-hidden p-4 sm:p-6 lg:p-8 relative transition-all duration-moderate hover:shadow-xl hover:-translate-y-1 animate-bounce-in-modern"
+>
+    <!-- Background decoration -->
+    <div
+        class="absolute top-0 right-0 w-16 h-16 bg-primary/3 rounded-full blur-xl group-hover:bg-primary/6 transition-all duration-moderate"
+    ></div>
+    <div
+        class="absolute bottom-0 left-0 w-12 h-12 bg-accent/3 rounded-full blur-xl group-hover:bg-accent/6 transition-all duration-moderate"
+    ></div>
+
+    <!-- Image Column -->
+    @if (displayImage()) {
+    <div class="sm:w-2/5 lg:w-1/3 flex-shrink-0 relative">
+        <div class="relative group/image">
+            <div
+                class="absolute -inset-0.5 bg-primary/15 rounded-lg blur opacity-20 group-hover:opacity-40 transition duration-500"
+            ></div>
+
+            <div class="relative overflow-hidden rounded-lg">
+                <img
+                    [ngSrc]="displayImage()!"
+                    [alt]="'Imagen de ' + p.name"
+                    width="400"
+                    height="300"
+                    class="w-full aspect-video object-cover transition-all duration-moderate group-hover:scale-105"
+                />
+                <div
+                    class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-moderate"
+                ></div>
+            </div>
+        </div>
+
+        <!-- Prize level badge -->
+        <div class="absolute -top-2 -right-2 z-10">
+            <div
+                class="bg-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-bold shadow-md animate-float"
+            >
+                <lucide-icon
+                    name="Award"
+                    class="size-3 inline mr-1"
+                ></lucide-icon>
+                {{ p.level_title }}
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Content Column -->
+    <div class="flex-1 relative z-10 min-w-0">
+        @if (isWinnerView()) {
+        <!-- WINNER VIEW -->
+        <div class="animate-fade-in space-y-4 sm:space-y-6">
+            <!-- Winner header -->
+            <div class="space-y-3">
+                <div
+                    class="inline-flex items-center gap-2 bg-success text-success-foreground px-3 py-1.5 rounded-full text-xs font-bold shadow-md"
+                >
+                    <lucide-icon name="Trophy" class="size-3"></lucide-icon>
+                    <span>GANADOR DEL {{ p.level_title | uppercase }}</span>
+                    <lucide-icon
+                        name="Crown"
+                        class="size-3 text-warning"
+                    ></lucide-icon>
+                </div>
+
+                <div class="space-y-2">
+                    <h3
+                        class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-success"
+                    >
+                        🎉 {{ p.winner_name }}
+                    </h3>
+                    <p
+                        class="text-base sm:text-lg text-card-foreground font-semibold"
+                    >
+                        {{ p.name }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Winner ticket -->
+            <div
+                class="glass rounded-xl p-4 sm:p-6 border border-success/20 relative overflow-hidden"
+            >
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-success/5 via-success/10 to-success/5 animate-shimmer bg-[length:200%_100%]"
+                ></div>
+
+                <div class="relative z-10 flex items-center gap-3 sm:gap-4">
+                    <div
+                        class="bg-success text-success-foreground p-2 sm:p-3 rounded-lg shadow-md"
+                    >
+                        <lucide-icon
+                            name="Ticket"
+                            class="size-5 sm:size-6"
+                        ></lucide-icon>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <p
+                            class="text-xs sm:text-sm font-medium text-muted-foreground mb-1"
+                        >
+                            Ticket Ganador
+                        </p>
+                        <p
+                            class="text-lg sm:text-xl lg:text-2xl font-extrabold text-success"
+                        >
+                            N° {{ p.winner_ticket_number }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="absolute top-2 right-2 text-warning">
+                    <lucide-icon
+                        name="Sparkles"
+                        class="size-4 sm:size-5"
+                    ></lucide-icon>
+                </div>
+            </div>
+        </div>
+        } @else {
+        <!-- PRIZE VIEW -->
+        <div class="space-y-4 sm:space-y-6 h-full flex flex-col">
+            <!-- Prize header -->
+            <div class="space-y-3">
+                <div
+                    class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold shadow-md animate-float"
+                >
+                    <lucide-icon name="Award" class="size-3"></lucide-icon>
+                    <span>{{ p.level_title }}</span>
+                    <lucide-icon name="Star" class="size-3"></lucide-icon>
+                </div>
+
+                <h3
+                    class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-card-foreground group-hover:text-primary transition-colors duration-moderate"
+                >
+                    {{ p.name }}
+                </h3>
+            </div>
+
+            <!-- Prize description -->
+            @if(p.description) {
+            <div class="flex-1">
+                <div
+                    class="glass rounded-lg p-3 sm:p-4 border border-primary/10"
+                >
+                    <p
+                        class="text-sm sm:text-base text-card-foreground leading-relaxed"
+                    >
+                        {{ p.description }}
+                    </p>
+                </div>
+            </div>
+            }
+
+            <!-- Call to action -->
+            <div class="pt-3 sm:pt-4 border-t border-border/30">
+                <div
+                    class="flex items-center gap-2 sm:gap-3 text-primary group-hover:text-accent transition-colors duration-moderate"
+                >
+                    <lucide-icon
+                        name="Target"
+                        class="size-4 group-hover:scale-110 transition-transform duration-moderate"
+                    ></lucide-icon>
+                    <span class="font-semibold text-xs sm:text-sm"
+                        >¡Este premio podría ser tuyo!</span
+                    >
+                    <lucide-icon
+                        name="ArrowRight"
+                        class="size-3 sm:size-4 group-hover:translate-x-0.5 transition-transform duration-moderate"
+                    ></lucide-icon>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Hover indicator -->
+    <div
+        class="absolute inset-0 border border-primary/0 group-hover:border-primary/20 rounded-2xl transition-all duration-moderate pointer-events-none"
+    ></div>
+</article>
+}

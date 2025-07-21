@@ -9,23 +9,6 @@ from rest_framework import serializers
 
 from ..models import PaymentMethod
 
-class PublicCalculationInputSerializer(AsyncSerializer):
-    """Serializer para validar la entrada de la API de cálculo público."""
-
-    raffle_id = serializers.IntegerField()
-    payment_method_id = serializers.IntegerField()
-    ticket_count = serializers.IntegerField(min_value=1)
-
-
-class PublicCalculationOutputSerializer(AsyncSerializer):
-    """Serializer para formatear la salida de la API de cálculo."""
-
-    amount_to_pay = serializers.DecimalField(max_digits=12, decimal_places=2)
-    currency = serializers.CharField()
-    exchange_rate_applied = serializers.DecimalField(
-        max_digits=10, decimal_places=4, required=False, allow_null=True
-    )
-
 
 class PublicPaymentMethodDetailSerializer(AsyncModelSerializer):
     """

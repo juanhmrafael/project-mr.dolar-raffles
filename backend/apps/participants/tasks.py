@@ -4,6 +4,7 @@ import logging
 from asgiref.sync import async_to_sync
 from celery import shared_task
 from django.utils.translation import gettext as _
+from payments.models import Payment
 
 from .models import Participation
 
@@ -16,40 +17,46 @@ logger = logging.getLogger(__name__)
 async def _cleanup_expired_participation_async_logic(participation_id: int):
     """
     Contiene el núcleo de la lógica asíncrona para limpiar participaciones expiradas.
+    SOLUCIÓN FINAL: Usa una comprobación de existencia explícita y asíncrona.
     """
     try:
-        # Usamos .select_related('payment').aget() para una obtención asíncrona y eficiente.
-        # Esto precarga la relación de pago en la misma consulta.
-        participation = await Participation.objects.select_related("payment").aget(
-            pk=participation_id
-        )
+        # ✅ PASO 1: Comprobar la existencia del pago de forma explícita y asíncrona.
+        # Esto traduce la pregunta "¿Existe un pago para esta participación?"
+        # directamente a una consulta asíncrona eficiente (SELECT 1 ... LIMIT 1).
+        payment_exists = await Payment.objects.filter(
+            participation_id=participation_id
+        ).aexists()
 
-        # La forma más segura de comprobar es ver si el campo 'payment' (la relación) es None.
-        # Como hemos hecho select_related, esta comprobación no causa una consulta adicional.
-        if participation.payment is None:
+        if payment_exists:
+            # Si el pago existe, no hacemos nada.
+            logger.info(
+                _("Participation %(id)d has a payment reported. No action taken.")
+                % {"id": participation_id}
+            )
+            return  # Salimos de la función tempranamente.
+
+        # ✅ PASO 2: Si el pago NO existe, procedemos a eliminar la participación.
+        # Obtenemos la participación solo si sabemos que necesitamos actuar sobre ella.
+        try:
+            participation = await Participation.objects.aget(pk=participation_id)
             logger.warning(
                 _("Participation %(id)d has expired without a payment. Deleting.")
                 % {"id": participation_id}
             )
-            # .adelete() es la versión asíncrona de .delete()
+            # .adelete() es la versión asíncrona y correcta de .delete()
             await participation.adelete()
             logger.info(
                 _("Participation %(id)d successfully deleted.")
                 % {"id": participation_id}
             )
-        else:
+        except Participation.DoesNotExist:
+            # Es posible que la participación ya haya sido eliminada entre la comprobación
+            # de aexists y el aget, lo cual es un caso normal.
             logger.info(
-                _("Participation %(id)d has a payment reported. No action taken.")
+                _("Participation %(id)d not found for deletion. Already processed.")
                 % {"id": participation_id}
             )
 
-    except Participation.DoesNotExist:
-        # Este es un caso normal si el pago se procesó o la participación se eliminó
-        # por otros medios. No es un error.
-        logger.info(
-            _("Participation %(id)d not found. Already processed or deleted.")
-            % {"id": participation_id}
-        )
     except Exception as e:
         # Capturamos cualquier otro error inesperado para tener visibilidad.
         logger.error(

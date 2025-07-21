@@ -22,7 +22,7 @@ from .exceptions import (
     PaymentCalculationError,
 )
 from .services_sync import create_payment_sync
-
+from raffles.models import Raffle
 
 async def calculate_payment_amount(
     participation: Participation,
@@ -104,6 +104,66 @@ async def calculate_payment_amount(
             raise PaymentCalculationError(_("Unexpected currency combination."))
 
     return amount_to_pay, payment_currency, exchange_rate
+
+
+async def calculate_unit_ticket_price_for_method_async(
+    raffle: Raffle,
+    payment_method: PaymentMethod,
+    payment_date: date,
+) -> Tuple[Decimal, str, Optional[Decimal]]:
+    """
+    Calcula el precio de UN SOLO ticket según el método de pago seleccionado.
+
+    Args:
+        raffle: La instancia de la Rifa.
+        payment_method: El método de pago que el usuario ha seleccionado.
+        payment_date: La fecha del pago, para determinar la tasa de cambio.
+
+    Returns:
+        Una tupla con: (precio_unitario, código_de_moneda, tasa_aplicada | None).
+    """
+    # 1. Validación de Seguridad (PRESERVADA DE TU CÓDIGO)
+    if not await raffle.available_payment_methods.filter(
+        pk=payment_method.pk
+    ).aexists():
+        raise InvalidPaymentMethodError(
+            _("Payment method '%(method)s' is not available for this raffle.")
+            % {"method": payment_method.name}
+        )
+
+    # Lógica de cálculo adaptada para precio unitario.
+    base_price = raffle.ticket_price  # Ya no se multiplica por ticket_count.
+    raffle_currency = raffle.currency
+    payment_currency = payment_method.currency
+    exchange_rate = None
+
+    if raffle_currency == payment_currency:
+        # Escenario 1 y 2: Monedas iguales, no hay conversión.
+        unit_price = base_price
+    else:
+        # Se necesita conversión. OBTENER DEL CACHÉ EN PRODUCCIÓN.
+        rate_obj = await get_exchange_rate_for_date(payment_date)
+        if not rate_obj:
+            raise ExchangeRateUnavailableError(
+                _("No exchange rate available for the date %(date)s.")
+                % {"date": payment_date}
+            )
+        exchange_rate = rate_obj.rate
+
+        if raffle_currency == "USD" and payment_currency == "VEF":
+            # Escenario 3: Rifa en USD, pago en VEF.
+            unit_price = (base_price * exchange_rate).quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
+        elif raffle_currency == "VEF" and payment_currency == "USD":
+            # Escenario 4: Rifa en VEF, pago en USD.
+            unit_price = (base_price / exchange_rate).quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            )
+        else:
+            raise PaymentCalculationError(_("Unexpected currency combination."))
+
+    return unit_price, payment_currency, exchange_rate
 
 
 async def create_payment_for_participation_async(

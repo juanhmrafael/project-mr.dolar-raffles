@@ -15,11 +15,11 @@ export const routes: Routes = [
             ),
     },
     {
-        path: 'form',
-        title: 'Ubicación - ¡Gana con Sandra!',
+        path: 'rifa/:slug',
+        title: 'Detalles - ¡Gana con Sandra!',
         loadComponent: () =>
-            import('./features/formulario-page/formulario-page').then(
-                (c) => c.FormularioPage
+            import('./features/raffle-detail/raffle-detail').then(
+                (m) => m.RaffleDetail
             ),
     },
     { path: '**', redirectTo: '' },

@@ -1,79 +1,244 @@
-<!-- Modal Container - Solo se renderiza cuando está abierto -->
+<!-- modal.html -->
 @if (isOpen()) {
-
-<!-- Backdrop con animación mejorada -->
+<!-- 1. Backdrop Robusto -->
 <div
     (click)="onBackdropClick()"
-    class="fixed inset-0 z-modal-backdrop bg-black/75 backdrop-blur-sm animate-fade-in"
+    class="modal-backdrop fixed inset-0 z-modal-backdrop bg-black/60 backdrop-blur-sm animate-fade-in"
     aria-hidden="true"
 ></div>
 
-<!-- Contenedor de posicionamiento responsivo -->
-<div [ngClass]="containerClasses()">
-    <!-- Panel principal del Modal con animaciones mejoradas -->
+<!-- 2. Contenedor Principal -->
+<div
+    [attr.data-keyboard-visible]="deviceState().isKeyboardVisible"
+    [attr.data-device-type]="deviceState().type"
+    [attr.data-mobile-behavior]="effectiveMobileBehavior()"
+    class="modal-container fixed inset-0 z-modal flex overflow-hidden p-2 sm:p-4"
+>
+    <!-- 3. Panel del Modal -->
     <div
         #modalPanel
         [ngClass]="modalClasses()"
         (click)="$event.stopPropagation()"
-        class="flex flex-col animate-bounce-in-modern transform-gpu"
         role="dialog"
         aria-modal="true"
         [attr.aria-labelledby]="title() ? 'modal-title' : null"
-        [attr.aria-describedby]="title() ? null : 'modal-content'"
     >
-        <!-- Header del Modal sin gradientes que rompan bordes -->
+        <!-- Header -->
         <header
-            class="flex items-center justify-between p-6 pb-4 shrink-0 border-b border-border/30 bg-muted/5 rounded-t-2xl"
+            class="flex shrink-0 items-center justify-between border-b border-border/50 px-4 py-3"
         >
             @if (title()) {
-            <div class="flex items-center gap-3">
-                <!-- Indicador visual mejorado -->
-                <div
-                    class="w-1 h-7 bg-primary rounded-full shadow-glow-soft animate-pulse-glow-modern"
-                ></div>
-                <h2
-                    id="modal-title"
-                    class="text-xl sm:text-2xl font-bold text-foreground tracking-tight animate-slide-in-left"
-                >
-                    {{ title() }}
-                </h2>
-            </div>
+            <h2
+                id="modal-title"
+                class="truncate text-lg font-bold text-foreground"
+            >
+                {{ title() }}
+            </h2>
             } @else {
             <div></div>
             }
-
-            <!-- Botón de cierre con color destructive -->
             <button
                 type="button"
                 (click)="close()"
-                class="group flex items-center justify-center w-11 h-11 rounded-xl text-destructive/70 hover:text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/20 transition-all duration-moderate ease-bounce focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-2 hover:scale-110 active:scale-95 animate-slide-in-right"
+                class="group -mr-2 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted"
                 aria-label="Cerrar modal"
             >
-                <lucide-icon
-                    name="X"
-                    class="w-5 h-5 transition-all duration-moderate ease-bounce group-hover:rotate-90 group-hover:scale-110"
-                ></lucide-icon>
+                <svg
+                    class="h-5 w-5 transition-transform group-hover:rotate-90"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
             </button>
         </header>
 
-        <!-- Contenido principal con scroll mejorado -->
-        <main
-            id="modal-content"
-            class="flex-1 p-6 overflow-y-auto overscroll-contain scroll-smooth animate-slide-up"
-            style="
-                scrollbar-width: thin;
-                scrollbar-color: hsl(var(--primary) / 0.3) transparent;
-            "
-        >
-            <ng-content></ng-content>
+        <!-- Contenido Principal con Scroll -->
+        <main #modalContent [ngClass]="contentClasses()">
+            <div [ngClass]="paddingClasses()">
+                <ng-content></ng-content>
+            </div>
         </main>
 
-        <!-- Footer sin gradientes que rompan bordes -->
+        <!-- Footer (opcional) -->
         <footer
-            class="shrink-0 p-6 pt-4 [&:has(*:not(:empty))]:border-t [&:has(*:not(:empty))]:border-border/30 [&:has(*:not(:empty))]:bg-muted/5 rounded-b-2xl animate-slide-up"
+            class="shrink-0 border-t border-border/50 [&:empty]:hidden"
+            [ngClass]="paddingClasses()"
         >
             <ng-content select="[modal-footer]"></ng-content>
         </footer>
     </div>
 </div>
 }
+
+<!-- 4. Bloque de Estilos Centralizado y Optimizado -->
+<style>
+    /* === ESTRATEGIA DE BLOQUEO DE SCROLL === */
+    html.modal-open-html {
+        overflow: hidden !important;
+        padding-right: var(--scrollbar-width, 0px);
+    }
+
+    body.modal-open-body {
+        position: fixed !important;
+        width: 100%;
+        overflow: hidden !important;
+        overscroll-behavior: none !important;
+    }
+
+    /* === ESTILOS DEL COMPONENTE MODAL === */
+
+    :host {
+        --z-modal-backdrop: 40;
+        --z-modal: 50;
+    }
+
+    .modal-container,
+    .modal-panel {
+        overscroll-behavior: contain;
+    }
+
+    .modal-backdrop,
+    .modal-container {
+        height: 100dvh;
+        touch-action: none;
+    }
+
+    .modal-container {
+        /* Comportamiento por defecto: centrado. */
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-panel {
+        max-height: calc(95dvh - 2rem);
+    }
+
+    .modal-content {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+
+    /* === ESTILOS BASADOS EN ESTADO (DATA-ATTRIBUTES) === */
+
+    /* ✅ CORRECCIÓN FINAL: Cuando el teclado es visible... */
+    [data-keyboard-visible="true"].modal-container {
+        /* ...alinea el modal en la parte superior, eliminando el hueco. */
+        align-items: flex-start;
+        /* Añadimos un pequeño padding superior para que no se pegue al borde */
+        padding-top: 1rem;
+        /* Y un padding inferior para compensar */
+        padding-bottom: 1rem;
+    }
+
+    [data-mobile-behavior="bottom-sheet"] {
+        align-items: flex-end;
+        padding: 0;
+    }
+    [data-mobile-behavior="bottom-sheet"] .modal-panel {
+        max-height: 90dvh;
+        width: 100%;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    [data-mobile-behavior="fullscreen"] {
+        padding: 0;
+    }
+    [data-mobile-behavior="fullscreen"][data-device-type="mobile"]
+        .modal-panel {
+        height: 100dvh;
+        max-height: 100dvh;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    [data-keyboard-visible="true"] .modal-panel {
+        max-height: calc(
+            100vh - var(--keyboard-height, 0px) - 2rem
+        ); /* 2rem para los paddings */
+        transition: max-height 0.2s ease-out;
+    }
+    [data-keyboard-visible="true"][data-mobile-behavior="bottom-sheet"]
+        .modal-panel {
+        margin-bottom: 0;
+    }
+
+    /* === UTILIDADES Y MEJORAS === */
+
+    .modal-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .modal-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb {
+        background: hsl(var(--muted-foreground) / 0.3);
+        border-radius: 3px;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb:hover {
+        background: hsl(var(--muted-foreground) / 0.5);
+    }
+
+    .modal-safe-area {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+    .modal-safe-area:last-child {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    .animate-fade-in {
+        animation: fade-in 200ms ease-out forwards;
+    }
+
+    @keyframes bounce-in {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    .animate-modal-fade-in {
+        animation: bounce-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes slide-up {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    .animate-modal-slide-up {
+        animation: slide-up 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .animate-fade-in,
+        .animate-modal-fade-in,
+        .animate-modal-slide-up {
+            animation: fade-in 150ms ease-out forwards;
+            transition: none;
+        }
+    }
+</style>

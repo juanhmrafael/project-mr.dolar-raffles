@@ -177,15 +177,15 @@ class RaffleAdmin(SimpleHistoryAdmin, admin.ModelAdmin):
         # El campo de reporte es un método, siempre es de solo lectura.
         readonly_fields = ["get_report_summary"]
 
-        # if obj:
-        #     readonly_fields.extend(
-        #         [
-        #             "currency",
-        #             "ticket_price",
-        #             "total_tickets",
-        #             "min_ticket_purchase",
-        #             "start_date",
-        #         ]
-        #     )
+        if obj:
+            readonly_fields.extend(
+                [
+                    "currency",
+                    "ticket_price",
+                    "total_tickets",
+                    "min_ticket_purchase",
+                    "start_date",
+                ]
+            )
 
         return readonly_fields

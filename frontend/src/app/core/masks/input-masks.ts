@@ -4,6 +4,15 @@ import type Inputmask from 'inputmask';
 
 // Objeto que contendrá todas nuestras definiciones de máscaras, fuertemente tipadas.
 export const InputMasks: { [key: string]: Inputmask.Options } = {
+    fullName: {
+        mask: '*{1,100}',
+        definitions: {
+            '*': {
+                validator: "[A-Za-z\\sáéíóúÁÉÍÓÚñÑ']",
+            },
+        },
+        placeholder: '',
+    },
     /**
      * Definición de la máscara para un ID venezolano (Cédula/RIF).
      */

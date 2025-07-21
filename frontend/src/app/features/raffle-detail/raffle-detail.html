@@ -1,0 +1,433 @@
+@if (raffle(); as raffle) {
+<div
+    class="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 max-w-7xl"
+>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 xl:gap-12">
+        <!-- Columna principal de contenido -->
+        <main class="lg:col-span-8 space-y-8 lg:space-y-12">
+            <!-- HEADER SECTION -->
+            <header class="relative animate-fade-in">
+                <!-- Decorative elements -->
+                <div
+                    class="absolute -top-2 -left-2 w-16 h-16 bg-primary/8 rounded-full blur-xl animate-float hidden sm:block"
+                ></div>
+                <div
+                    class="absolute -bottom-2 -right-2 w-20 h-20 bg-secondary/8 rounded-full blur-xl animate-float hidden sm:block"
+                    style="animation-delay: 1s"
+                ></div>
+
+                <div class="relative z-10 space-y-4 sm:space-y-6">
+                    <!-- Title -->
+                    <h1
+                        class="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl lg:text-6xl"
+                    >
+                        {{ raffle.title }}
+                    </h1>
+
+                    <!-- Status and date -->
+                    <div
+                        class="flex flex-wrap items-center gap-3 sm:gap-4 animate-slide-in-right"
+                        style="animation-delay: 0.2s"
+                    >
+                        <span
+                            class="badge badge-primary text-xs sm:text-sm px-3 py-1.5 animate-pulse-glow"
+                        >
+                            <lucide-icon
+                                name="Zap"
+                                class="size-3 sm:size-4 mr-1.5"
+                            ></lucide-icon>
+                            {{ raffle.status_display }}
+                        </span>
+                        @if(raffle.end_date) {
+                        <div
+                            class="glass rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 hover:scale-105 transition-transform duration-moderate"
+                        >
+                            <lucide-icon
+                                name="Clock"
+                                class="size-3 sm:size-4 text-warning"
+                            ></lucide-icon>
+                            <span
+                                class="text-xs sm:text-sm font-medium text-card-foreground"
+                            >
+                                Finaliza: {{ raffle.end_date | date:'shortDate'
+                                }}
+                            </span>
+                        </div>
+                        }
+                    </div>
+
+                    <!-- Description -->
+                    @if(raffle.description) {
+                    <div
+                        class="glass rounded-xl sm:rounded-2xl p-4 sm:p-6 animate-slide-up"
+                        style="animation-delay: 0.4s"
+                    >
+                        <p
+                            class="text-sm sm:text-base text-card-foreground leading-relaxed"
+                        >
+                            {{ raffle.description }}
+                        </p>
+                    </div>
+                    }
+                </div>
+            </header>
+
+            <!-- MAIN IMAGE -->
+            <section class="animate-scale-in" style="animation-delay: 0.6s">
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-0.5 sm:-inset-1 bg-primary/20 rounded-xl sm:rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-700"
+                    ></div>
+                    <div class="relative">
+                        <img
+                            [ngSrc]="raffle.image"
+                            [alt]="'Imagen de ' + raffle.title"
+                            width="800"
+                            height="600"
+                            priority="true"
+                            class="w-full aspect-video object-cover rounded-xl sm:rounded-2xl shadow-lg transition-all duration-moderate group-hover:scale-[1.01]"
+                        />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent bg-[length:200%_100%] animate-shimmer rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-moderate"
+                        ></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MOBILE/TABLET CTA SECTION -->
+            <section
+                class="lg:hidden animate-bounce-in-modern"
+                style="animation-delay: 0.8s"
+            >
+                <div
+                    class="card-glass border border-primary/20 rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden"
+                >
+                    <!-- Background decoration -->
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-primary/3 rounded-full blur-2xl"
+                    ></div>
+                    <div
+                        class="absolute bottom-0 left-0 w-20 h-20 bg-accent/3 rounded-full blur-2xl"
+                    ></div>
+
+                    <div class="relative z-10 space-y-6">
+                        <!-- Header -->
+                        <div class="text-center space-y-3">
+                            <div
+                                class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold animate-float shadow-md"
+                            >
+                                <lucide-icon
+                                    name="Star"
+                                    class="size-3"
+                                ></lucide-icon>
+                                <span>OPORTUNIDAD ÚNICA</span>
+                                <lucide-icon
+                                    name="Star"
+                                    class="size-3"
+                                ></lucide-icon>
+                            </div>
+                            <h3
+                                class="text-lg sm:text-xl font-bold text-primary"
+                            >
+                                ¡Tu Oportunidad de Ganar!
+                            </h3>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="text-center space-y-2">
+                            <p
+                                class="text-xs sm:text-sm text-muted-foreground font-medium"
+                            >
+                                Precio por ticket
+                            </p>
+                            <div class="relative">
+                                <p
+                                    class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary"
+                                >
+                                    {{ raffle.ticket_price | number:'1.2-2' }}
+                                    <span
+                                        class="text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground ml-1"
+                                        >{{ raffle.currency }}</span
+                                    >
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Progress -->
+                        <div class="space-y-3">
+                            <div
+                                class="flex justify-between items-center text-sm font-semibold"
+                            >
+                                <span class="text-muted-foreground"
+                                    >Boletos reservados</span
+                                >
+                                <span class="text-primary">
+                                    {{ raffle.stats.tickets_progress_percentage
+                                    | number:'1.0-2' }}%
+                                </span>
+                            </div>
+                            <div
+                                class="w-full bg-muted rounded-full h-2.5 overflow-hidden"
+                            >
+                                <div
+                                    class="h-full bg-primary transition-all duration-slow ease-smooth rounded-full relative"
+                                    [style.width.%]="raffle.stats.tickets_progress_percentage"
+                                >
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="space-y-3 pt-4 border-t border-border/50">
+                            @if (raffle.status === 'IN_PROGRESS') {
+                            <button
+                                (click)="isParticipationModalOpen.set(true)"
+                                class="btn btn-primary w-full btn-md sm:btn-lg group relative overflow-hidden"
+                            >
+                                <div
+                                    class="flex items-center justify-center gap-2 sm:gap-3"
+                                >
+                                    <lucide-icon
+                                        name="Ticket"
+                                        class="size-4 sm:size-5"
+                                    ></lucide-icon>
+                                    <span class="font-bold text-sm sm:text-base"
+                                        >PARTICIPAR AHORA</span
+                                    >
+                                    <lucide-icon
+                                        name="ArrowRight"
+                                        class="size-3 sm:size-4 group-hover:translate-x-0.5 transition-transform duration-moderate"
+                                    ></lucide-icon>
+                                </div>
+                            </button>
+                            }
+                            <button
+                                (click)="isLookupModalOpen.set(true)"
+                                class="btn btn-outline-secondary w-full btn-md sm:btn-lg group"
+                            >
+                                <lucide-icon
+                                    name="Search"
+                                    class="size-4 sm:size-5"
+                                ></lucide-icon>
+                                <span class="font-semibold text-sm sm:text-base"
+                                    >Consultar mis Tickets</span
+                                >
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRIZES SECTION -->
+            <section class="animate-slide-up" style="animation-delay: 1s">
+                <div class="text-center space-y-6 mb-8 sm:mb-12">
+                    <div class="space-y-4">
+                        <div
+                            class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-xs sm:text-sm font-bold animate-float shadow-md"
+                        >
+                            <lucide-icon
+                                name="Gift"
+                                class="size-4"
+                            ></lucide-icon>
+                            <span>PREMIOS INCREÍBLES</span>
+                            <lucide-icon
+                                name="Gift"
+                                class="size-4"
+                            ></lucide-icon>
+                        </div>
+
+                        <h2
+                            class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-primary"
+                        >
+                            Un vistazo a los Premios
+                        </h2>
+                        <p
+                            class="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+                        >
+                            Estos son los increíbles premios que podrías ganar.
+                            ¡Tu próxima gran oportunidad te está esperando!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="space-y-6 sm:space-y-8">
+                    @for (prize of raffle.prizes; track prize.display_order) {
+                    <div
+                        class="animate-slide-in-left"
+                        [style.animation-delay]="(1.2 + $index * 0.1) + 's'"
+                    >
+                        <app-prize-card
+                            [prize]="prize"
+                            [raffleStatus]="raffle.status"
+                        />
+                    </div>
+                    }
+                </div>
+            </section>
+        </main>
+
+        <!-- DESKTOP SIDEBAR -->
+        <aside
+            class="hidden lg:block lg:col-span-4 animate-slide-in-right"
+            style="animation-delay: 0.4s"
+        >
+            <div class="sticky top-6">
+                <div
+                    class="card-glass border border-primary/20 rounded-2xl p-6 xl:p-8 space-y-6 relative overflow-hidden"
+                >
+                    <!-- Background decoration -->
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-primary/3 rounded-full blur-2xl animate-float"
+                    ></div>
+                    <div
+                        class="absolute bottom-0 left-0 w-20 h-20 bg-accent/3 rounded-full blur-2xl animate-float"
+                        style="animation-delay: 2s"
+                    ></div>
+
+                    <div class="relative z-10 space-y-6">
+                        <!-- Header -->
+                        <div class="text-center space-y-3">
+                            <div
+                                class="inline-flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full text-xs font-bold animate-float shadow-md"
+                            >
+                                <lucide-icon
+                                    name="Star"
+                                    class="size-3"
+                                ></lucide-icon>
+                                <span>OPORTUNIDAD ÚNICA</span>
+                                <lucide-icon
+                                    name="Star"
+                                    class="size-3"
+                                ></lucide-icon>
+                            </div>
+                            <h3 class="text-xl font-bold text-primary">
+                                ¡Tu Oportunidad de Ganar!
+                            </h3>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="text-center space-y-2">
+                            <p
+                                class="text-sm text-muted-foreground font-medium"
+                            >
+                                Precio por ticket
+                            </p>
+                            <div class="relative">
+                                <p
+                                    class="text-4xl xl:text-5xl font-extrabold text-primary"
+                                >
+                                    {{ raffle.ticket_price | number:'1.2-2' }}
+                                    <span
+                                        class="text-2xl xl:text-3xl font-semibold text-foreground ml-1"
+                                        >{{ raffle.currency }}</span
+                                    >
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Progress -->
+                        <div class="space-y-3">
+                            <div
+                                class="flex justify-between items-center text-sm font-semibold"
+                            >
+                                <span class="text-muted-foreground"
+                                    >Boletos reservados</span
+                                >
+                                <span class="text-primary">
+                                    {{ raffle.stats.tickets_progress_percentage
+                                    | number:'1.0-2' }}%
+                                </span>
+                            </div>
+                            <div
+                                class="w-full bg-muted rounded-full h-3 overflow-hidden"
+                            >
+                                <div
+                                    class="h-full bg-primary transition-all duration-slow ease-smooth rounded-full relative"
+                                    [style.width.%]="raffle.stats.tickets_progress_percentage"
+                                >
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="space-y-3 pt-4 border-t border-border/50">
+                            @if (raffle.status === 'IN_PROGRESS') {
+                            <button
+                            (click)="isParticipationModalOpen.set(true)"
+                                class="btn btn-primary w-full btn-lg group relative overflow-hidden"
+                            >
+                                <div
+                                    class="flex items-center justify-center gap-3"
+                                >
+                                    <lucide-icon
+                                        name="Ticket"
+                                        class="size-5"
+                                    ></lucide-icon>
+                                    <span class="font-bold"
+                                        >PARTICIPAR AHORA</span
+                                    >
+                                    <lucide-icon
+                                        name="ArrowRight"
+                                        class="size-4 group-hover:translate-x-0.5 transition-transform duration-moderate"
+                                    ></lucide-icon>
+                                </div>
+                            </button>
+                            }
+                            <button
+                                (click)="isLookupModalOpen.set(true)"
+                                class="btn btn-outline-secondary w-full btn-lg group"
+                            >
+                                <lucide-icon
+                                    name="Search"
+                                    class="size-5"
+                                ></lucide-icon>
+                                <span class="font-semibold"
+                                    >Consultar mis Tickets</span
+                                >
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- MODAL -->
+@if (isLookupModalOpen()) {
+<app-ticket-lookup-modal
+    [(isOpen)]="isLookupModalOpen"
+    [raffleId]="raffle.id"
+/>
+
+} @if (isParticipationModalOpen()) {
+<app-participation-modal
+    [(isOpen)]="isParticipationModalOpen"
+    [raffleDetail]="raffle"
+/>
+} } @else {
+<!-- LOADING STATE -->
+<div class="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+    <div class="relative">
+        <div
+            class="absolute inset-0 bg-primary/15 blur-xl rounded-full animate-pulse"
+        ></div>
+        <lucide-icon
+            name="LoaderCircle"
+            class="size-12 animate-spin text-primary relative z-10"
+        ></lucide-icon>
+    </div>
+    <div class="text-center space-y-2">
+        <h3 class="text-lg font-bold text-primary">Cargando tu rifa...</h3>
+        <p class="text-sm text-muted-foreground">
+            Preparando una experiencia increíble
+        </p>
+    </div>
+</div>
+}

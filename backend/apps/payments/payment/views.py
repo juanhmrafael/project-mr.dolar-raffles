@@ -1,6 +1,6 @@
 # backend/apps/payments/views.py
 
-from datetime import date, datetime
+from datetime import datetime
 
 from adrf.views import APIView
 from asgiref.sync import sync_to_async
@@ -8,7 +8,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django_ratelimit.decorators import ratelimit
 from participants.models import Participation
-from raffles.models import Raffle
 from rest_framework import serializers, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -21,13 +20,12 @@ from .exceptions import (
     InvalidPaymentMethodError,
 )
 from .serializers_async import (
-    PublicCalculationInputSerializer,
-    PublicCalculationOutputSerializer,
     PublicPaymentCreateSerializer,
 )
 from .serializers_sync import PaymentMethodLightSerializer
-from .services_async import calculate_payment_amount as calculate_payment_amount_async
-from .services_async import create_payment_for_participation_async
+from .services_async import (
+    create_payment_for_participation_async,
+)
 from .services_sync import calculate_payment_amount
 
 
@@ -123,69 +121,6 @@ class CalculatePaymentAmountAPIView(APIView):
             return Response(
                 {"error": _("Invalid date format. Use YYYY-MM-DD.")}, status=400
             )
-
-
-class CalculatePublicPaymentAmountAPIView(APIView):
-    """
-    API pública para calcular el monto a pagar en tiempo real.
-    """
-
-    permission_classes = [AllowAny]
-    authentication_classes = []
-
-    @method_decorator(ratelimit(key="ip", rate="10/m", block=True))
-    async def post(self, request, *args, **kwargs):
-        """
-        Calcula el monto a pagar basado en la rifa, método de pago y cantidad de tickets.
-        La fecha del pago se asume como el día de hoy.
-        """
-        input_serializer = PublicCalculationInputSerializer(data=request.data)
-        if not input_serializer.is_valid():
-            return Response(input_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        data = input_serializer.validated_data
-
-        try:
-            # Creamos una "pseudo" participación en memoria para el cálculo
-            raffle = await Raffle.objects.aget(pk=data["raffle_id"])
-
-            # Un usuario solo puede calcular montos para rifas activas y en progreso.
-            if not raffle.is_active or raffle.status != Raffle.Status.IN_PROGRESS:
-                return Response(
-                    {"error": _("This raffle is not available for calculation.")},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            pseudo_participation = Participation(
-                raffle=raffle, ticket_count=data["ticket_count"]
-            )
-            payment_method = await PaymentMethod.objects.aget(
-                pk=data["payment_method_id"]
-            )
-
-            amount, currency, rate = await calculate_payment_amount_async(
-                pseudo_participation, payment_method, date.today()
-            )
-
-            output_serializer = PublicCalculationOutputSerializer(
-                data={
-                    "amount_to_pay": amount,
-                    "currency": currency,
-                    "exchange_rate_applied": rate,
-                }
-            )
-            # Es importante validar el serializer de salida también
-            output_serializer.is_valid(raise_exception=True)
-
-            return Response(output_serializer.data)
-
-        except (Raffle.DoesNotExist, PaymentMethod.DoesNotExist):
-            return Response(
-                {"error": _("Invalid raffle or payment method ID")},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        except (InvalidPaymentMethodError, ExchangeRateUnavailableError) as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PublicPaymentCreateAPIView(APIView):

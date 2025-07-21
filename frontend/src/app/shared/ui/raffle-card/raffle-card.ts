@@ -8,12 +8,13 @@ import {
 import { SecondaryRaffle } from '../../models/raffle';
 import { LucideAngularModule } from 'lucide-angular';
 import { DatePipe, NgOptimizedImage } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 type IconName = 'Ticket' | 'Eye' | 'Trophy';
 
 @Component({
     selector: 'app-raffle-card',
-    imports: [DatePipe, NgOptimizedImage, LucideAngularModule],
+    imports: [DatePipe, NgOptimizedImage, LucideAngularModule, RouterLink],
     templateUrl: './raffle-card.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })

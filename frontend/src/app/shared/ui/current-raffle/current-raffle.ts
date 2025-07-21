@@ -3,17 +3,19 @@ import {
     computed,
     effect,
     input,
-    signal,output,
+    signal,
+    output,
     ChangeDetectionStrategy,
 } from '@angular/core';
 import { Prize, TimeLeft } from '../../models/raffle';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { EnhancedMainRaffle } from '../../../core/state/raffles-store';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'app-current-raffle',
-    imports: [CommonModule, NgOptimizedImage, LucideAngularModule],
+    imports: [CommonModule, NgOptimizedImage, LucideAngularModule, RouterLink],
     templateUrl: './current-raffle.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -25,7 +27,7 @@ export class CurrentRaffle {
     protected onLookupClick(): void {
         this.lookupTicketsClicked.emit(this.raffle().id);
     }
-    
+
     public readonly mainPrize = computed<Prize | undefined>(() =>
         this.raffle().prizes.find((p) => p.display_order === 1)
     );

@@ -1,6 +1,10 @@
 # backend/apps/raffles/views.py
+from datetime import date
+
 from adrf.views import APIView
-from django.core.cache import cache
+from currencies.services_async import get_exchange_rate_for_date
+
+# from django.core.cache import cache
 from django.db.models import Prefetch
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -69,6 +73,7 @@ class RaffleStatsAPIView(APIView):
         stats = await get_raffle_stats(raffle)
         return Response(stats)
 
+
 class PublicRaffleDetailAPIView(APIView):
     """
     API para obtener los detalles públicos y completos de una rifa.
@@ -77,15 +82,9 @@ class PublicRaffleDetailAPIView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     CACHE_PREFIX = "raffle_detail_"
-    CACHE_TIMEOUT = 60 * 15  # 15 minutos
 
     @method_decorator(ratelimit(key="ip", rate="30/m", block=True))
     async def get(self, request, slug, *args, **kwargs):
-        cache_key = f"{self.CACHE_PREFIX}{slug}"
-        cached_data = await cache.aget(cache_key)
-        if cached_data:
-            return Response(cached_data)
-
         try:
             # Obtenemos la rifa y precargamos todo lo necesario
             raffle = await Raffle.objects.prefetch_related(
@@ -107,8 +106,16 @@ class PublicRaffleDetailAPIView(APIView):
                 {"error": _("Raffle not found")}, status=status.HTTP_404_NOT_FOUND
             )
 
-        serializer = PublicRaffleDetailSerializer(raffle)
-        await cache.aset(cache_key, serializer.data, self.CACHE_TIMEOUT)
+        # ✅ PASO CLAVE: Obtener la tasa de cambio ANTES de serializar.
+        rate_obj = None
+        if raffle.status == Raffle.Status.IN_PROGRESS:
+            # Esta función debe estar optimizada con caché.
+            rate_obj = await get_exchange_rate_for_date(date.today())
 
+        # ✅ Pasar la tasa al contexto del serializer.
+        serializer = PublicRaffleDetailSerializer(
+            raffle, context={"rate_obj": rate_obj}
+        )
+
+        # Nota: La lógica de caché de respuesta completa se ha omitido como se recomendó.
         return Response(serializer.data)
-

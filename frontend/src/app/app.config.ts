@@ -72,6 +72,16 @@ import {
     Calendar,
     Lightbulb,
     Activity,
+    Compass,
+    TrendingUp,
+    Minus,
+    Plus,
+    ArrowLeft,
+    Wallet,
+    FileText,
+    CheckCircle,
+    Send,
+    Hash,
 } from 'lucide-angular';
 
 // ✅ 1. IMPORTA LOS DATOS DE LOCALIZACIÓN
@@ -152,6 +162,16 @@ export const appConfig: ApplicationConfig = {
                 Calendar,
                 Lightbulb,
                 Activity,
+                Compass,
+                TrendingUp,
+                Minus,
+                Plus,
+                ArrowLeft,
+                Wallet,
+                FileText,
+                CheckCircle,
+                Send,
+                Hash,
             })
         ),
         { provide: LOCALE_ID, useValue: 'es' },

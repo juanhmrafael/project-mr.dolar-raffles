@@ -5,7 +5,6 @@ from django.urls import path
 
 from .payment.views import (
     CalculatePaymentAmountAPIView,
-    CalculatePublicPaymentAmountAPIView,
     PaymentMethodsForParticipationAPIView,
     PublicPaymentCreateAPIView,
 )
@@ -13,12 +12,6 @@ from .payment.views import (
 app_name = "payments"
 
 urlpatterns = [
-    # APIs Públicas
-    path(
-        "api/v1/payments/calculate-amount/",
-        CalculatePublicPaymentAmountAPIView.as_view(),
-        name="api-public-calculate-amount",
-    ),
     path(
         "api/v1/payments/",
         PublicPaymentCreateAPIView.as_view(),

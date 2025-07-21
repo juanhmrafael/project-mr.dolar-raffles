@@ -83,7 +83,10 @@
         </div>
 
         <!-- Botón de Acción -->
-        <button class="btn btn-outline-primary btn-md mt-6">
+        <button
+            [routerLink]="['/rifa', raffle().slug]"
+            class="btn btn-outline-primary btn-md mt-6"
+        >
             <lucide-icon
                 [name]="buttonConfig().icon"
                 class="size-4"

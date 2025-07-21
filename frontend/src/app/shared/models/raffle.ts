@@ -16,9 +16,32 @@ type Currency = 'VEF' | 'USD';
  * Representa un único premio dentro de una rifa.
  */
 export interface Prize {
+    /** Título del nivel del premio. Ej: "Premio Mayor", "2do Lugar". */
     readonly level_title: string;
+
+    /** Nombre específico del premio. Ej: "Carro del año". */
     readonly name: string;
+
+    /** Orden numérico para la visualización. */
     readonly display_order: number;
+
+    /** Descripción detallada del premio. Puede ser null. */
+    readonly description: string | null;
+
+    /** URL de la imagen promocional del premio. Puede ser null. */
+    readonly image: string | null;
+
+    /** URL de la foto del ganador recibiendo el premio. Puede ser null. */
+    readonly delivered_image: string | null;
+
+    /** Nombre completo del ganador. Es null si aún no hay un ganador asignado. */
+    readonly winner_name: string | null;
+
+    /** Número del ticket ganador. Es null si aún no hay un ganador. */
+    readonly winner_ticket_number: number | null;
+
+    /** Fecha y hora de entrega del premio en formato ISO 8601. Es null si no se ha entregado. */
+    readonly delivered_at: string | null;
 }
 
 /**
@@ -141,6 +164,18 @@ export type PaymentMethod = BasePaymentMethod &
  * @path GET /api/v1/raffles/{slug}/
  */
 
+/**
+ * ✅ NUEVA INTERFAZ
+ * Describe el objeto que contiene el precio unitario de un ticket en ambas monedas.
+ */
+export interface UnitPricePerCurrency {
+    /** Precio unitario en Dólares Americanos. */
+    readonly USD: string;
+    /** Precio unitario en Bolívares. */
+    readonly VEF: string;
+}
+
+
 export interface RaffleDetail {
     readonly id: number;
     readonly title: string;
@@ -157,6 +192,23 @@ export interface RaffleDetail {
     readonly end_date: string | null; // ISO 8601
     readonly prizes: readonly Prize[];
     readonly available_payment_methods: readonly PaymentMethod[];
+
+    /**
+     * La fecha de la tasa aplicada, en formato legible.
+     * Será `null` si la rifa no está en progreso o no hay tasa disponible.
+     */
+    readonly applied_rate_date: string | null;
+    /**
+     * El precio de 1 Dólar en Bolívares según la tasa aplicada.
+     * Será `null` si la rifa no está en progreso o no hay tasa disponible.
+     */
+    readonly vef_per_usd_price: string | null;
+    /**
+     * Objeto que contiene el precio unitario pre-calculado en ambas monedas.
+     * Será `null` si la rifa no está en progreso o no hay tasa disponible.
+     * El frontend debe usar este objeto para los cálculos de pago.
+     */
+    readonly unit_price_per_currency: UnitPricePerCurrency | null;
 }
 
 /**
@@ -279,44 +331,6 @@ export interface ParticipationStatus {
  */
 export type TicketLookupResponse = readonly ParticipationStatus[];
 
-/**
- * @file Contiene las interfaces para el cálculo y reporte de pagos.
- */
-
-// --- API: Calcular Monto de Pago ---
-// Path: POST /api/v1/payments/calculate-amount/
-
-/**
- * Payload para la API de cálculo de monto de pago.
- */
-export interface PaymentCalculationPayload {
-    readonly raffle_id: number;
-    readonly payment_method_id: number;
-    readonly ticket_count: number;
-}
-
-/**
- * Respuesta de la API de cálculo de monto de pago.
- */
-export interface PaymentCalculationResponse {
-    /**
-     * El monto final a pagar. Se representa como string para evitar
-     * imprecisiones de punto flotante en JavaScript.
-     */
-    readonly amount_to_pay: string;
-
-    /**
-     * La moneda en la que se debe realizar el pago (ej: "VEF", "USD").
-     */
-    readonly currency: string;
-
-    /**
-     * La tasa de cambio que se utilizó para el cálculo, si aplica.
-     * Es null si el pago es en la moneda base de la rifa.
-     * Se representa como string para precisión decimal.
-     */
-    readonly exchange_rate_applied: string | null;
-}
 
 // --- API: Reportar un Nuevo Pago ---
 // Path: POST /api/v1/payments/
@@ -357,4 +371,8 @@ export interface PaymentReportResponse {
      * Ej: "Pago reportado con éxito. En espera de verificación."
      */
     readonly status: string;
+}
+
+export interface EnhancedRaffleDetail extends RaffleDetail {
+    stats: RaffleStats;
 }
