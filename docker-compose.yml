@@ -15,6 +15,8 @@ x-django-base: &django-base
     - postgres_password
     - postgres_db
     - redis_appuser_password # El backend también necesita la contraseña de Redis
+    - django_secret_key     
+    - field_encryption_key  
   # Las variables de entorno ahora solo contienen configuración NO sensible.
   environment:
     - PYTHONPATH=/home/appuser/app/apps
@@ -200,3 +202,7 @@ secrets:
     file: ./secrets/postgres_db.txt
   redis_appuser_password:
     file: ./secrets/redis_appuser_password.txt
+  django_secret_key: # <-- AÑADIR ESTE BLOQUE
+    file: ./secrets/django_secret_key.txt
+  field_encryption_key: # <-- AÑADIR ESTE BLOQUE
+    file: ./secrets/field_encryption_key.txt
