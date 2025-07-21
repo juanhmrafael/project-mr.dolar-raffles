@@ -36,16 +36,17 @@ ehthumbs.db
 Thumbs.db
 
 # ¡CRÍTICO! Ignorar archivos de entorno y secretos para que no terminen en la imagen.
-.env
+# Se ignoran todos los archivos .env por defecto para máxima seguridad.
+# La excepción para el .env de producción se define al final.
 .env.*
 *.env
 
 
 # Ignorar los archivos de Docker para evitar recursividad o conflictos.
-Dockerfile
-Dockerfile.*
-docker-compose.yml
-docker-compose.*.yml
+# Dockerfile
+# Dockerfile.*
+# docker-compose.yml
+# docker-compose.*.yml
 .dockerignore
 
 # Documentation
@@ -76,3 +77,9 @@ node_modules
 .npm/
 .yarn/
 .cache/
+
+# --- REGLA DE EXCEPCIÓN CANÓNICA (FINAL) ---
+# Propósito: Anular la exclusión anterior para el archivo .env específico de la raíz.
+# El '!' invierte la regla de ignorar para este patrón exacto.
+# Esto es necesario para que el Dockerfile.backend pueda copiar la configuración no secreta.
+!/.env
