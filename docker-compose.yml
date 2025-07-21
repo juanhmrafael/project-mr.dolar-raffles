@@ -89,7 +89,8 @@ services:
         limits: { cpus: '0.5', memory: 512M }
         reservations: { cpus: '0.25', memory: 256M }
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a $$(cat /run/secrets/redis_appuser_password) ping | grep PONG"]
+      # Sintaxis más robusta y portable para el healthcheck.
+      test: ["CMD", "sh", "-c", "redis-cli -a \"$(cat /run/secrets/redis_appuser_password)\" ping | grep PONG"]
       interval: 10s
       timeout: 5s
       retries: 5
