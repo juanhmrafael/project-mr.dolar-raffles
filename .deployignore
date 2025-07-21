@@ -1,9 +1,0 @@
-.git
-.gitignore
-.deployignore
-secrets/
-__pycache__/
-*.pyc
-*.pyo
-*.DS_Store
-node_modules/
