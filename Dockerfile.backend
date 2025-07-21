@@ -117,6 +117,7 @@ COPY --from=prod-deps /usr/local/bin /usr/local/bin
 # 'appuser', evitando problemas de permisos en tiempo de ejecución.
 COPY --chown=appuser:appuser ./backend /home/appuser/app
 COPY --chown=appuser:appuser ./entrypoint.sh /home/appuser/app/entrypoint.sh
+COPY --chown=appuser:appuser ./.env /home/appuser/app/.env
 
 # Propósito: Otorgar permisos de ejecución al script 'entrypoint.sh'. Sin este permiso,
 # el contenedor no podría ejecutar el script al arrancar.
