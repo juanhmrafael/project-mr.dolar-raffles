@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VERSIÓN DEL PAQUETE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 15:45-0400\n"
+"POT-Creation-Date: 2025-07-21 08:51-0400\n"
 "PO-Revision-Date: 2025-07-03 02:00+America/Caracas\n"
 "Last-Translator: Juan Rafael Hoyos Miranda <juanhmrafael@gmail.com>\n"
 "Language-Team: Español <LL@li.org>\n"
@@ -180,16 +180,14 @@ msgstr "Intento fallido."
 msgid ""
 "The participation has been created successfully. It will expire in 5 minutes "
 "if a payment is not registered."
-msgstr ""
-"La participación se ha creado exitosamente. Expirará en 5 minutos si no se "
-"registra un pago."
+msgstr "La participación se ha creado exitosamente. Expirará en 5 minutos si no se registra un pago."
 
 #: apps/participants/apps.py:7
 msgid "Participants"
 msgstr "Participantes"
 
 #: apps/participants/models.py:32 apps/raffles/models.py:111
-#: apps/raffles/models.py:147 apps/tickets/models.py:21
+#: apps/raffles/models.py:167 apps/tickets/models.py:21
 msgid "Raffle"
 msgstr "Rifa"
 
@@ -205,9 +203,7 @@ msgstr "Número de Teléfono"
 msgid ""
 "Enter the 11-digit cell phone number. It will be formatted automatically as "
 "(04XX) XXX-XXXX."
-msgstr ""
-"Ingresa el número de celular de 11 dígitos. Se formateará automáticamente "
-"como (04XX) XXX-XXXX."
+msgstr "Ingresa el número de celular de 11 dígitos. Se formateará automáticamente como (04XX) XXX-XXXX."
 
 #: apps/participants/models.py:49
 msgid "Email Address"
@@ -261,7 +257,7 @@ msgstr "Esta rifa no está disponible para participar."
 msgid "The minimum purchase for this raffle is %(min_purchase)s tickets."
 msgstr "La compra mínima para esta rifa es de %(min_purchase)s tickets."
 
-#: apps/participants/serializers.py:104
+#: apps/participants/serializers.py:140
 msgid "Pending Payment Report"
 msgstr "Reporte de Pagos Pendientes"
 
@@ -269,34 +265,32 @@ msgstr "Reporte de Pagos Pendientes"
 msgid "Not enough tickets available."
 msgstr "No hay suficientes tickets disponibles."
 
-#: apps/participants/tasks.py:31
-#, python-format
-msgid "Participation %(id)d has expired without a payment. Deleting."
-msgstr "La participación %(id)d ha expirado sin un pago. Eliminando."
-
-#: apps/participants/tasks.py:37
-#, python-format
-msgid "Participation %(id)d successfully deleted."
-msgstr "Participación %(id)d eliminada con éxito."
-
-#: apps/participants/tasks.py:42
+#: apps/participants/tasks.py:33
 #, python-format
 msgid "Participation %(id)d has a payment reported. No action taken."
 msgstr "La participación %(id)d tiene un pago reportado. No se tomó ninguna acción."
 
-#: apps/participants/tasks.py:50
+#: apps/participants/tasks.py:43
 #, python-format
-msgid "Participation %(id)d not found. Already processed or deleted."
-msgstr "Participación %(id)d no encontrada. Ya procesada o eliminada."
+msgid "Participation %(id)d has expired without a payment. Deleting."
+msgstr "La participación %(id)d ha expirado sin un pago. Eliminando."
 
-#: apps/participants/tasks.py:57
+#: apps/participants/tasks.py:49
+#, python-format
+msgid "Participation %(id)d successfully deleted."
+msgstr "Participación %(id)d eliminada con éxito."
+
+#: apps/participants/tasks.py:56
+#, python-format
+msgid "Participation %(id)d not found for deletion. Already processed."
+msgstr "Participación %(id)d no encontrada para su eliminación. Ya fue procesada."
+
+#: apps/participants/tasks.py:64
 #, python-format
 msgid ""
 "An unexpected error occurred during cleanup for participation %(id)d: "
 "%(error)s"
-msgstr ""
-"Ocurrió un error inesperado durante la limpieza para la participación %(id)d: "
-"%(error)s"
+msgstr "Ocurrió un error inesperado durante la limpieza para la participación %(id)d: %(error)s"
 
 #: apps/payments/apps.py:8
 msgid "Payments & Verification"
@@ -420,7 +414,7 @@ msgid "Payment Hash"
 msgstr "Hash del Pago"
 
 #: apps/payments/models.py:172 apps/raffles/models.py:72
-#: apps/raffles/models.py:250
+#: apps/raffles/models.py:270
 msgid "Status"
 msgstr "Estatus"
 
@@ -452,7 +446,7 @@ msgstr "Pago"
 msgid "Payments"
 msgstr "Pagos"
 
-#: apps/payments/payment/admin.py:84
+#: apps/payments/payment/admin.py:84 apps/tickets/admin.py:50
 msgid "Participant"
 msgstr "Participante"
 
@@ -557,20 +551,20 @@ msgid ""
 "reported."
 msgstr "Ya se ha reportado un pago con esta misma referencia, fecha y monto."
 
-#: apps/payments/payment/serializers_async.py:65
+#: apps/payments/payment/serializers_async.py:48
 msgid "This participation already has a payment reported."
 msgstr "Esta participación ya tiene un pago reportado."
 
-#: apps/payments/payment/serializers_async.py:69
+#: apps/payments/payment/serializers_async.py:52
 msgid "Participation not found."
 msgstr "Participación no encontrada."
 
-#: apps/payments/payment/serializers_async.py:99
+#: apps/payments/payment/serializers_async.py:82
 #, python-format
 msgid "Missing required details for this payment method: %(fields)s"
 msgstr "Faltan detalles requeridos para este método de pago: %(fields)s"
 
-#: apps/payments/payment/serializers_async.py:107
+#: apps/payments/payment/serializers_async.py:90
 msgid "Payment method not found."
 msgstr "Método de pago no encontrado."
 
@@ -587,41 +581,40 @@ msgid "method_name"
 msgstr "nombre_del_metodo"
 
 #: apps/payments/payment/services_async.py:79
+#: apps/payments/payment/services_async.py:148
 #: apps/payments/payment/services_sync.py:81
 #, python-format
 msgid "No exchange rate available for the date %(date)s."
 msgstr "No hay tasa de cambio disponible para la fecha %(date)s."
 
 #: apps/payments/payment/services_async.py:104
+#: apps/payments/payment/services_async.py:164
 #: apps/payments/payment/services_sync.py:106
 msgid "Unexpected currency combination."
 msgstr "Combinación de monedas inesperada."
 
-#: apps/payments/payment/views.py:100
+#: apps/payments/payment/services_async.py:130
+#, python-format
+msgid "Payment method '%(method)s' is not available for this raffle."
+msgstr "El método de pago '%(method)s' no está disponible para esta rifa."
+
+#: apps/payments/payment/views.py:98
 msgid "Missing required parameters"
 msgstr "Faltan parámetros obligatorios"
 
-#: apps/payments/payment/views.py:119
+#: apps/payments/payment/views.py:117
 msgid "Invalid ID provided"
 msgstr "El ID proporcionado es inválido"
 
-#: apps/payments/payment/views.py:124
+#: apps/payments/payment/views.py:122
 msgid "Invalid date format. Use YYYY-MM-DD."
 msgstr "Formato de fecha inválido. Use AAAA-MM-DD."
 
-#: apps/payments/payment/views.py:155
-msgid "This raffle is not available for calculation."
-msgstr "Esta rifa no está disponible para realizar cálculos."
-
-#: apps/payments/payment/views.py:184
-msgid "Invalid raffle or payment method ID"
-msgstr "ID de rifa o método de pago inválido."
-
-#: apps/payments/payment/views.py:211
+#: apps/payments/payment/views.py:146
 msgid "Payment reported successfully. Awaiting verification."
 msgstr "Pago reportado con éxito. En espera de verificación."
 
-#: apps/payments/payment/views.py:219
+#: apps/payments/payment/views.py:154
 msgid "A payment with these exact details has already been reported."
 msgstr "Ya se ha reportado un pago con estos mismos detalles."
 
@@ -629,10 +622,7 @@ msgstr "Ya se ha reportado un pago con estos mismos detalles."
 msgid ""
 "This payment method is in use and its critical details cannot be modified. "
 "Only the 'Account Nickname' and 'Is Active?' status can be changed."
-msgstr ""
-"Este método de pago está en uso y sus detalles críticos no pueden ser "
-"modificados. Solo el 'Alias de la Cuenta' y el estatus '¿Está Activo?' "
-"pueden cambiarse."
+msgstr "Este método de pago está en uso y sus detalles críticos no pueden ser modificados. Solo el 'Alias de la Cuenta' y el estatus '¿Está Activo?' pueden cambiarse."
 
 #: apps/payments/payment_method/admin.py:60
 msgid "Account Configuration"
@@ -642,9 +632,7 @@ msgstr "Configuración de la Cuenta"
 msgid ""
 "Fill in the required details for the selected payment method below. The "
 "system will show/hide fields automatically."
-msgstr ""
-"Completa los detalles necesarios para el método de pago seleccionado a "
-"continuación. El sistema mostrará/ocultará los campos automáticamente."
+msgstr "Completa los detalles necesarios para el método de pago seleccionado a continuación. El sistema mostrará/ocultará los campos automáticamente."
 
 #: apps/payments/payment_method/admin.py:104
 msgid "Delete selected payment methods"
@@ -660,9 +648,7 @@ msgstr "{deletable_objects} métodos de pago fueron eliminados con éxito."
 msgid ""
 "{protected_objects} payment methods could not be deleted because they are in "
 "use."
-msgstr ""
-"{protected_objects} métodos de pago no pudieron ser eliminados porque están "
-"en uso."
+msgstr "{protected_objects} métodos de pago no pudieron ser eliminados porque están en uso."
 
 #: apps/payments/payment_method/form.py:31
 msgid "Phone"
@@ -690,9 +676,7 @@ msgstr "Número de Cuenta"
 
 #: apps/payments/payment_method/form.py:69
 msgid "Enter the full bank account number, typically 20 digits."
-msgstr ""
-"Ingresa el número de cuenta bancaria completo, que usualmente tiene 20 "
-"dígitos."
+msgstr "Ingresa el número de cuenta bancaria completo, que usualmente tiene 20 dígitos."
 
 #: apps/payments/payment_method/form.py:73
 msgid "Holder Name"
@@ -701,9 +685,7 @@ msgstr "Nombre del Titular"
 #: apps/payments/payment_method/form.py:77
 msgid ""
 "Enter the full name of the account holder, at least first and last name."
-msgstr ""
-"Ingresa el nombre completo del titular de la cuenta, al menos nombre y "
-"apellido."
+msgstr "Ingresa el nombre completo del titular de la cuenta, al menos nombre y apellido."
 
 #: apps/payments/payment_method/form.py:85
 msgid "Enter a valid email address for the account holder (e.g., for Zelle)."
@@ -716,6 +698,33 @@ msgstr "Ingresa el Pay ID de Binance asociado a la cuenta."
 #: apps/raffles/apps.py:7
 msgid "Raffles Management"
 msgstr "Gestión de Rifas"
+
+#: apps/raffles/draw/admin.py:24
+msgid "Información del Sorteo"
+msgstr "Información del Sorteo"
+
+#: apps/raffles/draw/admin.py:28
+msgid "Procesar Resultado"
+msgstr "Procesar Resultado"
+
+#: apps/raffles/draw/admin.py:31
+msgid ""
+"Para un sorteo 'Programado', introduzca el número ganador aquí y haga clic "
+"en 'Guardar'. El sistema asignará el premio o lo acumulará automáticamente."
+msgstr "Para un sorteo 'Programado', introduzca el número ganador aquí y haga clic en 'Guardar'. El sistema asignará el premio o lo acumulará automáticamente."
+
+#: apps/raffles/draw/admin.py:40
+msgid "Revocar sorteo y programar uno nuevo"
+msgstr "Revocar sorteo y programar uno nuevo"
+
+#: apps/raffles/draw/admin.py:51
+msgid "Acción solo aplicable a sorteos con estado 'Completado'."
+msgstr "Acción solo aplicable a sorteos con estado 'Completado'."
+
+#: apps/raffles/draw/admin.py:67
+#, python-brace-format
+msgid "{revoked_count} sorteo(s) han sido revocados y reprogramados."
+msgstr "{revoked_count} sorteo(s) han sido revocados y reprogramados."
 
 #: apps/raffles/models.py:26
 msgid "In Progress"
@@ -787,8 +796,7 @@ msgstr "¿Es Visible Públicamente?"
 
 #: apps/raffles/models.py:84
 msgid "Check this to make the raffle visible to participants on the website."
-msgstr ""
-"Marca esto para hacer la rifa visible a los participantes en el sitio web."
+msgstr "Marca esto para hacer la rifa visible a los participantes en el sitio web."
 
 #: apps/raffles/models.py:88
 msgid "Main Image"
@@ -818,129 +826,186 @@ msgstr "Fecha de Fin"
 msgid ""
 "Optional. Leave blank if the raffle ends based on manual decision or ticket "
 "sales."
-msgstr ""
-"Opcional. Dejar en blanco si la rifa finaliza por decisión manual o al "
-"venderse todos los tickets."
+msgstr "Opcional. Dejar en blanco si la rifa finaliza por decisión manual o al venderse todos los tickets."
 
 #: apps/raffles/models.py:112
 msgid "Raffles"
 msgstr "Rifas"
 
-#: apps/raffles/models.py:152
+#: apps/raffles/models.py:172
 msgid "Display Order"
 msgstr "Orden de Visualización"
 
-#: apps/raffles/models.py:154
+#: apps/raffles/models.py:174
 msgid "Order of importance for display (1 = most important)."
 msgstr "Orden de importancia para mostrar (1 = más importante)."
 
-#: apps/raffles/models.py:157
+#: apps/raffles/models.py:177
 msgid "Prize Level Title"
 msgstr "Título del Nivel de Premio"
 
-#: apps/raffles/models.py:160
+#: apps/raffles/models.py:180
 msgid "E.g., 'Grand Prize', 'Second Prize', 'Consolation Prize'."
 msgstr "Ej: 'Primer Premio', 'Segundo Premio', 'Premio de Consolación'."
 
-#: apps/raffles/models.py:163
+#: apps/raffles/models.py:183
 msgid "Prize Name"
 msgstr "Nombre del Premio"
 
-#: apps/raffles/models.py:164
+#: apps/raffles/models.py:184
 msgid "Prize Description"
 msgstr "Descripción del Premio"
 
-#: apps/raffles/models.py:168
+#: apps/raffles/models.py:188
 msgid "Prize Image"
 msgstr "Imagen del Premio"
 
-#: apps/raffles/models.py:172
+#: apps/raffles/models.py:192
 msgid "Promotional image of the prize."
 msgstr "Imagen promocional del premio."
 
-#: apps/raffles/models.py:175
+#: apps/raffles/models.py:195
 msgid "Winner Photo"
 msgstr "Foto del Ganador"
 
-#: apps/raffles/models.py:179
+#: apps/raffles/models.py:199
 msgid "Photo of the winner with their prize."
 msgstr "Foto del ganador con su premio."
 
-#: apps/raffles/models.py:189
+#: apps/raffles/models.py:209 apps/raffles/prize/admin.py:260
 msgid "Winner"
 msgstr "Ganador"
 
-#: apps/raffles/models.py:192
+#: apps/raffles/models.py:212
 msgid "Winner Ticket Number"
 msgstr "Número del Ticket Ganador"
 
-#: apps/raffles/models.py:194
+#: apps/raffles/models.py:214
 msgid "Delivered At"
 msgstr "Fecha de Entrega"
 
-#: apps/raffles/models.py:203 apps/raffles/models.py:237
+#: apps/raffles/models.py:223 apps/raffles/models.py:257
 msgid "Prize"
 msgstr "Premio"
 
-#: apps/raffles/models.py:204
+#: apps/raffles/models.py:224
 msgid "Prizes"
 msgstr "Premios"
 
-#: apps/raffles/models.py:231
+#: apps/raffles/models.py:251
 msgid "Scheduled"
 msgstr "Programado"
 
-#: apps/raffles/models.py:232
+#: apps/raffles/models.py:252
 msgid "Completed"
 msgstr "Completado"
 
-#: apps/raffles/models.py:233
+#: apps/raffles/models.py:253
 msgid "Rolled Over"
-msgstr "Pospuesto"
+msgstr "Acumulado"
 
-#: apps/raffles/models.py:240
+#: apps/raffles/models.py:260
 msgid "Lottery Name"
 msgstr "Nombre de la Lotería"
 
-#: apps/raffles/models.py:243
+#: apps/raffles/models.py:263
 msgid "Draw Time"
 msgstr "Hora del Sorteo"
 
-#: apps/raffles/models.py:243
+#: apps/raffles/models.py:263
 msgid "Date and time of the external lottery draw."
 msgstr "Fecha y hora del sorteo de la lotería externa."
 
-#: apps/raffles/models.py:247
+#: apps/raffles/models.py:267
 msgid "Winning Number"
 msgstr "Número Ganador"
 
-#: apps/raffles/models.py:256
+#: apps/raffles/models.py:276
 msgid "Draw"
 msgstr "Sorteo"
 
-#: apps/raffles/models.py:257
+#: apps/raffles/models.py:277
 msgid "Draws"
 msgstr "Sorteos"
 
-#: apps/raffles/prize/admin.py:75
+#: apps/raffles/prize/admin.py:121
 msgid "Promotional Image"
 msgstr "Imagen Promocional"
 
-#: apps/raffles/prize/admin.py:77
-msgid "Winner Details"
-msgstr "Detalles del Ganador"
+#: apps/raffles/prize/admin.py:125
+msgid "Winner & Delivery Details"
+msgstr "Ganador y Detalles de Entrega"
 
-#: apps/raffles/prize/admin.py:92
+#: apps/raffles/prize/admin.py:128
+msgid ""
+"Un ganador ha sido asignado. Para registrar la entrega, complete la fecha y "
+"suba la foto del ganador."
+msgstr "Un ganador ha sido asignado. Para registrar la entrega, complete la fecha y suba la foto del ganador."
+
+#: apps/raffles/prize/admin.py:148
+msgid ""
+"La fecha de entrega se ha establecido automáticamente porque se subió una "
+"foto del ganador."
+msgstr "La fecha de entrega se ha establecido automáticamente porque se subió una foto del ganador."
+
+#: apps/raffles/prize/admin.py:155
+msgid "Revocar premio y programar nuevo sorteo"
+msgstr "Revocar premio y programar nuevo sorteo"
+
+#: apps/raffles/prize/admin.py:172
+#, python-brace-format
+msgid ""
+"{revoked_count} premio(s) han sido revocados y se han programado nuevos "
+"sorteos."
+msgstr "{revoked_count} premio(s) han sido revocados y se han programado nuevos sorteos."
+
+#: apps/raffles/prize/admin.py:178
+msgid "Forzar reseteo de ganador (corrige sorteos eliminados)"
+msgstr "Forzar reseteo de ganador (corrige sorteos eliminados)"
+
+#: apps/raffles/prize/admin.py:192
+#, python-brace-format
+msgid "El premio '{prize.name}' no tiene ganador. No se necesita esta acción."
+msgstr "El premio '{prize.name}' no tiene ganador. No se necesita esta acción."
+
+#: apps/raffles/prize/admin.py:201
+#, python-brace-format
+msgid "El premio '{prize.name}' ya fue entregado y no puede ser reseteado."
+msgstr "El premio '{prize.name}' ya fue entregado y no puede ser reseteado."
+
+#: apps/raffles/prize/admin.py:211
+#, python-brace-format
+msgid ""
+"El premio '{prize.name}' tiene un sorteo válido. Use la acción de revocación "
+"estándar."
+msgstr "El premio '{prize.name}' tiene un sorteo válido. Use la acción de revocación estándar."
+
+#: apps/raffles/prize/admin.py:236
+#, python-brace-format
+msgid ""
+"{fixed_count} premio(s) con ganadores huérfanos han sido reseteados y "
+"reprogramados."
+msgstr "{fixed_count} premio(s) con ganadores huérfanos han sido reseteados y reprogramados."
+
+#: apps/raffles/prize/admin.py:242
 msgid "Image Preview"
 msgstr "Vista Previa de la Imagen"
 
-#: apps/raffles/prize/admin.py:99 apps/raffles/prize/admin.py:108
+#: apps/raffles/prize/admin.py:249 apps/raffles/prize/admin.py:258
 msgid "No image"
 msgstr "Sin imagen"
 
-#: apps/raffles/prize/admin.py:101
+#: apps/raffles/prize/admin.py:251
 msgid "Winner Photo Preview"
 msgstr "Vista Previa de la Foto del Ganador"
+
+#: apps/raffles/prize/admin.py:266
+msgid "Delivered?"
+msgstr "¿Entregado?"
+
+#: apps/raffles/prize/admin.py:299
+msgid "El ganador fue reseteado porque el sorteo que lo generó fue eliminado."
+msgstr "El ganador fue reseteado porque el sorteo que lo generó fue eliminado."
 
 #: apps/raffles/raffle/admin.py:32
 msgid "Step 1: Identity & Visibility"
@@ -949,9 +1014,7 @@ msgstr "Paso 1: Identidad y Visibilidad"
 #: apps/raffles/raffle/admin.py:35
 msgid ""
 "Set the main details of the raffle and control if it's visible to the public."
-msgstr ""
-"Define los detalles principales de la rifa y controla si es visible al "
-"público."
+msgstr "Define los detalles principales de la rifa y controla si es visible al público."
 
 #: apps/raffles/raffle/admin.py:46
 msgid "Step 2: Rules & Pricing"
@@ -964,8 +1027,7 @@ msgstr "Paso 3: Métodos de Pago Disponibles"
 #: apps/raffles/raffle/admin.py:58
 msgid ""
 "Select which payment accounts participants can use for this specific raffle."
-msgstr ""
-"Selecciona qué cuentas de pago pueden usar los participantes para esta rifa."
+msgstr "Selecciona qué cuentas de pago pueden usar los participantes para esta rifa."
 
 #: apps/raffles/raffle/admin.py:63
 msgid "Step 4: Timeline"
@@ -1011,17 +1073,17 @@ msgstr "Cola de Verificación"
 msgid "Pending Payments"
 msgstr "Pagos Pendientes"
 
-#: apps/raffles/views.py:66 apps/raffles/views.py:102 apps/raffles/views.py:107
+#: apps/raffles/views.py:70 apps/raffles/views.py:101 apps/raffles/views.py:106
 msgid "Raffle not found"
 msgstr "Rifa no encontrada"
+
+#: apps/tickets/admin.py:42 apps/tickets/models.py:29
+msgid "Ticket Number"
+msgstr "Número de Ticket"
 
 #: apps/tickets/apps.py:8
 msgid "Assigned Tickets"
 msgstr "Tickets Asignados"
-
-#: apps/tickets/models.py:29
-msgid "Ticket Number"
-msgstr "Número de Ticket"
 
 #: apps/tickets/models.py:31
 msgid "Assigned At"
@@ -1103,8 +1165,7 @@ msgstr "estatus de personal"
 
 #: apps/users/models.py:111
 msgid "Designates whether the user can log into this admin site."
-msgstr ""
-"Indica si el usuario puede iniciar sesión en este sitio de administración."
+msgstr "Indica si el usuario puede iniciar sesión en este sitio de administración."
 
 #: apps/users/models.py:114
 msgid "active"
@@ -1114,9 +1175,7 @@ msgstr "activo"
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
-msgstr ""
-"Indica si este usuario debe ser tratado como activo. Desmarca esta opción en "
-"lugar de eliminar la cuenta."
+msgstr "Indica si este usuario debe ser tratado como activo. Desmarca esta opción en lugar de eliminar la cuenta."
 
 #: apps/users/models.py:122
 msgid "chief auditor status"
@@ -1141,8 +1200,7 @@ msgstr "Usuarios"
 #: apps/users/models.py:168
 #, python-brace-format
 msgid "The system user ({email}) is read-only and cannot be modified."
-msgstr ""
-"El usuario de sistema ({email}) es de solo lectura y no puede ser modificado."
+msgstr "El usuario de sistema ({email}) es de solo lectura y no puede ser modificado."
 
 #: apps/users/models.py:183
 #, python-brace-format
@@ -1171,24 +1229,18 @@ msgstr "Bolívar Venezolano"
 
 #: apps/utils/validators.py:48
 msgid "Invalid ID. Must be a valid personal ID (V, E, P) like 'V-12345678'."
-msgstr ""
-"Cédula inválida. Debe ser una cédula personal válida (V, E, P) como "
-"'V-12345678'."
+msgstr "Cédula inválida. Debe ser una cédula personal válida (V, E, P) como 'V-12345678'."
 
 #: apps/utils/validators.py:69
 msgid ""
 "Invalid Payer ID format. Use a format like 'V-12345678' or 'J-123456789'."
-msgstr ""
-"Formato de Cédula/RIF del pagador inválido. Usa un formato como 'V-12345678' "
-"o 'J-123456789'."
+msgstr "Formato de Cédula/RIF del pagador inválido. Usa un formato como 'V-12345678' o 'J-123456789'."
 
 #: apps/utils/validators.py:91
 msgid ""
 "Invalid phone number. Must be a valid Venezuelan cell number (e.g., (04XX) "
 "XXX-XXXX)."
-msgstr ""
-"Número de teléfono inválido. Debe ser un número celular venezolano válido "
-"(ej. (04XX) XXX-XXXX)."
+msgstr "Número de teléfono inválido. Debe ser un número celular venezolano válido (ej. (04XX) XXX-XXXX)."
 
 #: apps/utils/validators.py:104
 msgid "Name can only contain letters and spaces."
@@ -1252,9 +1304,7 @@ msgstr "Error del Servidor <em>(500)</em>"
 msgid ""
 "There’s been an error. It’s been reported to the site administrators via "
 "email and should be fixed shortly. Thanks for your patience."
-msgstr ""
-"Ha ocurrido un error. Ha sido reportado a los administradores del sitio vía "
-"email y debería ser solucionado en breve. Gracias por tu paciencia."
+msgstr "Ha ocurrido un error. Ha sido reportado a los administradores del sitio vía email y debería ser solucionado en breve. Gracias por tu paciencia."
 
 #: templates/admin/actions.html:8
 msgid "Run"
@@ -1348,16 +1398,13 @@ msgstr[2] "Por favor, corrige los errores a continuación."
 #: templates/admin/auth/user/change_password.html:52
 #, python-format
 msgid "Enter a new password for the user <strong>%(username)s</strong>."
-msgstr ""
-"Ingresa una nueva contraseña para el usuario <strong>%(username)s</strong>."
+msgstr "Ingresa una nueva contraseña para el usuario <strong>%(username)s</strong>."
 
 #: templates/admin/auth/user/change_password.html:56
 msgid ""
 "This action will <strong>enable</strong> password-based authentication for "
 "this user."
-msgstr ""
-"Esta acción <strong>habilitará</strong> la autenticación por contraseña para "
-"este usuario."
+msgstr "Esta acción <strong>habilitará</strong> la autenticación por contraseña para este usuario."
 
 #: templates/admin/auth/user/change_password.html:95
 msgid "Disable password-based authentication"
@@ -1489,29 +1536,21 @@ msgid ""
 "Deleting the %(object_name)s “%(escaped_object)s” would result in deleting "
 "related objects, but your account doesn't have permission to delete the "
 "following types of objects:"
-msgstr ""
-"Eliminar el %(object_name)s “%(escaped_object)s” resultaría en la "
-"eliminación de objetos relacionados, pero tu cuenta no tiene permiso para "
-"eliminar los siguientes tipos de objetos:"
+msgstr "Eliminar el %(object_name)s “%(escaped_object)s” resultaría en la eliminación de objetos relacionados, pero tu cuenta no tiene permiso para eliminar los siguientes tipos de objetos:"
 
 #: templates/admin/delete_confirmation.html:30
 #, python-format
 msgid ""
 "Deleting the %(object_name)s “%(escaped_object)s” would require deleting the "
 "following protected related objects:"
-msgstr ""
-"Eliminar el %(object_name)s “%(escaped_object)s” requeriría eliminar los "
-"siguientes objetos relacionados protegidos:"
+msgstr "Eliminar el %(object_name)s “%(escaped_object)s” requeriría eliminar los siguientes objetos relacionados protegidos:"
 
 #: templates/admin/delete_confirmation.html:35
 #, python-format
 msgid ""
 "Are you sure you want to delete the %(object_name)s “%(escaped_object)s”? "
 "All of the following related items will be deleted:"
-msgstr ""
-"¿Estás seguro de que quieres eliminar el %(object_name)s "
-"“%(escaped_object)s”? Todos los siguientes elementos relacionados serán "
-"eliminados:"
+msgstr "“¿Estás seguro de que quieres eliminar el %(object_name)s “%(escaped_object)s”? Todos los siguientes elementos relacionados serán eliminados:"
 
 #: templates/admin/delete_confirmation.html:37
 #: templates/admin/delete_selected_confirmation.html:31
@@ -1538,28 +1577,21 @@ msgid ""
 "Deleting the selected %(objects_name)s would result in deleting related "
 "objects, but your account doesn't have permission to delete the following "
 "types of objects:"
-msgstr ""
-"Eliminar los %(objects_name)s seleccionados resultaría en la eliminación de "
-"objetos relacionados, pero tu cuenta no tiene permiso para eliminar los "
-"siguientes tipos de objetos:"
+msgstr "Eliminar los %(objects_name)s seleccionados resultaría en la eliminación de objetos relacionados, pero tu cuenta no tiene permiso para eliminar los siguientes tipos de objetos:"
 
 #: templates/admin/delete_selected_confirmation.html:26
 #, python-format
 msgid ""
 "Deleting the selected %(objects_name)s would require deleting the following "
 "protected related objects:"
-msgstr ""
-"Eliminar los %(objects_name)s seleccionados requeriría eliminar los "
-"siguientes objetos relacionados protegidos:"
+msgstr "Eliminar los %(objects_name)s seleccionados requeriría eliminar los siguientes objetos relacionados protegidos:"
 
 #: templates/admin/delete_selected_confirmation.html:29
 #, python-format
 msgid ""
 "Are you sure you want to delete the selected %(objects_name)s? All of the "
 "following objects and their related items will be deleted:"
-msgstr ""
-"¿Estás seguro de que quieres eliminar los %(objects_name)s seleccionados? "
-"Todos los siguientes objetos y sus elementos relacionados serán eliminados:"
+msgstr "¿Estás seguro de que quieres eliminar los %(objects_name)s seleccionados? Todos los siguientes objetos y sus elementos relacionados serán eliminados:"
 
 #: templates/admin/edit_inline/tabular.html:26
 msgid "Delete?"
@@ -1775,10 +1807,7 @@ msgid ""
 "Something’s wrong with your database installation. Make sure the appropriate "
 "database tables have been created, and make sure the database is readable by "
 "the appropriate user."
-msgstr ""
-"Algo está mal con la instalación de tu base de datos. Asegúrate de que las "
-"tablas apropiadas de la base de datos hayan sido creadas, y asegúrate de que "
-"la base de datos sea legible por el usuario apropiado."
+msgstr "Algo está mal con la instalación de tu base de datos. Asegúrate de que las tablas apropiadas de la base de datos hayan sido creadas, y asegúrate de que la base de datos sea legible por el usuario apropiado."
 
 #: templates/admin/login.html:34
 msgid "Company Logo"
@@ -1819,9 +1848,7 @@ msgstr[2] ""
 msgid ""
 "You are authenticated as %(username)s, but are not authorized to access this "
 "page. Would you like to login to a different account?"
-msgstr ""
-"Estás autenticado como %(username)s, pero no tienes autorización para "
-"acceder a esta página. ¿Te gustaría iniciar sesión con una cuenta diferente?"
+msgstr "Estás autenticado como %(username)s, pero no tienes autorización para acceder a esta página. ¿Te gustaría iniciar sesión con una cuenta diferente?"
 
 #: templates/admin/login.html:121
 msgid "SIGN IN"
@@ -1871,9 +1898,7 @@ msgstr[2] "entradas"
 msgid ""
 "This object doesn’t have a change history. It probably wasn’t added via this "
 "admin site."
-msgstr ""
-"Este objeto no tiene un historial de cambios. Probablemente no fue añadido a "
-"través de este sitio de administración."
+msgstr "Este objeto no tiene un historial de cambios. Probablemente no fue añadido a través de este sitio de administración."
 
 #: templates/admin/pagination.html:5
 #, python-format
@@ -1972,10 +1997,7 @@ msgstr "Tu contraseña fue cambiada."
 msgid ""
 "Please enter your old password, for security’s sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
-msgstr ""
-"Por favor, ingresa tu contraseña anterior, por seguridad, y luego ingresa tu "
-"nueva contraseña dos veces para que podamos verificar que la escribiste "
-"correctamente."
+msgstr "Por favor, ingresa tu contraseña anterior, por seguridad, y luego ingresa tu nueva contraseña dos veces para que podamos verificar que la escribiste correctamente."
 
 #: templates/registration/password_change_form.html:56
 #: templates/registration/password_reset_confirm.html:38
@@ -2004,9 +2026,7 @@ msgstr "Confirmación de restablecimiento de contraseña"
 msgid ""
 "Please enter your new password twice so we can verify you typed it in "
 "correctly."
-msgstr ""
-"Por favor, ingresa tu nueva contraseña dos veces para que podamos verificar "
-"que la escribiste correctamente."
+msgstr "Por favor, ingresa tu nueva contraseña dos veces para que podamos verificar que la escribiste correctamente."
 
 #: templates/registration/password_reset_confirm.html:25
 msgid "New password:"
@@ -2020,37 +2040,26 @@ msgstr "Confirmar contraseña:"
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
 "used.  Please request a new password reset."
-msgstr ""
-"El enlace de restablecimiento de contraseña era inválido, posiblemente "
-"porque ya ha sido utilizado. Por favor, solicita un nuevo restablecimiento "
-"de contraseña."
+msgstr "El enlace de restablecimiento de contraseña era inválido, posiblemente porque ya ha sido utilizado. Por favor, solicita un nuevo restablecimiento de contraseña."
 
 #: templates/registration/password_reset_done.html:13
 msgid ""
 "We’ve emailed you instructions for setting your password, if an account "
 "exists with the email you entered. You should receive them shortly."
-msgstr ""
-"Te hemos enviado por correo electrónico las instrucciones para establecer tu "
-"contraseña, si existe una cuenta con el correo que introdujiste. Deberías "
-"recibirlas en breve."
+msgstr "Te hemos enviado por correo electrónico las instrucciones para establecer tu contraseña, si existe una cuenta con el correo que introdujiste. Deberías recibirlas en breve."
 
 #: templates/registration/password_reset_done.html:15
 msgid ""
 "If you don’t receive an email, please make sure you’ve entered the address "
 "you registered with, and check your spam folder."
-msgstr ""
-"Si no recibes un correo electrónico, por favor asegúrate de haber "
-"introducido la dirección con la que te registraste y revisa tu carpeta de "
-"spam."
+msgstr "Si no recibes un correo electrónico, por favor asegúrate de haber introducido la dirección con la que te registraste y revisa tu carpeta de spam."
 
 #: templates/registration/password_reset_email.html:2
 #, python-format
 msgid ""
 "You're receiving this email because you requested a password reset for your "
 "user account at %(site_name)s."
-msgstr ""
-"Estás recibiendo este correo porque solicitaste un restablecimiento de "
-"contraseña para tu cuenta de usuario en %(site_name)s."
+msgstr "Estás recibiendo este correo porque solicitaste un restablecimiento de contraseña para tu cuenta de usuario en %(site_name)s."
 
 #: templates/registration/password_reset_email.html:4
 msgid "Please go to the following page and choose a new password:"
@@ -2073,9 +2082,7 @@ msgstr "El equipo de %(site_name)s"
 msgid ""
 "Forgotten your password? Enter your email address below, and we’ll email "
 "instructions for setting a new one."
-msgstr ""
-"¿Olvidaste tu contraseña? Ingresa tu dirección de correo electrónico a "
-"continuación y te enviaremos las instrucciones para establecer una nueva."
+msgstr "“¿Olvidaste tu contraseña? Ingresa tu dirección de correo electrónico a continuación y te enviaremos las instrucciones para establecer una nueva."
 
 #: templates/registration/password_reset_form.html:22
 msgid "Email address:"
@@ -2089,9 +2096,7 @@ msgstr "Restablecer mi contraseña"
 msgid ""
 "Choose a date from the list below to revert to a previous version of this "
 "object."
-msgstr ""
-"Elige una fecha de la lista a continuación para revertir a una versión "
-"anterior de este objeto."
+msgstr "Elige una fecha de la lista a continuación para revertir a una versión anterior de este objeto."
 
 #: templates/simple_history/object_history.html:14
 msgid "This object doesn't have a change history."
@@ -2146,3 +2151,9 @@ msgstr "Revertir"
 #: templates/simple_history/submit_line.html:6
 msgid "Change History"
 msgstr "Historial de Cambios"
+
+#~ msgid "This raffle is not available for calculation."
+#~ msgstr "Esta rifa no está disponible para realizar cálculos."
+
+#~ msgid "Invalid raffle or payment method ID"
+#~ msgstr "ID de rifa o método de pago inválido."
