@@ -1,6 +1,7 @@
-# settings/base.py (Versión Final Definitiva - Auditada y Corregida)
+# settings/base.py (Versión Corregida - URLs de Redis Funcionales)
 
 from pathlib import Path
+from urllib.parse import urlparse, urlunparse
 
 from celery.schedules import crontab
 from decouple import Csv, config
@@ -25,22 +26,55 @@ CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 REDIS_USER = config("REDIS_USER", default="appuser")
 
 
-# --- BLOQUE 2: CONSTRUCCIÓN SEGURA DE URIs DE CONEXIÓN ---
+# --- BLOQUE 2: CONSTRUCCIÓN SEGURA DE URIs DE CONEXIÓN (CORREGIDO) ---
 # ----------------------------------------------------------------
-# Se leen las plantillas de URL desde .env y se inyectan las credenciales
-# de forma segura para construir las cadenas de conexión finales.
+def build_redis_url_with_auth(base_url: str, username: str, password: str) -> str:
+    """
+    Construye una URL de Redis con autenticación de forma segura.
 
-# Leer las plantillas de URL desde el entorno (desde .env)
+    Args:
+        base_url: URL base sin credenciales (ej: "redis://redis:6379/0")
+        username: Nombre de usuario para Redis
+        password: Contraseña para Redis
+
+    Returns:
+        URL completa con autenticación (ej: "redis://user:pass@redis:6379/0")
+    """
+    parsed = urlparse(base_url)
+
+    # Construir la nueva netloc con credenciales
+    auth_netloc = f"{username}:{password}@{parsed.hostname}:{parsed.port}"
+
+    # Reconstruir la URL completa
+    return urlunparse(
+        (
+            parsed.scheme,  # redis
+            auth_netloc,  # user:pass@redis:6379
+            parsed.path,  # /0, /1, /2, /3
+            parsed.params,  # ''
+            parsed.query,  # ''
+            parsed.fragment,  # ''
+        )
+    )
+
+
+# Leer las URLs base desde el entorno (ahora SIN variables ${})
 RAW_CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 RAW_CELERY_RESULT_BACKEND_URL = config("CELERY_RESULT_BACKEND_URL")
 RAW_CACHE_URL = config("CACHE_URL")
 RAW_CACHE_SELECT2_URL = config("CACHE_SELECT2_URL")
 
-# Inyectar credenciales para crear las URLs finales
-CELERY_BROKER_URL = RAW_CELERY_BROKER_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
-CELERY_RESULT_BACKEND_URL = RAW_CELERY_RESULT_BACKEND_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
-FINAL_CACHE_URL = RAW_CACHE_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
-FINAL_CACHE_SELECT2_URL = RAW_CACHE_SELECT2_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
+# Construir las URLs finales con autenticación
+CELERY_BROKER_URL = build_redis_url_with_auth(
+    RAW_CELERY_BROKER_URL, REDIS_USER, REDIS_PASSWORD
+)
+CELERY_RESULT_BACKEND_URL = build_redis_url_with_auth(
+    RAW_CELERY_RESULT_BACKEND_URL, REDIS_USER, REDIS_PASSWORD
+)
+FINAL_CACHE_URL = build_redis_url_with_auth(RAW_CACHE_URL, REDIS_USER, REDIS_PASSWORD)
+FINAL_CACHE_SELECT2_URL = build_redis_url_with_auth(
+    RAW_CACHE_SELECT2_URL, REDIS_USER, REDIS_PASSWORD
+)
 
 
 # --- BLOQUE 3: CONFIGURACIÓN DE APLICACIONES DE DJANGO ---
@@ -121,7 +155,9 @@ TEMPLATES = [
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -143,7 +179,9 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication"
+    ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
 }
@@ -167,8 +205,7 @@ SELECT2_CACHE_BACKEND = "select2"
 RATELIMIT_USE_CACHE = "default"
 
 # Configuración de Celery
-CELERY_BROKER_URL = CELERY_BROKER_URL # El broker usa la URL construida para la DB 0
-CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND_URL # El backend de resultados usa la URL para la DB 3
+CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND_URL
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json"]
