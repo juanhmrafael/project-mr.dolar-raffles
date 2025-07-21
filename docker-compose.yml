@@ -8,24 +8,20 @@
 
 x-django-base: &django-base
   image: fullstack-raffle:backend-prod
-  # --- MODIFICACIÓN DE SEGURIDAD CRÍTICA ---
-  # Se elimina 'env_file'. Las credenciales se gestionan exclusivamente con Docker Secrets.
   secrets:
     - postgres_user
     - postgres_password
     - postgres_db
-    - redis_appuser_password # El backend también necesita la contraseña de Redis
+    - redis_appuser_password
     - django_secret_key     
     - field_encryption_key  
-  # Las variables de entorno ahora solo contienen configuración NO sensible.
   environment:
     - PYTHONPATH=/home/appuser/app/apps
-    # El entrypoint.sh leerá los secretos y los exportará a estas variables para la aplicación.
     - DB_HOST=db
     - DB_PORT=5432
     - REDIS_HOST=redis
     - REDIS_PORT=6379
-    - REDIS_USER=appuser # El nuevo usuario ACL de Redis
+    - REDIS_USER=appuser
   networks:
     - app_network
   restart: unless-stopped
@@ -33,7 +29,7 @@ x-django-base: &django-base
     db:
       condition: service_healthy
     redis:
-      condition: service_healthy # Dependencia en un Redis saludable y autenticado.
+      condition: service_healthy
   logging:
     driver: "json-file"
     options:
@@ -47,14 +43,10 @@ services:
       context: ./database
       dockerfile: Dockerfile
       args: { GLIBC_VER: 2.35-r1 }
-    # --- MODIFICACIÓN DE SEGURIDAD CRÍTICA ---
-    # Se elimina 'env_file'. Se usan secrets.
     secrets:
       - postgres_user
       - postgres_password
       - postgres_db
-    # El entrypoint oficial de la imagen de Postgres buscará estas variables _FILE
-    # y leerá las credenciales desde los archivos de secrets montados, evitando exponerlas.
     environment:
       - POSTGRES_USER_FILE=/run/secrets/postgres_user
       - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
@@ -70,7 +62,6 @@ services:
         reservations: { cpus: '0.75', memory: 1G }
     stop_grace_period: 1m
     healthcheck:
-      # El healthcheck ahora lee el usuario y la DB de los secretos para máxima seguridad.
       test: ["CMD-SHELL", "pg_isready -U $$(cat /run/secrets/postgres_user) -d $$(cat /run/secrets/postgres_db)"]
       interval: 10s
       timeout: 5s
@@ -106,7 +97,7 @@ services:
       driver: "json-file"
       options: { max-size: "10m", max-file: "3" }
 
-  # --- Servicio de Backend: Django/Gunicorn (Con Healthcheck) ---
+  # --- Servicio de Backend: Django/Gunicorn (Con Healthcheck Robusto) ---
   backend:
     <<: *django-base
     build:
@@ -121,14 +112,15 @@ services:
       resources:
         limits: { cpus: '2.0', memory: 3G }
         reservations: { cpus: '1.0', memory: 1.5G }
-    # --- MEJORA DE RESILIENCIA ---
-    # Añadido un healthcheck para asegurar que Gunicorn está realmente respondiendo.
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz/"]
-      interval: 20s      # Aumentamos el intervalo entre chequeos
-      timeout: 10s       # Aumentamos el tiempo de espera por respuesta
-      retries: 5         # Aumentamos el número de reintentos
-      start_period: 60s # Da tiempo a que Gunicorn arranque antes de empezar a verificar.
+      # --- CORRECCIÓN CRÍTICA DE RESILIENCIA ---
+      # Este healthcheck verifica si el puerto 8000 está escuchando dentro del contenedor.
+      # Es más robusto que un curl a una URL, ya que solo comprueba si Gunicorn está vivo.
+      test: ["CMD-SHELL", "nc -z localhost 8000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     command: ["web", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "5", "-k", "uvicorn.workers.UvicornWorker", "config.asgi:application"]
 
   # --- Servicio de Trabajador en Segundo Plano: Celery ---
@@ -160,9 +152,6 @@ services:
         limits: { cpus: '0.5', memory: 256M }
         reservations: { cpus: '0.25', memory: 128M }
     depends_on:
-      # --- MEJORA DE RESILIENCIA ---
-      # Ahora depende de que el backend esté saludable, no solo iniciado.
-      # Esto previene errores 502 al arrancar el stack.
       backend:
         condition: service_healthy
       db:
@@ -188,11 +177,8 @@ volumes:
   postgres_data: {}
   staticfiles: {}
   mediafiles: {}
-  redis_data: {} # Volumen para los datos persistentes de Redis (AOF)
+  redis_data: {}
 
-# --- DEFINICIÓN CENTRALIZADA DE SECRETOS ---
-# Docker Compose leerá los archivos de texto plano del directorio 'secrets'
-# y los montará de forma segura como archivos dentro de cada contenedor que los necesite.
 secrets:
   postgres_user:
     file: ./secrets/postgres_user.txt
@@ -202,7 +188,7 @@ secrets:
     file: ./secrets/postgres_db.txt
   redis_appuser_password:
     file: ./secrets/redis_appuser_password.txt
-  django_secret_key: # <-- AÑADIR ESTE BLOQUE
+  django_secret_key:
     file: ./secrets/django_secret_key.txt
-  field_encryption_key: # <-- AÑADIR ESTE BLOQUE
+  field_encryption_key:
     file: ./secrets/field_encryption_key.txt

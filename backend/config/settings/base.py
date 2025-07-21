@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # ----------------------------------------------------------------
 # Decouple lee del entorno, que es poblado por el entrypoint.sh.
 
-# Secretos (leídos de /run/secrets/)
+# Secretos (leídos de /run/secrets/ o del entorno)
 SECRET_KEY = config("SECRET_KEY")
 FIELD_ENCRYPTION_KEY = config("FIELD_ENCRYPTION_KEY")
 REDIS_PASSWORD = config("REDIS_PASSWORD")
@@ -23,19 +23,24 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=Csv())
 CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS", cast=Csv())
 REDIS_USER = config("REDIS_USER", default="appuser")
-REDIS_HOST = config("REDIS_HOST")
-REDIS_PORT = config("REDIS_PORT")
 
 
 # --- BLOQUE 2: CONSTRUCCIÓN SEGURA DE URIs DE CONEXIÓN ---
 # ----------------------------------------------------------------
-# Se construyen las URIs completas de forma explícita para evitar errores de parsing.
+# Se leen las plantillas de URL desde .env y se inyectan las credenciales
+# de forma segura para construir las cadenas de conexión finales.
 
-CELERY_BROKER_URL = f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0"
-FINAL_CACHE_URL = f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/1"
-FINAL_CACHE_SELECT2_URL = (
-    f"redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/2"
-)
+# Leer las plantillas de URL desde el entorno (desde .env)
+RAW_CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+RAW_CELERY_RESULT_BACKEND_URL = config("CELERY_RESULT_BACKEND_URL")
+RAW_CACHE_URL = config("CACHE_URL")
+RAW_CACHE_SELECT2_URL = config("CACHE_SELECT2_URL")
+
+# Inyectar credenciales para crear las URLs finales
+CELERY_BROKER_URL = RAW_CELERY_BROKER_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
+CELERY_RESULT_BACKEND_URL = RAW_CELERY_RESULT_BACKEND_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
+FINAL_CACHE_URL = RAW_CACHE_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
+FINAL_CACHE_SELECT2_URL = RAW_CACHE_SELECT2_URL.replace("redis://", f"redis://{REDIS_USER}:{REDIS_PASSWORD}@")
 
 
 # --- BLOQUE 3: CONFIGURACIÓN DE APLICACIONES DE DJANGO ---
@@ -116,9 +121,7 @@ TEMPLATES = [
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -140,9 +143,7 @@ MEDIA_ROOT = BASE_DIR / "mediafiles"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication"
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
 }
@@ -166,7 +167,8 @@ SELECT2_CACHE_BACKEND = "select2"
 RATELIMIT_USE_CACHE = "default"
 
 # Configuración de Celery
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_BROKER_URL = CELERY_BROKER_URL # El broker usa la URL construida para la DB 0
+CELERY_RESULT_BACKEND = CELERY_RESULT_BACKEND_URL # El backend de resultados usa la URL para la DB 3
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json"]
