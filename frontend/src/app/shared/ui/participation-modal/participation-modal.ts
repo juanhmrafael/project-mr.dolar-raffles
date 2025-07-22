@@ -1,7 +1,16 @@
-import { Component, ChangeDetectionStrategy, computed, effect, inject, input, model, signal } from '@angular/core';
+import {
+    Component,
+    ChangeDetectionStrategy,
+    computed,
+    effect,
+    inject,
+    input,
+    model,
+    signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { catchError, of, timer, Subscription, map, } from 'rxjs';
+import { catchError, of, timer, Subscription, map } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
 import { toSignal } from '@angular/core/rxjs-interop';
 // Imports de la aplicación
@@ -45,7 +54,6 @@ type ParticipationStep =
 export class ParticipationModal {
     private readonly fb = inject(FormBuilder);
     private readonly rafflesApi = inject(RafflesApi);
-    private countdownSubscription: Subscription | null = null;
 
     public readonly isOpen = model.required<boolean>();
     public readonly raffleDetail = input.required<EnhancedRaffleDetail>();
@@ -60,7 +68,9 @@ export class ParticipationModal {
     protected readonly formErrors = signal<{ [key: string]: string }>({});
     protected readonly participationResponse =
         signal<ParticipationCreatedResponse | null>(null);
+
     protected readonly countdown = signal(300);
+    private readonly expirationTimestamp = signal<number>(0);
 
     protected readonly personalDataForm = this.fb.group({
         full_name: ['', Validators.required],
@@ -81,7 +91,7 @@ export class ParticipationModal {
             Validators.required,
         ],
     });
-    
+
     protected readonly paymentReportValidationErrors = computed(() => {
         const errors: { reference?: string } = {};
         const control = this.paymentReportForm.get('reference');
@@ -168,10 +178,38 @@ export class ParticipationModal {
         summary: 'Resumen y Confirmación',
     };
     constructor() {
-        effect(() => {
-            if (!this.isOpen()) {
+        effect((onCleanup) => {
+            const isOpen = this.isOpen();
+            const step = this.currentStep();
+            let intervalId: number | undefined;
+
+            // Lógica para iniciar o detener el temporizador
+            if (isOpen && step === 'paymentReport') {
+                // Establece el tiempo de expiración solo la primera vez que entramos a este paso
+                if (this.expirationTimestamp() === 0) {
+                    this.expirationTimestamp.set(
+                        Date.now() + this.countdown() * 1000
+                    );
+                }
+
+                intervalId = window.setInterval(() => {
+                    const remainingMs = this.expirationTimestamp() - Date.now();
+                    if (remainingMs <= 0) {
+                        this.countdown.set(0);
+                        this.isOpen.set(false); // Cierra el modal, el tiempo expiró
+                    } else {
+                        this.countdown.set(Math.ceil(remainingMs / 1000));
+                    }
+                }, 1000);
+            } else if (!isOpen) {
+                // Si el modal se cierra por cualquier motivo, resetea todo
                 this.resetState();
             }
+
+            // Esta función de limpieza se ejecuta cada vez que el efecto se reinicia o destruye
+            onCleanup(() => {
+                clearInterval(intervalId);
+            });
         });
     }
 
@@ -230,7 +268,6 @@ export class ParticipationModal {
                 if (response) {
                     this.participationResponse.set(response);
                     this.currentStep.set('paymentReport');
-                    this.startCountdown();
                 }
             });
     }
@@ -258,7 +295,6 @@ export class ParticipationModal {
             )
             .subscribe((response: PaymentReportResponse | null) => {
                 if (response) {
-                    this.stopCountdown();
                     this.currentStep.set('success');
                 }
             });
@@ -283,21 +319,6 @@ export class ParticipationModal {
         }
     }
 
-    private startCountdown(): void {
-        this.countdownSubscription = timer(0, 1000).subscribe(() => {
-            this.countdown.update((val) => {
-                if (val > 0) return val - 1;
-                this.isOpen.set(false);
-                return 0;
-            });
-        });
-    }
-
-    private stopCountdown(): void {
-        this.countdownSubscription?.unsubscribe();
-        this.countdownSubscription = null;
-    }
-
     private resetState(): void {
         this.currentStep.set('personal');
         this.personalDataForm.reset();
@@ -311,6 +332,6 @@ export class ParticipationModal {
         this.formErrors.set({});
         this.participationResponse.set(null);
         this.countdown.set(300);
-        this.stopCountdown();
+        this.expirationTimestamp.set(0);
     }
 }
