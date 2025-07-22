@@ -69,7 +69,9 @@ services:
 
   # --- Servicio de Broker/Caché: Redis (Endurecido y Configurado Explícitamente) ---
   redis:
-    image: redis:7-alpine
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
       - redis_data:/data
