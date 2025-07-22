@@ -228,3 +228,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute="0", hour="17", day_of_week="1-5"),
     },
 }
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "fanout_prefix": True,
+    "fanout_patterns": True,
+}
