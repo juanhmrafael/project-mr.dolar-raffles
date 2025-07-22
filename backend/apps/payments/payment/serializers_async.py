@@ -8,20 +8,51 @@ from participants.models import Participation
 from rest_framework import serializers
 
 from ..models import PaymentMethod
-
+from typing import Optional
 
 class PublicPaymentMethodDetailSerializer(AsyncModelSerializer):
     """
     Serializer para exponer los detalles PÚBLICOS de un método de pago.
     Crucial para que el usuario sepa a dónde transferir.
     """
-
+    bank_details_display = serializers.SerializerMethodField()
+    
     class Meta:
         model = PaymentMethod
         # Exponemos los campos necesarios para que el frontend construya la UI
-        fields = ["id", "name", "method_type", "currency", "details"]
+        fields = [
+            "id",
+            "name",
+            "method_type",
+            "currency",
+            "details",
+            "bank_details_display",
+        ]
+        read_only_fields = fields
 
+    def get_bank_details_display(self, obj: PaymentMethod) -> Optional[str]:
+        """
+        Genera una cadena legible para los detalles bancarios si el método
+        es una Transferencia o un Pago Móvil, buscando por CÓDIGO de banco.
+        """
+        if obj.method_type not in ("TRANSFERENCIA", "PAGO_MOVIL"):
+            return None
 
+        # ✅ CORREGIDO: Buscamos la clave 'bank' que contiene el código.
+        bank_code = obj.details.get("bank")
+        if not bank_code:
+            return None
+
+        # ✅ CORREGIDO: Buscamos en el mapa usando el código como clave.
+        bank_map = self.context.get("bank_map_by_code", {})
+        bank_data = bank_map.get(bank_code)
+
+        if bank_data:
+            # El nombre ya está en el mapa, no se necesita el código.
+            return f"({bank_code}) - {bank_data['name']}"
+
+        return None
+    
 class PublicPaymentCreateSerializer(
     AsyncSerializer
 ):  # ✅ Heredamos del Serializer de adrf

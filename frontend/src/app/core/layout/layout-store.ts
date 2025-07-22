@@ -66,7 +66,7 @@ export class LayoutStore {
     ]);
 
     public readonly footerContactInfo = signal<ContactInfo>({
-        phone: '(0424) 419-9668',
+        phone: '(0424) 474-3384',
         address:
             'Entre Manrique y Cantaura, Calle Boyaca, Casa 94 21 Toldo Amarillo, Valencia 2001, Carabobo',
         hours: [

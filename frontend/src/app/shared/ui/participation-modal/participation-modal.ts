@@ -73,13 +73,29 @@ export class ParticipationModal {
     });
 
     protected readonly paymentReportForm = this.fb.group({
-        reference: ['', Validators.required],
+        reference: ['', [Validators.required, Validators.minLength(8)]],
         email: [''],
         binance_pay_id: [''],
         payment_date: [
             new Date().toISOString().split('T')[0],
             Validators.required,
         ],
+    });
+    
+    protected readonly paymentReportValidationErrors = computed(() => {
+        const errors: { reference?: string } = {};
+        const control = this.paymentReportForm.get('reference');
+
+        if (control && control.invalid && (control.dirty || control.touched)) {
+            if (control.hasError('required')) {
+                errors.reference = 'El número de referencia es obligatorio.';
+            } else if (control.hasError('minlength')) {
+                const requiredLength =
+                    control.errors?.['minlength'].requiredLength;
+                errors.reference = `La referencia debe tener al menos ${requiredLength} caracteres.`;
+            }
+        }
+        return errors;
     });
 
     protected readonly isPersonalDataFormValid = toSignal(

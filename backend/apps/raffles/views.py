@@ -10,7 +10,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django_ratelimit.decorators import ratelimit
 from participants.services_async import get_raffle_stats
-from payments.models import PaymentMethod
+from payments.models import PaymentMethod, Bank
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -81,7 +81,6 @@ class PublicRaffleDetailAPIView(APIView):
 
     permission_classes = [AllowAny]
     authentication_classes = []
-    CACHE_PREFIX = "raffle_detail_"
 
     @method_decorator(ratelimit(key="ip", rate="30/m", block=True))
     async def get(self, request, slug, *args, **kwargs):
@@ -106,16 +105,39 @@ class PublicRaffleDetailAPIView(APIView):
                 {"error": _("Raffle not found")}, status=status.HTTP_404_NOT_FOUND
             )
 
+
+
+        # --- OPTIMIZACIÓN DE DATOS DE BANCOS (LÓGICA CORREGIDA) ---
+        payment_methods = raffle.available_payment_methods.all()
+
+        # 1. ✅ RECOLECTAR CÓDIGOS de banco (no IDs).
+        bank_codes = {
+            pm.details.get("bank")
+            for pm in payment_methods
+            if pm.method_type in ("TRANSFERENCIA", "PAGO_MOVIL")
+            and pm.details.get("bank")
+        }
+
+        # 2. ✅ CONSULTAR por código y crear el mapa por código.
+        bank_map_by_code = {}
+        if bank_codes:
+            # Esta consulta ahora es súper rápida gracias al db_index=True
+            banks_data = Bank.objects.filter(code__in=bank_codes).values("code", "name")
+            # El mapa ahora se construye con el código del banco como clave.
+            bank_map_by_code = {bank["code"]: bank async for bank in banks_data}
+            
         # ✅ PASO CLAVE: Obtener la tasa de cambio ANTES de serializar.
         rate_obj = None
         if raffle.status == Raffle.Status.IN_PROGRESS:
             # Esta función debe estar optimizada con caché.
             rate_obj = await get_exchange_rate_for_date(date.today())
 
-        # ✅ Pasar la tasa al contexto del serializer.
-        serializer = PublicRaffleDetailSerializer(
-            raffle, context={"rate_obj": rate_obj}
-        )
+        # 3. ✅ PASAR el mapa correcto al contexto del serializer.
+        context = {
+            "rate_obj": rate_obj,
+            "bank_map_by_code": bank_map_by_code,
+        }
+        serializer = PublicRaffleDetailSerializer(raffle, context=context)
 
         # Nota: La lógica de caché de respuesta completa se ha omitido como se recomendó.
         return Response(serializer.data)

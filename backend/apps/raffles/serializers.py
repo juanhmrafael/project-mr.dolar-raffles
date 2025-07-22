@@ -1,13 +1,15 @@
 # backend/apps/raffles/serializers.py
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Dict, Optional
 
 from adrf.serializers import ModelSerializer as AsyncModelSerializer
 from adrf.serializers import Serializer as AsyncSerializer
+from babel.dates import format_date
 from payments.payment.serializers_async import PublicPaymentMethodDetailSerializer
 from rest_framework import serializers
-from decimal import Decimal, ROUND_HALF_UP
+
 from .models import Prize, Raffle
-from babel.dates import format_date
+
 
 # PublicPrizeSerializer no cambia
 class PublicPrizeSerializer(AsyncModelSerializer):
@@ -139,7 +141,7 @@ class PublicRaffleDetailSerializer(AsyncModelSerializer):
     applied_rate_date = serializers.SerializerMethodField()
     vef_per_usd_price = serializers.SerializerMethodField()
     unit_price_per_currency = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Raffle
         fields = [
@@ -203,12 +205,12 @@ class PublicRaffleDetailSerializer(AsyncModelSerializer):
         if obj.currency == "USD":
             price_in_usd = base_price
             price_in_vef = (base_price * rate).quantize(
-                Decimal("0.01"), rounding=ROUND_HALF_UP
+                Decimal("0.0001"), rounding=ROUND_HALF_UP
             )
         elif obj.currency == "VEF":
             price_in_vef = base_price
             price_in_usd = (base_price / rate).quantize(
-                Decimal("0.01"), rounding=ROUND_HALF_UP
+                Decimal("0.0001"), rounding=ROUND_HALF_UP
             )
         else:
             # Combinación no soportada
@@ -220,7 +222,8 @@ class PublicRaffleDetailSerializer(AsyncModelSerializer):
         )
         price_serializer.is_valid(raise_exception=True)
         return price_serializer.data
-    
+
+
 class UnitPriceSerializer(serializers.Serializer):
     """
     Representa el precio de un ticket en ambas monedas clave.

@@ -18,7 +18,7 @@ class Bank(models.Model):
     Representa una entidad bancaria con su código y nombre.
     """
 
-    code = models.CharField(_("Bank Code"), max_length=4, unique=True)
+    code = models.CharField(_("Bank Code"), max_length=4, unique=True, db_index=True)
     name = models.CharField(_("Bank Name"), max_length=100)
     history = HistoricalRecords()
 

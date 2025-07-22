@@ -118,6 +118,14 @@ interface BasePaymentMethod {
     readonly name: string;
     readonly method_type: PaymentMethodType;
     readonly currency: Currency;
+    /**
+     * ✅ NUEVO: Cadena formateada para mostrar los detalles del banco.
+     * Contiene el código y el nombre del banco (ej: "(0102) - Banco de Venezuela").
+     * Es `string` para los tipos 'PAGO_MOVIL' y 'TRANSFERENCIA' si el banco se encuentra.
+     * Es `null` para todos los demás tipos de pago (Zelle, Binance) y si hay algún error.
+     * Es seguro para mostrar directamente en la UI.
+     */
+    readonly bank_details_display: string | null;
 }
 
 interface PagoMovilDetails {

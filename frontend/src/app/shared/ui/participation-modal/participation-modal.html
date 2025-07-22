@@ -403,6 +403,19 @@
                         </span>
                     </div>
                 </div>
+
+                @if (raffle.applied_rate_date && raffle.vef_per_usd_price) {
+                <div class="text-center text-xs text-muted-foreground pt-2">
+                    <p>
+                        Tasa del {{ raffle.applied_rate_date }}:
+                        <span class="font-semibold text-foreground"
+                            >1 USD = {{ raffle.vef_per_usd_price |
+                            number:'1.4-4' }} VEF</span
+                        >
+                    </p>
+                </div>
+                }
+
                 <!-- Tip motivacional -->
                 <div
                     class="bg-gradient-to-br from-info/5 to-accent/5 border-2 border-info/20 rounded-xl p-6"
@@ -753,6 +766,41 @@
                     </div>
                 </div>
 
+                <div class="max-w-2xl mx-auto">
+                    <div
+                        class="bg-gradient-to-r from-warning/10 via-warning/5 to-warning/10 border-2 border-warning/20 rounded-xl p-5 relative overflow-hidden"
+                    >
+                        <div class="relative">
+                            <div class="flex items-start gap-4">
+                                <div
+                                    class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-warning to-warning/80 rounded-full flex items-center justify-center"
+                                >
+                                    <lucide-icon
+                                        name="Clock"
+                                        class="h-6 w-6 text-warning-foreground"
+                                    ></lucide-icon>
+                                </div>
+                                <div class="flex-1">
+                                    <h4
+                                        class="font-bold text-foreground mb-2 flex items-center gap-2"
+                                    >
+                                        ⏳ ¡Prepara tu método de pago!
+                                    </h4>
+                                    <p
+                                        class="text-sm text-muted-foreground leading-relaxed"
+                                    >
+                                        Al confirmar, tendrás
+                                        <strong>5 minutos</strong> para realizar
+                                        y reportar tu pago. Te recomendamos
+                                        tener tu app bancaria o plataforma de
+                                        pago abierta y lista.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Términos y condiciones MEJORADOS -->
                 <div class="max-w-2xl mx-auto space-y-6">
                     <div class="text-center">
@@ -927,6 +975,95 @@
                     </div>
                 </div>
 
+                @if(selectedPaymentMethod(); as method) {
+                <div class="max-w-lg mx-auto space-y-4">
+                    <h4 class="text-xl font-bold text-center text-primary">
+                        Realiza tu pago a la siguiente cuenta:
+                    </h4>
+                    <div
+                        class="bg-gradient-to-br from-card/80 to-muted/20 border-2 border-border rounded-xl p-6"
+                    >
+                        @switch (method.method_type) { @case ('PAGO_MOVIL') {
+                        <div class="space-y-3 font-mono text-center">
+                            @if(method.bank_details_display) {
+                            <p>
+                                <strong>Banco:</strong> {{
+                                method.bank_details_display }}
+                            </p>
+                            }
+                            <p>
+                                <strong>Teléfono:</strong> {{
+                                method.details.phone }}
+                            </p>
+                            <p>
+                                <strong>C.I./RIF:</strong> {{
+                                method.details.id_number }}
+                            </p>
+                        </div>
+                        } @case ('ZELLE') {
+                        <div class="space-y-3 font-mono text-center">
+                            <p>
+                                <strong>Email:</strong> {{ method.details.email
+                                }}
+                            </p>
+                            <p>
+                                <strong>Titular:</strong> {{
+                                method.details.holder_name }}
+                            </p>
+                        </div>
+                        } @case ('BINANCE') {
+                        <div class="space-y-3 font-mono text-center">
+                            <p>
+                                <strong>Binance Pay ID:</strong> {{
+                                method.details.pay_id }}
+                            </p>
+                            <p>
+                                <strong>Titular:</strong> {{
+                                method.details.holder_name }}
+                            </p>
+                        </div>
+                        } @case ('TRANSFERENCIA') {
+                        <div class="space-y-3 font-mono text-center">
+                            @if(method.bank_details_display) {
+                            <p>
+                                <strong>Banco:</strong> {{
+                                method.bank_details_display }}
+                            </p>
+                            }
+                            <p>
+                                <strong>Titular:</strong> {{
+                                method.details.holder_name }}
+                            </p>
+                            <p>
+                                <strong>C.I./RIF:</strong> {{
+                                method.details.id_number }}
+                            </p>
+                            <p>
+                                <strong>Cuenta:</strong> {{
+                                method.details.account_number }}
+                            </p>
+                        </div>
+                        } }
+                        <!-- ✅ [NUEVO] TASA DE CAMBIO APLICADA -->
+                        @if (raffle.applied_rate_date &&
+                        raffle.vef_per_usd_price) {
+                        <div
+                            class="text-center text-xs text-muted-foreground mt-4 border-t border-border/30 pt-3"
+                        >
+                            <p>
+                                Tasa aplicada del {{ raffle.applied_rate_date
+                                }}:
+                                <span class="font-semibold text-foreground"
+                                    >1 USD = {{ raffle.vef_per_usd_price |
+                                    number:'1.4-4' }} VEF</span
+                                >
+                            </p>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
                 <!-- Formulario de reporte de pago -->
                 <div class="max-w-lg mx-auto">
                     <div
@@ -966,6 +1103,21 @@
                                             Número de Referencia *
                                         </div>
                                     </label>
+
+                                    <!-- ✅ [NUEVO] MENSAJE DE GUÍA PARA EL USUARIO -->
+                                    <div
+                                        class="flex items-center gap-2 text-xs text-muted-foreground bg-card p-2 rounded-md border border-border"
+                                    >
+                                        <lucide-icon
+                                            name="Info"
+                                            class="h-4 w-4 text-info flex-shrink-0"
+                                        ></lucide-icon>
+                                        <span
+                                            >Ingresa el número de referencia
+                                            completo (mínimo 8 dígitos).</span
+                                        >
+                                    </div>
+
                                     <div class="relative group">
                                         <input
                                             formControlName="reference"
@@ -985,7 +1137,25 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @if(formErrors()['reference']) {
+
+                                    <!-- ✅ [NUEVO] BLOQUE DE ERROR PARA VALIDACIÓN EN TIEMPO REAL -->
+                                    @if(paymentReportValidationErrors().reference)
+                                    {
+                                    <div
+                                        class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
+                                    >
+                                        <lucide-icon
+                                            name="AlertTriangle"
+                                            class="h-4 w-4 flex-shrink-0"
+                                        ></lucide-icon>
+                                        <span
+                                            >{{
+                                            paymentReportValidationErrors().reference
+                                            }}</span
+                                        >
+                                    </div>
+                                    } @else if (formErrors()['reference']) {
+                                    <!-- Mantenemos el error que pueda venir de la API -->
                                     <div
                                         class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
                                     >
@@ -1000,7 +1170,6 @@
                                     </div>
                                     }
                                 </div>
-
                                 @if(selectedPaymentMethod()?.method_type ===
                                 'ZELLE') {
                                 <div class="space-y-3">
