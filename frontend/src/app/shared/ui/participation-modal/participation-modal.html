@@ -939,12 +939,14 @@
                     </div>
 
                     <div>
-                        <h3 class="text-3xl font-bold text-success mb-3">
-                            ¡Excelente! 🎉
-                        </h3>
-                        <p class="text-lg text-foreground mb-4">
-                            Tus boletos están reservados
-                        </p>
+                        <div>
+                            <h3 class="text-3xl font-bold text-success mb-3">
+                                ¡Excelente! 🎉 Tus boletos están reservados
+                            </h3>
+                            <p class="text-lg text-foreground mb-4">
+                                Completa tu pago para asegurar tu participación.
+                            </p>
+                        </div>
                     </div>
 
                     <div
@@ -972,6 +974,50 @@
                         >
                             para completar tu pago
                         </p>
+                    </div>
+                </div>
+
+                <div class="max-w-lg mx-auto">
+                    <div
+                        class="bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/5 border-2 border-primary/20 rounded-2xl p-6 space-y-4"
+                    >
+                        <h4 class="font-bold text-xl text-center text-primary">
+                            📋 Resumen de tu Compra
+                        </h4>
+
+                        <div
+                            class="flex justify-between items-center py-2 border-b border-border/30"
+                        >
+                            <span class="text-muted-foreground"
+                                >Cantidad de boletos:</span
+                            >
+                            <span class="font-bold text-lg text-foreground"
+                                >{{ ticketCount() }}</span
+                            >
+                        </div>
+
+                        <div
+                            class="bg-gradient-accent/10 border border-accent/20 rounded-xl p-4 space-y-3"
+                        >
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-foreground"
+                                    >Total a Pagar (USD):</span
+                                >
+                                <span
+                                    class="text-2xl font-extrabold text-success"
+                                    >${{ totalUSD() | number:'1.2-2' }}</span
+                                >
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-bold text-foreground"
+                                    >Total a Pagar (VEF):</span
+                                >
+                                <span
+                                    class="text-2xl font-extrabold text-success"
+                                    >{{ totalVEF() | number:'1.2-2' }} Bs</span
+                                >
+                            </div>
+                        </div>
                     </div>
                 </div>
 
