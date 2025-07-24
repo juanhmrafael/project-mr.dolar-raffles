@@ -225,7 +225,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
     "update-bcv-rate-afternoons": {
         "task": "currencies.update_bcv_rate",
-        "schedule": crontab(minute="0", hour="17", day_of_week="1-5"),
+        "schedule": crontab(minute="0", hour="17-21", day_of_week="1-5"),
     },
 }
 CELERY_BROKER_TRANSPORT_OPTIONS = {
