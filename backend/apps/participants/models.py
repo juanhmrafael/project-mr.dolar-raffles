@@ -12,7 +12,6 @@ from simple_history.models import HistoricalRecords
 from utils.validators import (
     validate_full_name,
     validate_natural_person_id,
-    validate_venezuelan_phone,
 )
 
 
@@ -41,9 +40,8 @@ class Participation(models.Model):
     phone = models.CharField(
         _("Phone Number"),
         max_length=20,
-        validators=[validate_venezuelan_phone],
         help_text=_(
-            "Enter the 11-digit cell phone number. It will be formatted automatically as (04XX) XXX-XXXX."
+            "Enter the 11-digit cell phone number."
         ),
     )
     email = models.EmailField(_("Email Address"))

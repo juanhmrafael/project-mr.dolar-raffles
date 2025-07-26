@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { catchError, of, timer, Subscription, map } from 'rxjs';
+import { catchError, of, map } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
 import { toSignal } from '@angular/core/rxjs-interop';
 // Imports de la aplicación
@@ -27,6 +27,7 @@ import {
     PaymentReportResponse,
 } from '../../models/raffle';
 import { TermsAndConditions } from '../terms-and-conditions/terms-and-conditions'; // ✅ IMPORTAR
+import { fullNameValidator } from '../../../core/validators/full-name.validator';
 
 type ParticipationStep =
     | 'personal'
@@ -73,12 +74,18 @@ export class ParticipationModal {
     private readonly expirationTimestamp = signal<number>(0);
 
     protected readonly personalDataForm = this.fb.group({
-        full_name: ['', Validators.required],
-        identification_number: [
+        full_name: ['', [Validators.required, fullNameValidator]],
+        // Se divide la identificación en dos controles
+        identification_type: ['V', [Validators.required]],
+        identification_number_only: [
             '',
-            [Validators.required, Validators.pattern(/^[VEJGTPvejtgp]-\d+$/)],
+            [
+                Validators.required,
+                Validators.pattern(/^\d+$/),
+                Validators.minLength(7),
+            ],
         ],
-        phone: ['', Validators.required],
+        phone: ['', [Validators.required]],
         email: ['', [Validators.required, Validators.email]],
     });
 
@@ -87,8 +94,8 @@ export class ParticipationModal {
         email: [''],
         binance_pay_id: [''],
         payment_date: [
-            new Date().toISOString().split('T')[0],
-            Validators.required,
+            new Date().toLocaleDateString('en-CA'),
+            [Validators.required],
         ],
     });
 
@@ -247,11 +254,15 @@ export class ParticipationModal {
         if (!this.isCurrentStepValid()) return;
         this.currentStep.set('reserving');
         const formValue = this.personalDataForm.getRawValue();
+
+        const combinedIdentification = `${formValue.identification_type}-${formValue.identification_number_only}`;
+        console.log(combinedIdentification);
+
         const payload: ParticipationCreatePayload = {
             raffle_id: this.raffleDetail().id,
             ticket_count: this.ticketCount(),
             full_name: formValue.full_name!,
-            identification_number: formValue.identification_number!,
+            identification_number: combinedIdentification,
             phone: formValue.phone!,
             email: formValue.email!,
         };
@@ -310,8 +321,15 @@ export class ParticipationModal {
                 const control =
                     this.personalDataForm.get(key) ||
                     this.paymentReportForm.get(key);
-                if (control) fieldErrors[key] = message;
-                else this.apiError.set(message);
+
+                // ✅ LA CORRECCIÓN CLAVE ESTÁ AQUÍ
+                // Si el control existe O si el error de la API es específicamente 'identification_number',
+                // lo tratamos como un error de campo.
+                if (control || key === 'identification_number') {
+                    fieldErrors[key] = message;
+                } else {
+                    this.apiError.set(message);
+                }
             });
             this.formErrors.set(fieldErrors);
         } else {
@@ -321,9 +339,15 @@ export class ParticipationModal {
 
     private resetState(): void {
         this.currentStep.set('personal');
-        this.personalDataForm.reset();
+        this.personalDataForm.reset({
+            identification_type: 'V', // Valor por defecto para el select
+            full_name: '',
+            identification_number_only: '',
+            phone: '',
+            email: '',
+        });
         this.paymentReportForm.reset({
-            payment_date: new Date().toISOString().split('T')[0],
+            payment_date: new Date().toLocaleDateString('en-CA'),
         });
         this.ticketCount.set(25);
         this.selectedPaymentMethod.set(null);

@@ -108,7 +108,6 @@
                 <!-- Campo Cédula -->
                 <div class="space-y-3">
                     <label
-                        for="id_number"
                         class="flex items-center gap-3 text-sm font-semibold text-foreground"
                     >
                         <div
@@ -121,33 +120,37 @@
                                 name="CreditCard"
                                 class="h-4 w-4 text-primary"
                             ></lucide-icon>
-                            Cédula de Identidad
+                            Identificación / RIF
                         </div>
                     </label>
-                    <div class="relative group">
-                        <input
-                            type="text"
-                            id="id_number"
-                            formControlName="identification_number"
-                            class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all duration-moderate font-mono text-lg group-hover:border-primary/50"
-                            placeholder="V-12345678"
-                            [inputMask]="InputMasks['venezuelanId']"
-                        />
-                        <div
-                            class="absolute inset-y-0 right-0 flex items-center pr-4"
+
+                    <div class="flex items-start gap-2 group">
+                        <select
+                            formControlName="identification_type"
+                            class="h-[58px] px-3 py-4 bg-card border-2 border-border rounded-xl text-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all duration-moderate font-mono text-lg group-hover:border-primary/50"
+                            aria-label="Tipo de identificación"
                         >
-                            <div
-                                class="w-6 h-6 bg-muted rounded-full flex items-center justify-center"
-                            >
-                                <lucide-icon
-                                    name="User"
-                                    class="h-4 w-4 text-muted-foreground"
-                                ></lucide-icon>
-                            </div>
+                            <option value="V">V</option>
+                            <option value="E">E</option>
+                            <option value="J">J</option>
+                        </select>
+
+                        <div class="relative flex-1">
+                            <input
+                                formControlName="identification_number_only"
+                                placeholder="12345678"
+                                type="text"
+                                inputmode="numeric"
+                                class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all duration-moderate font-mono text-lg group-hover:border-primary/50"
+                            />
                         </div>
                     </div>
-                    @if (lookupForm.get('identification_number')?.touched &&
-                    lookupForm.get('identification_number')?.errors) {
+
+                    <!-- Bloque de error mejorado para el nuevo campo -->
+                    @let idControl =
+                    lookupForm.get('identification_number_only'); @if
+                    (idControl?.invalid && (idControl?.dirty ||
+                    idControl?.touched)) {
                     <div
                         class="flex items-center gap-3 text-destructive text-sm animate-slide-down bg-destructive/10 border border-destructive/20 rounded-lg p-3"
                     >
@@ -155,10 +158,14 @@
                             name="AlertTriangle"
                             class="h-4 w-4 flex-shrink-0"
                         ></lucide-icon>
-                        <span
-                            >Formato inválido. Debe ser como:
-                            <strong>V-12345678</strong></span
-                        >
+                        <span>
+                            @if (idControl?.hasError('required')) { El número de
+                            identificación es obligatorio. } @else if
+                            (idControl?.hasError('minlength')) { Debe tener al
+                            menos 7 dígitos. } @else if
+                            (idControl?.hasError('pattern')) { El número de
+                            identificación solo debe contener números. }
+                        </span>
                     </div>
                     }
                 </div>
@@ -189,7 +196,6 @@
                             formControlName="phone"
                             class="w-full px-5 py-4 bg-card border-2 border-border rounded-xl text-foreground placeholder-muted-foreground focus:border-secondary focus:ring-4 focus:ring-secondary/10 focus:outline-none transition-all duration-moderate text-lg group-hover:border-secondary/50"
                             placeholder="(0412) 123-4567"
-                            [inputMask]="InputMasks['venezuelanPhone']"
                         />
                         <div
                             class="absolute inset-y-0 right-0 flex items-center pr-4"

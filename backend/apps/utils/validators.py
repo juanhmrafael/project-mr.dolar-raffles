@@ -23,7 +23,7 @@ def _validate_base_id_format(value: str, allowed_prefixes: str, error_message: s
     """
     # Construimos la expresión regular dinámicamente.
     # Ej: si allowed_prefixes es "VEP", el regex será ^[VEP]-\d{7,9}$
-    regex = f"^[{allowed_prefixes.upper()}]-\\d{{7,9}}$"
+    regex = f"^[{allowed_prefixes.upper()}]-\\d{{7,}}$"
 
     if not re.match(regex, value.upper()):
         raise ValidationError(error_message)

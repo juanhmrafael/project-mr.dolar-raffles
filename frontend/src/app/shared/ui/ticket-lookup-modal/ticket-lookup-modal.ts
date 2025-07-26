@@ -10,8 +10,6 @@ import {
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, finalize, of } from 'rxjs';
 import { LucideAngularModule } from 'lucide-angular';
-import {InputMaskDirective} from '../../directives/input-mask';
-import { InputMasks } from '../../../core/masks/input-masks';
 
 // Imports de la aplicación
 import { RafflesApi } from '../../../core/api/raffles-api';
@@ -29,7 +27,6 @@ type ViewStatus = 'form' | 'loading' | 'success' | 'error';
 @Component({
     selector: 'app-ticket-lookup-modal',
     imports: [
-        InputMaskDirective,
         CommonModule,
         NgClass,
         ReactiveFormsModule,
@@ -41,7 +38,6 @@ type ViewStatus = 'form' | 'loading' | 'success' | 'error';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketLookupModal {
-    protected readonly InputMasks = InputMasks;
     // --- INJECTIONS ---
     private readonly fb = inject(FormBuilder);
     private readonly rafflesApi = inject(RafflesApi);
@@ -69,9 +65,14 @@ export class TicketLookupModal {
 
     // --- FORM DEFINITION ---
     protected readonly lookupForm = this.fb.group({
-        identification_number: [
+        identification_type: ['V', [Validators.required]],
+        identification_number_only: [
             '',
-            [Validators.required, Validators.pattern(/^[VEJGTPvejtgp]-\d+$/)],
+            [
+                Validators.required,
+                Validators.pattern(/^\d+$/),
+                Validators.minLength(7),
+            ],
         ],
         phone: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
@@ -88,9 +89,12 @@ export class TicketLookupModal {
 
         this.viewStatus.set('loading');
         const formValue = this.lookupForm.getRawValue();
+
+        const combinedIdentification = `${formValue.identification_type}-${formValue.identification_number_only}`;
+
         const payload: TicketLookupPayload = {
             raffle_id: this.raffleId(),
-            identification_number: formValue.identification_number!,
+            identification_number: combinedIdentification,
             phone: formValue.phone!,
             email: formValue.email!,
         };
@@ -133,7 +137,7 @@ export class TicketLookupModal {
 
     /** Resetea el estado del modal para permitir una nueva consulta. */
     protected startNewLookup(): void {
-        this.lookupForm.reset();
+        this.lookupForm.reset({ identification_type: 'V' });
         this.viewStatus.set('form');
         this.lookupResult.set(null);
         this.errorMessage.set('');

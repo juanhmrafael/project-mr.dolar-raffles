@@ -7,7 +7,6 @@ from rest_framework import serializers
 from utils.validators import (
     validate_full_name,
     validate_natural_person_id,
-    validate_venezuelan_phone,
 )
 
 from .models import Participation
@@ -33,7 +32,6 @@ class ParticipationCreateSerializer(AsyncModelSerializer):
         # Aplicamos los validadores que ya tenemos
         extra_kwargs = {
             "full_name": {"validators": [validate_full_name]},
-            "phone": {"validators": [validate_venezuelan_phone]},
             "identification_number": {"validators": [validate_natural_person_id]},
         }
 
