@@ -1,0 +1,185 @@
+# docker-compose.yml para el Desarrollo del Backend
+# =======================================================================================
+# Propósito: Orquesta los servicios necesarios para desarrollar y probar la aplicación Django.
+# Está diseñado para ser levantado por la extensión Dev Containers de VS Code, creando
+# un entorno de desarrollo completo y autocontenido.
+# =======================================================================================
+
+services:
+  # --- Servicio Principal de Desarrollo del Backend ---
+  # Propósito: Este servicio representa el contenedor donde se ejecutará el código de Django
+  # y al cual VS Code se conectará.
+  backend:
+    # Propósito: Define cómo construir la imagen de Docker para este servicio.
+    build:
+      # Propósito: Establece la ruta raíz del proyecto como el contexto de build.
+      # Esto permite que el Dockerfile acceda a cualquier archivo del proyecto.
+      context: ../../
+      # Propósito: Apunta al Dockerfile específico que define la imagen de desarrollo.
+      dockerfile: .devcontainer/backend/Dockerfile
+      # Propósito: Comando que se ejecuta al iniciar el contenedor para mantenerlo vivo.
+      # VS Code se encargará de ejecutar los procesos necesarios (servidor, tests)
+      # a través de su terminal integrada, por lo que solo necesitamos que el contenedor no se apague.
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    command: sleep infinity
+    # Propósito: Monta el código fuente del backend desde la máquina local al contenedor.
+    # Esto crea un vínculo en tiempo real, permitiendo el hot-reloading: los cambios
+    # guardados en el IDE se reflejan instantáneamente dentro del contenedor.
+    volumes:
+      - ../../backend:/workspaces/backend
+    # Propósito: Carga las variables de entorno desde un archivo .env local,
+    # manteniendo las credenciales y configuraciones fuera del control de versiones.
+    env_file:
+      - .env
+    # Propósito: Conecta este servicio a la red privada 'dev_network', permitiéndole
+    # comunicarse con otros servicios como la base de datos.
+    networks:
+      - dev_network_external
+    ports:
+      - "8000:8000"
+    # Propósito: Define el orden de arranque. El servicio 'backend' no se iniciará
+    # hasta que 'db_dev' y 'redis_dev' estén saludables, previniendo errores de conexión.
+    depends_on:
+      db_dev:
+        condition: service_healthy
+      redis_dev:
+        condition: service_healthy
+
+  # --- Servicio de Base de Datos de Desarrollo ---
+  db_dev:
+    # Propósito: Proporciona una base de datos PostgreSQL aislada para el desarrollo.
+    image: postgres:17-alpine
+    # Propósito: Persiste los datos de la base de datos en un volumen nombrado.
+    # Esto asegura que los datos no se pierdan cuando los contenedores se detienen o reinician.
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    env_file:
+      - .env
+    # Propósito: Expone explícitamente las variables del .env a nivel de Compose
+    # para que puedan ser usadas en el healthcheck. Sin esto, el healthcheck fallaría.
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    # Propósito: Mapea el puerto 5432 del contenedor al puerto 5432 de la máquina host.
+    # Esto permite que herramientas externas (como la extensión de PostgreSQL en VS Code)
+    # se conecten a la base de datos a través de 'localhost:5432'.
+    ports:
+      - "5432:5432"
+    networks:
+      - dev_network_external
+    # Propósito: Define una prueba de salud que Docker ejecuta periódicamente para
+    # verificar que la base de datos está lista para aceptar conexiones.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Servicio de Caché/Broker de Desarrollo ---
+  redis_dev:
+    # Propósito: Proporciona una instancia de Redis para la caché de Django y como
+    # broker de mensajes para Celery.
+    build:
+      context: ./redis
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    # Propósito: Expone la variable explícitamente para que el healthcheck pueda usarla.
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_USER=${REDIS_USER}
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    # Propósito: Inicia Redis exigiéndole una contraseña para cualquier conexión.
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - dev_network_external
+    # Propósito: El healthcheck ahora se autentica con la contraseña antes de hacer ping.
+    # El $$ es sintaxis de Compose para escapar la variable y pasarla al shell del contenedor.
+    # Referencia: https://docs.docker.com/compose/compose-file/compose-file-v3/#variable-substitution
+    healthcheck:
+      test: ["CMD", "redis-cli", "--user", "$${REDIS_USER}", "-a", "$${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    # Propósito: Una interfaz gráfica web para administrar la base de datos de desarrollo.
+    # NO construye su propia imagen; utiliza la construida por el servicio 'build-dev'.
+    image: dpage/pgadmin4:latest # Usa la imagen oficial de pgAdmin.
+    env_file:
+      - .env # Carga el email y la contraseña para el login de pgAdmin.
+    ports:
+      - "5050:80" # Expone la interfaz de pgAdmin en http://localhost:5050
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin # Persiste la configuración de pgAdmin.
+    networks:
+      - dev_network_external
+    depends_on:
+      - db_dev # No se inicia hasta que la base de datos de desarrollo esté lista.
+  # --- Servicio de Trabajador Celery de Desarrollo ---
+  
+  worker_dev:
+    # Propósito: Ejecuta el worker de Celery para procesar tareas en segundo plano.
+    build:
+      context: ../../
+      dockerfile: .devcontainer/backend/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    # Propósito: Este es el comando que inicia el worker.
+    # Usa exactamente la misma configuración que el servicio principal 'backend'.
+    command: celery -A config.celery worker -l info
+    # Propósito: Monta el código fuente para que los cambios en las tareas se reflejen sin reiniciar.
+    volumes:
+      - ../../backend:/workspaces/backend
+    env_file:
+      - .env
+    networks:
+      - dev_network_external
+    # Propósito: Depende de los mismos servicios que el backend.
+    depends_on:
+      db_dev:
+        condition: service_healthy
+      redis_dev:
+        condition: service_healthy
+
+  # --- Servicio de Programador Celery Beat de Desarrollo ---
+  beat_dev:
+    # Propósito: Ejecuta el scheduler de Celery Beat para disparar tareas programadas.
+    build:
+      context: ../../
+      dockerfile: .devcontainer/backend/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    # Propósito: El comando que inicia Celery Beat, usando el scheduler de la base de datos.
+    command: celery -A config.celery beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    # Propósito: Monta el código fuente.
+    volumes:
+      - ../../backend:/workspaces/backend
+    env_file:
+      - .env
+    networks:
+      - dev_network_external
+    # Propósito: Depende de los mismos servicios que el backend.
+    depends_on:
+      db_dev:
+        condition: service_healthy
+      redis_dev:
+        condition: service_healthy
+
+# --- Definición de Redes y Volúmenes de Desarrollo ---
+networks:
+  # Propósito: Define la red privada que usarán todos los servicios de desarrollo para comunicarse.
+  dev_network_external:
+    name: dev_raffles
+    external: true
+
+volumes:
+  # Propósito: Declara el volumen nombrado para la persistencia de datos de PostgreSQL.
+  postgres_data_dev:
+  pgadmin_data:

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.conf.urls.static import static
 
 # --- URLS DE INTERNACIONALIZACIÓN (I18N) ---
 # Propósito: Proporcionar las vistas y URLs necesarias para que Django
@@ -35,9 +36,6 @@ urlpatterns += [
 ]
 
 if settings.DEBUG:
-    from django.conf import settings
-    from django.conf.urls.static import static
-
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += [
         # La URL `__debug__/` es el prefijo estándar para las rutas de la toolbar.

@@ -10,9 +10,9 @@
 .env.*
 !.env.prod.example
 !.env.dev.example
-.devcontainer
 nginx/certs/cert.pem
 nginx/certs/key.pem
+/secrets/
 # --- Archivos de Base de Datos ---
 # Nunca subas la base de datos de desarrollo local.
 db.sqlite3

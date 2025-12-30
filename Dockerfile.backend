@@ -16,7 +16,7 @@
 # '.in' (definiciones abstractas) a '.txt' (versiones fijadas y concretas). Al aislar
 # este proceso, nos aseguramos de que ninguna de estas herramientas de desarrollo
 # (como pip-tools o compiladores de C) contamine la imagen final de producción.
-FROM python:3.13-alpine AS builder
+FROM python:3.14-alpine AS builder
 
 # Propósito: Establecer variables de entorno estándar para optimizar la ejecución de Python en Docker.
 # - PYTHONDONTWRITEBYTECODE=1: Evita que Python escriba archivos .pyc en el disco, lo cual es innecesario en contenedores.
@@ -54,7 +54,7 @@ RUN pip-compile requirements/base.in -o requirements/base.txt
 # Propósito: Esta etapa intermedia instala las dependencias de producción de Python en un entorno limpio.
 # Al separar la instalación de dependencias del código de la aplicación, creamos una capa de Docker
 # que rara vez cambiará, mejorando drásticamente los tiempos de construcción posteriores.
-FROM python:3.13-alpine AS prod-deps
+FROM python:3.14-alpine AS prod-deps
 
 # Propósito: Re-establecer las variables de entorno estándar para Python en esta nueva etapa.
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -86,7 +86,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # --- Etapa 3: 'production' (Imagen Final) ---
 # Propósito: Esta es la etapa final que construye la imagen que se desplegará en producción.
 # Es una imagen minimalista, segura y optimizada que solo contiene lo estrictamente necesario para correr la aplicación.
-FROM python:3.13-alpine AS production
+FROM python:3.14-alpine AS production
 
 # Propósito: Re-establecer las variables de entorno estándar para Python en la etapa final.
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -109,7 +109,7 @@ WORKDIR /home/appuser/app
 # Propósito: Copiar las dependencias de Python ya instaladas desde la etapa 'prod-deps'.
 # Esta es una operación de copia de archivos extremadamente rápida. Evita reinstalar todo y
 # aprovecha la capa de caché creada en la etapa anterior.
-COPY --from=prod-deps /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=prod-deps /usr/local/lib/python3.14/site-packages /usr/local/lib/python3.14/site-packages
 COPY --from=prod-deps /usr/local/bin /usr/local/bin
 
 # Propósito: Copiar el código fuente de la aplicación y el script de entrada.
